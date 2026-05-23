@@ -55,7 +55,19 @@ function formatDeliveryType(tipoEntrega) {
 }
 
 function formatOrderCode(codigo) {
-  return '#' + String(codigo || '000000').replace('PED-', '').slice(-6);
+  if (!codigo) {
+    return '#PED000';
+  }
+
+  const apenasNumeros = String(codigo).replace(/\D/g, '');
+
+  if (!apenasNumeros) {
+    return '#PED000';
+  }
+
+  const numeroFormatado = apenasNumeros.slice(-3).padStart(3, '0');
+
+  return '#PED' + numeroFormatado;
 }
 
 function formatDateTime(dataHora) {
