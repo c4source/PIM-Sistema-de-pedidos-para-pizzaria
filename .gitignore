@@ -8,6 +8,7 @@ Thumbs.db
 # VS Code / Visual Studio
 .vscode/
 .vs/
+.idea/
 
 # ASP.NET Core / .NET
 bin/
