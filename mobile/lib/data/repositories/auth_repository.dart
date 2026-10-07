@@ -5,22 +5,15 @@ import '../api/auth_api.dart';
 class AuthRepository {
   final AuthApi _authApi = AuthApi();
 
-  final FlutterSecureStorage _storage =
-      const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<Map<String, dynamic>> login(
-    String email,
-    String senha,
-  ) async {
+  Future<Map<String, dynamic>> login(String email, String senha) async {
     final resposta = await _authApi.login(email, senha);
 
     final token = resposta['token'];
 
     if (token != null) {
-      await _storage.write(
-        key: 'token',
-        value: token,
-      );
+      await _storage.write(key: 'token', value: token);
     }
 
     return resposta;
@@ -30,6 +23,10 @@ class AuthRepository {
     final token = await _storage.read(key: 'token');
 
     return token != null;
+  }
+
+  Future<String?> obterToken() async {
+    return await _storage.read(key: 'token');
   }
 
   Future<void> logout() async {

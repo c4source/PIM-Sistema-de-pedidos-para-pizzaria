@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'api_config.dart';
+
 import 'package:http/http.dart' as http;
 
 class AuthApi {
-  static const String _baseUrl = 'http://10.0.2.2:5162';
-
   Future<Map<String, dynamic>> login(String email, String senha) async {
-    final url = Uri.parse('$_baseUrl/api/Auth/login-colaborador');
+    final url = Uri.parse('${ApiConfig.baseUrl}/api/Auth/login-colaborador');
 
     final response = await http.post(
       url,
