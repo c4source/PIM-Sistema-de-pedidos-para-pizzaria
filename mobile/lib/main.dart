@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'ui/telas/estoque_screen.dart';
 import 'ui/telas/produtos_screen.dart';
 import 'core/rotas.dart';
 import 'core/tema.dart';
@@ -34,6 +34,7 @@ class EstoqueApp extends StatelessWidget {
         Rotas.login: (context) => const LoginScreen(),
         Rotas.home: (context) => const HomeScreen(),
         Rotas.produtos: (context) => const ProdutosScreen(),
+        Rotas.estoque: (context) => const EstoqueScreen(),
       },
     );
   }

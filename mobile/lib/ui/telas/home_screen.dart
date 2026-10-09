@@ -39,7 +39,13 @@ class HomeScreen extends StatelessWidget {
                       Navigator.pushNamed(context, Rotas.produtos);
                     },
                   ),
-                  _AtalhoAdmin(titulo: 'Estoque', icone: Icons.warehouse),
+                  _AtalhoAdmin(
+                    titulo: 'Estoque',
+                    icone: Icons.warehouse,
+                    onTap: () {
+                      Navigator.pushNamed(context, Rotas.estoque);
+                    },
+                  ),
                   _AtalhoAdmin(
                     titulo: 'Movimentações',
                     icone: Icons.swap_horiz,
