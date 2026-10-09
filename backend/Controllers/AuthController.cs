@@ -36,7 +36,7 @@ namespace Pim.Controllers
                 return Unauthorized("E-mail ou senha de colaborador incorretos.");
             }
 
-            var token = GerarToken(colaborador.Nome, colaborador.Email, "Colaborador");
+            var token = GerarToken(colaborador.Id,colaborador.Nome, colaborador.Email, "Colaborador");
 
             return Ok(new
             {
@@ -75,7 +75,7 @@ namespace Pim.Controllers
         }
 
         // Método privado para gerar token do colaborador.
-        private string GerarToken(string nome, string email, string papel)
+        private string GerarToken(int id,string nome, string email, string papel)
         {
             var jwtKey = _config["Jwt:Key"];
 
@@ -88,7 +88,8 @@ namespace Pim.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
-            {
+            {   
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                 new Claim(ClaimTypes.Name, nome),
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Role, papel),
