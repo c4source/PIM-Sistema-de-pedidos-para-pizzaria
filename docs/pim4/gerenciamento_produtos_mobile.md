@@ -71,3 +71,40 @@ armazenados no PostgreSQL através da API do sistema.
 
 As operações protegidas utilizam autenticação JWT e a listagem é
 atualizada após alterações realizadas pelo aplicativo.
+
+
+
+## Validações de Produtos
+
+Foram implementadas validações nos DTOs `ProdutoCreateDto` e `ProdutoUpdateDto` utilizando Data Annotations do ASP.NET Core.
+
+Regras aplicadas:
+
+- Nome obrigatório, com limite de 100 caracteres (`Required` e `StringLength`).
+- Preço maior que zero (`Range`), utilizando `ParseLimitsInInvariantCulture` para interpretar corretamente os limites decimais.
+- Categoria obrigatória, aceitando apenas `pizza`, `doce`, `bebida` e `combo`.
+- Status obrigatório, aceitando apenas `disponivel` e `indisponivel`.
+- Estoque obrigatório e maior ou igual a zero (`Range`).
+
+No Flutter, o campo Categoria foi substituído por um `DropdownButtonFormField`, restringindo a seleção às categorias permitidas.
+
+As validações do backend impedem que dados inválidos sejam encaminhados ao PostgreSQL. Requisições inválidas retornam HTTP 400 (Bad Request).
+
+## Testes realizados
+
+- Listagem de produtos no Flutter integrada à API.
+- Cadastro de produto pelo Flutter, com persistência confirmada no PostgreSQL.
+- Edição de produto pelo Flutter, com atualização confirmada no PostgreSQL.
+- Rejeição de categoria inválida no POST e no PUT.
+- Rejeição de preço negativo e estoque negativo.
+- Rejeição de nome vazio e status inválido.
+- Compilação do backend com sucesso no .NET 10.
+
+Os testes de validação foram realizados pelo Swagger.
+
+## Pendências relacionadas
+
+- Melhorar o tratamento de tokens JWT expirados e das mensagens de erro no aplicativo.
+- Implementar persistência local com SQLite e sincronização no RF40.
+- A exclusão já está implementada, mas seu teste funcional não foi realizado nesta etapa de validação.
+  

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'movimentacao_estoque_screen.dart';
 import '../../data/repositories/produto_repository.dart';
 import '../../models/produto.dart';
 
@@ -53,6 +54,24 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Estoque'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_box_outlined),
+            tooltip: 'Registrar entrada',
+            onPressed: () async {
+              final registrada = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const MovimentacaoEstoqueScreen(tipo: 'entrada'),
+                ),
+              );
+
+              if (registrada == true && mounted) {
+                await _carregarEstoque();
+              }
+            },
+          ),
+        ],
       ),
       body: _construirConteudo(),
     );
@@ -60,47 +79,33 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
 
   Widget _construirConteudo() {
     if (_carregando) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_erro != null) {
-      return Center(
-        child: Text(_erro!),
-      );
+      return Center(child: Text(_erro!));
     }
 
     if (_produtos.isEmpty) {
-      return const Center(
-        child: Text('Nenhum produto encontrado.'),
-      );
+      return const Center(child: Text('Nenhum produto encontrado.'));
     }
 
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _produtos.length,
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: 8),
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final produto = _produtos[index];
         final quantidade = produto.estoque ?? 0;
 
         return Card(
           child: ListTile(
-            leading: const Icon(
-              Icons.inventory_2_outlined,
-            ),
+            leading: const Icon(Icons.inventory_2_outlined),
             title: Text(produto.nome),
-            subtitle: Text(
-              produto.categoria ?? 'Sem categoria',
-            ),
+            subtitle: Text(produto.categoria ?? 'Sem categoria'),
             trailing: Text(
               '$quantidade un.',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         );
