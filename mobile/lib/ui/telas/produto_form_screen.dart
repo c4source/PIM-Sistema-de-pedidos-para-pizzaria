@@ -167,9 +167,38 @@ class _ProdutoFormScreenState extends State<ProdutoFormScreen> {
 
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _categoriaController,
+              DropdownButtonFormField<String>(
+                initialValue:
+                    [
+                      'pizza',
+                      'doce',
+                      'bebida',
+                      'combo',
+                    ].contains(_categoriaController.text)
+                    ? _categoriaController.text
+                    : null,
+
                 decoration: const InputDecoration(labelText: 'Categoria'),
+
+                items: const [
+                  DropdownMenuItem(value: 'pizza', child: Text('Pizza')),
+                  DropdownMenuItem(value: 'doce', child: Text('Doce')),
+                  DropdownMenuItem(value: 'bebida', child: Text('Bebida')),
+                  DropdownMenuItem(value: 'combo', child: Text('Combo')),
+                ],
+
+                onChanged: (valor) {
+                  if (valor != null) {
+                    _categoriaController.text = valor;
+                  }
+                },
+
+                validator: (valor) {
+                  if (valor == null) {
+                    return 'Selecione uma categoria';
+                  }
+                  return null;
+                },
               ),
 
               const SizedBox(height: 16),
