@@ -70,14 +70,17 @@ namespace Pim
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // 3. BANCO DE DADOS
-                builder.Services.AddScoped<ProdutoRepository>();
-                builder.Services.AddScoped<ProdutoService>();
+            builder.Services.AddScoped<ProdutoRepository>();
+            builder.Services.AddScoped<ProdutoService>();
 
-                builder.Services.AddScoped<PedidoRepository>();
-                builder.Services.AddScoped<PedidoService>();
+            builder.Services.AddScoped<PedidoRepository>();
+            builder.Services.AddScoped<PedidoService>();
 
-                builder.Services.AddScoped<ColaboradorRepository>();
-                builder.Services.AddScoped<ColaboradorService>();
+            builder.Services.AddScoped<ColaboradorRepository>();
+            builder.Services.AddScoped<ColaboradorService>();
+
+            builder.Services.AddScoped<MovimentacaoEstoqueRepository>();
+            builder.Services.AddScoped<MovimentacaoEstoqueService>();
 
             // 4. AUTENTICAÇÃO JWT
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
