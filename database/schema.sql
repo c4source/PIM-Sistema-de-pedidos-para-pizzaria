@@ -1,6 +1,9 @@
 -- Schema PostgreSQL para o MVP de pedidos da pizzaria.
 -- O pedido do cliente no MVP atual e feito sem login.
 
+DROP VIEW IF EXISTS produto_com_estoque;
+DROP TABLE IF EXISTS pedido_baixa_estoque;
+DROP TABLE IF EXISTS kit_componente;
 DROP TABLE IF EXISTS itempedido;
 DROP TABLE IF EXISTS item_pedido;
 DROP TABLE IF EXISTS pagamento;
@@ -15,6 +18,9 @@ CREATE TABLE colaborador (
         CHECK (TRIM(nome_usuario) <> ''),
     email_usuario VARCHAR(100) NOT NULL UNIQUE
         CHECK (TRIM(email_usuario) <> ''),
+    perfil VARCHAR(20) NOT NULL DEFAULT 'Colaborador' CHECK (perfil IN ('Administrador','Colaborador')),
+    trocar_senha BOOLEAN NOT NULL DEFAULT FALSE,
+    versao_sessao INT NOT NULL DEFAULT 1,
     senha_usuario VARCHAR(100) NOT NULL
         CHECK (TRIM(senha_usuario) <> '')
 );
@@ -146,3 +152,22 @@ CREATE TABLE itempedido (
         REFERENCES produto(codprod)
         ON DELETE RESTRICT
 );
+
+CREATE UNIQUE INDEX uq_colaborador_email_normalizado ON colaborador(lower(trim(email_usuario)));
+
+ALTER TABLE produto ADD COLUMN IF NOT EXISTS eh_kit BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE TABLE IF NOT EXISTS kit_componente (
+ id_kit INT NOT NULL REFERENCES produto(codprod) ON DELETE CASCADE,
+ id_produto INT NOT NULL REFERENCES produto(codprod) ON DELETE RESTRICT,
+ quantidade INT NOT NULL CHECK(quantidade>0),
+ PRIMARY KEY(id_kit,id_produto), CHECK(id_kit<>id_produto)
+);
+CREATE TABLE IF NOT EXISTS pedido_baixa_estoque (
+ id_pedido INT NOT NULL REFERENCES pedido(id_pedido) ON DELETE RESTRICT,
+ id_produto INT NOT NULL REFERENCES produto(codprod) ON DELETE RESTRICT,
+ quantidade INT NOT NULL CHECK(quantidade>0), PRIMARY KEY(id_pedido,id_produto)
+);
+CREATE OR REPLACE VIEW produto_com_estoque AS
+ SELECT p.codprod,p.nome_produto,p.preco,p.descricao,p.categoria,p.status_disponibilidade,p.imagem_url,p.eh_kit,
+ CASE WHEN p.eh_kit THEN COALESCE((SELECT min(CASE WHEN c.eh_kit OR c.status_disponibilidade<>'disponivel' THEN 0 ELSE c.estoque/k.quantidade END) FROM kit_componente k JOIN produto c ON c.codprod=k.id_produto WHERE k.id_kit=p.codprod),0)::int ELSE p.estoque END AS estoque
+ FROM produto p;

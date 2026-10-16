@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Pim.Repositories;
+using Pim.Data;
+using Microsoft.EntityFrameworkCore;
 using Pim.Services;
 
 
@@ -63,6 +66,9 @@ namespace Pim
                 });
             });
 
+            builder.Services.AddDbContext<PimDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             // 3. BANCO DE DADOS
                 builder.Services.AddScoped<ProdutoRepository>();
                 builder.Services.AddScoped<ProdutoService>();
@@ -77,6 +83,15 @@ namespace Pim
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.Events = new JwtBearerEvents {
+                        OnTokenValidated = async context => {
+                            var principal=context.Principal!;
+                            if(!int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier),out var id) || !int.TryParse(principal.FindFirstValue("versao"),out var versao)){context.Fail("Sessão inválida.");return;}
+                            var repo=context.HttpContext.RequestServices.GetRequiredService<ColaboradorRepository>();
+                            var u=await repo.BuscarPorIdAsync(id);
+                            if(u==null || u.VersaoSessao!=versao || principal.FindFirstValue(ClaimTypes.Role)!=(u.TrocarSenha?"TrocaSenha":u.Perfil))context.Fail("Sessão revogada.");
+                        }
+                    };
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -100,6 +115,13 @@ namespace Pim
             });
 
             var app = builder.Build();
+
+            if (args.Contains("--atualizar-banco"))
+            {
+                using var scope = app.Services.CreateScope();
+                AtualizadorBanco.ExecutarAsync(scope.ServiceProvider.GetRequiredService<PimDbContext>()).GetAwaiter().GetResult();
+                return;
+            }
 
             // Middlewares
             app.UseCors("AllowAll");

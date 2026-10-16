@@ -6,6 +6,7 @@
   <title>Painel Administrativo | Pizzaria MVP</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/admin.css">
+<link rel="stylesheet" href="../css/admin-colaboradores.css">
 </head>
 <body>
   <div class="app admin-dashboard-app">
@@ -60,6 +61,10 @@
         </div>
 
         <div class="admin-quick-actions">
+          <a class="admin-action-card" id="admin-colaboradores-link" href="./admin-colaboradores.html" hidden>
+            <span class="admin-action-title">Gerenciar colaboradores</span>
+            <span class="admin-action-description">Criar acessos e administrar a equipe</span>
+          </a>
           <button class="admin-action-card" id="admin-orders-link" type="button">
             <span class="admin-action-title">Ver pedidos</span>
             <span class="admin-action-description">Acompanhar histórico e status</span>
@@ -94,5 +99,6 @@
 
   <script src="../js/admin-api.js"></script>
   <script src="../js/admin-dashboard.js"></script>
+<script src="../js/admin-perfil.js"></script>
 </body>
 </html>

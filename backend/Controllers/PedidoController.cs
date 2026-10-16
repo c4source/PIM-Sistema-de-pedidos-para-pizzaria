@@ -43,7 +43,7 @@ namespace Pim.Controllers
             }
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoResponseDto>>> GetPedidos()
         {
@@ -51,7 +51,7 @@ namespace Pim.Controllers
             return Ok(pedidos);
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoResponseDto>> GetPedido(int id)
         {
@@ -63,7 +63,7 @@ namespace Pim.Controllers
             return Ok(pedido);
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpPatch("{id}/aprovar")]
         public async Task<IActionResult> AprovarPedido(int id, AprovarPedidoDto dto)
         {
@@ -79,7 +79,7 @@ namespace Pim.Controllers
             });
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> AtualizarStatus(int id, AtualizarStatusPedidoDto dto)
         {
@@ -94,7 +94,7 @@ namespace Pim.Controllers
             });
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpPatch("{id}/cancelar-loja")]
         public async Task<IActionResult> CancelarPelaLoja(int id, CancelarPedidoDto dto)
         {

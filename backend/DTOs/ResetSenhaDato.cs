@@ -2,8 +2,8 @@
 {
     public class ResetSenhaDto
     {
-        public string Email { get; set; }
-        public string Cpf { get; set; } // Usaremos o CPF como prova de identidade
-        public string NovaSenha { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Cpf { get; set; } = string.Empty; // Usaremos o CPF como prova de identidade
+        public string NovaSenha { get; set; } = string.Empty;
     }
 }

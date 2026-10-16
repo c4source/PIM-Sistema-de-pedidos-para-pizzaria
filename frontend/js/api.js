@@ -8,7 +8,7 @@ function adaptarProdutoApi(produto) {
     descricao: produto.descricao || '',
     categoria: produto.categoria || '',
     imagem: produto.imagemUrl || produto.imagem || '',
-    disponivel: !produto.status || produto.status.toLowerCase() === 'disponivel' || produto.status.toLowerCase() === 'disponível'
+    disponivel: Number(produto.estoque) > 0 && (!produto.status || produto.status.toLowerCase() === 'disponivel' || produto.status.toLowerCase() === 'disponível')
   };
 }
 
