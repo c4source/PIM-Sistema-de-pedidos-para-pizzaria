@@ -42,7 +42,7 @@ namespace Pim.Services
 
             var pedido = new Pedido
             {
-                Codigo = $"PED-{DateTime.Now:yyyyMMddHHmmssfff}",
+                Codigo = $"PED-{DateTime.Now:yyyyMMddHHmmssfff}-{Guid.NewGuid().ToString("N")[..8]}",
                 NomeCliente = dto.NomeCliente.Trim(),
                 TelefoneCliente = dto.TelefoneCliente.Trim(),
                 TipoEntrega = tipoEntrega,
@@ -70,8 +70,7 @@ namespace Pim.Services
                 if (produto == null)
                     return PedidoResultadoDto.Falha($"Produto {itemDto.IdProduto} nao encontrado.");
 
-                if (produto.Estoque.HasValue && produto.Estoque.Value < itemDto.Quantidade)
-                    return PedidoResultadoDto.Falha($"Estoque insuficiente para o produto: {produto.Nome}");
+
 
                 var itemPedido = new ItemPedido
                 {
@@ -95,7 +94,9 @@ namespace Pim.Services
                 DataHoraPagamento = DateTime.Now
             };
 
-            await _pedidoRepository.SalvarPedidoAsync(pedido);
+            try { await _pedidoRepository.SalvarPedidoAsync(pedido); }
+            catch (InvalidOperationException ex) { return PedidoResultadoDto.Falha(ex.Message); }
+            catch (OverflowException) { return PedidoResultadoDto.Falha("Quantidade informada muito grande."); }
 
             return PedidoResultadoDto.Ok(pedido);
         }
@@ -143,6 +144,8 @@ namespace Pim.Services
             if (novoStatus == null)
                 return (false, "Status invalido. Use: recebido, em_preparo, pronto, finalizado ou cancelado.");
 
+            if (novoStatus == PedidoStatus.Cancelado) return await CancelarPelaLojaAsync(id);
+            if (pedido.Status == PedidoStatus.Cancelado || pedido.Status == PedidoStatus.Finalizado) return (false,"Pedido cancelado ou finalizado não pode mudar de status.");
             await _pedidoRepository.AtualizarStatusAsync(id, novoStatus);
 
             return (true, $"Status do pedido {id} atualizado para {novoStatus}.");
@@ -161,7 +164,8 @@ namespace Pim.Services
             if (pedido.Status == PedidoStatus.Cancelado)
                 return (false, "Pedido ja esta cancelado.");
 
-            await _pedidoRepository.CancelarPedidoAsync(pedido);
+            try { await _pedidoRepository.CancelarPedidoAsync(pedido); }
+            catch (InvalidOperationException ex) { return (false,ex.Message); }
 
             return (true, $"Pedido {id} cancelado.");
         }

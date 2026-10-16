@@ -10,6 +10,8 @@ function initializeAdminProducts() {
   var productsStockTotalElement = document.getElementById('admin-products-stock-total');
   var productsBackDashboardButton = document.getElementById('admin-products-back-dashboard');
   var productsLogoutButton = document.getElementById('admin-products-logout');
+  var productModal = document.getElementById('produto-form-modal');
+  var createProductButton = document.getElementById('criar-produto');
   var productsForm = document.getElementById('admin-products-form');
   var productFormTitle = document.getElementById('product-form-title');
   var productIdInput = document.getElementById('product-id');
@@ -19,6 +21,48 @@ function initializeAdminProducts() {
   var productDescriptionInput = document.getElementById('product-description');
   var productImageInput = document.getElementById('product-image');
   var productStockInput = document.getElementById('product-stock');
+  var productKitInput = document.getElementById('product-is-kit');
+  var kitList = document.getElementById('kit-components-list');
+  function atualizarTipoKit() {
+    document.getElementById('kit-components-panel').hidden = !productKitInput.checked;
+    productStockInput.disabled = productKitInput.checked;
+    document.querySelector('label[for="product-stock"] .admin-products-label').textContent = productKitInput.checked ? 'Kits possíveis' : 'Estoque';
+    if (productKitInput.checked) calcularKitsPossiveis();
+  }
+  function calcularKitsPossiveis() {
+    if (!productKitInput.checked) return;
+    var quantidades = new Map();
+    var valido = kitList.children.length > 0;
+    Array.from(kitList.children).forEach(function(row){
+      var id = Number(row.querySelector('select').value);
+      var quantidade = Number(row.querySelector('input').value);
+      if (!id || !Number.isInteger(quantidade) || quantidade <= 0) { valido = false; return; }
+      quantidades.set(id, (quantidades.get(id) || 0) + quantidade);
+    });
+    var possiveis = Infinity;
+    quantidades.forEach(function(quantidade, id){
+      var produto = produtos.find(function(p){return Number(p.id) === id;});
+      if (!produto || produto.ehKit || produto.disponivel === false) { possiveis = 0; return; }
+      possiveis = Math.min(possiveis, Math.floor(produto.estoque / quantidade));
+    });
+    productStockInput.value = valido && Number.isFinite(possiveis) ? possiveis : 0;
+  }
+  kitList.addEventListener('input', calcularKitsPossiveis);
+  kitList.addEventListener('change', calcularKitsPossiveis);
+  function adicionarComponente(comp) {
+    var row = document.createElement('div'); row.className = 'kit-componente';
+    var label = document.createElement('label'); label.textContent = 'Produto';
+    var select = document.createElement('select'); select.className = 'admin-products-input';
+    var placeholder = document.createElement('option'); placeholder.value = ''; placeholder.textContent = 'Selecione um produto'; select.appendChild(placeholder);
+    produtos.filter(function(p){return !p.ehKit && Number(p.id)!==Number(productIdInput.value);}).forEach(function(p){var option=document.createElement('option');option.value=p.id;option.textContent=p.nome;select.appendChild(option);});
+    select.value = comp ? comp.idProduto : '';
+    var qtyLabel = document.createElement('label'); qtyLabel.textContent='Quantidade';
+    var qty = document.createElement('input'); qty.type='number';qty.min='1';qty.step='1';qty.value=comp?comp.quantidade:1;qty.className='admin-products-input';
+    var remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.title='Remover componente';remove.setAttribute('aria-label','Remover componente');remove.addEventListener('click',function(){row.remove();calcularKitsPossiveis();});
+    label.appendChild(select);qtyLabel.appendChild(qty);row.append(label,qtyLabel,remove);kitList.appendChild(row);calcularKitsPossiveis();
+  }
+  productKitInput.addEventListener('change',function(){atualizarTipoKit();if(productKitInput.checked && !kitList.children.length)adicionarComponente();});
+  document.getElementById('kit-add-component').addEventListener('click',function(){adicionarComponente();});
   var productAvailableInput = document.getElementById('product-available');
   var productSubmitButton = document.getElementById('product-submit-button');
   var productCancelEditButton = document.getElementById('product-cancel-edit-button');
@@ -47,6 +91,8 @@ function initializeAdminProducts() {
     return productsList.map(function (product) {
       return {
         id: product.id || product.codprod,
+        ehKit: Boolean(product.ehKit),
+        componentes: product.componentes || [],
         nome: product.nome || product.nome_produto || '',
         categoria: product.categoria || '',
         preco: Number(product.preco) || 0,
@@ -89,6 +135,8 @@ function initializeAdminProducts() {
 
   function getFormData() {
     return {
+      ehKit: productKitInput.checked,
+      componentes: productKitInput.checked ? Array.from(kitList.children).map(function(row){return {idProduto:Number(row.querySelector("select").value),quantidade:Number(row.querySelector("input").value)};}) : [],
       id: productIdInput.value,
       nome: productNameInput.value.trim(),
       categoria: productCategoryInput.value,
@@ -109,6 +157,7 @@ function initializeAdminProducts() {
   }
 
   function validateProduct(productData) {
+    if(productData.ehKit && (!productData.componentes.length || productData.componentes.some(function(c){return !c.idProduto || !Number.isInteger(c.quantidade) || c.quantidade<=0;}) || new Set(productData.componentes.map(function(c){return c.idProduto;})).size!==productData.componentes.length)) return 'Selecione produtos diferentes e quantidades inteiras maiores que zero para o kit.';
     if (productData.nome.length < 3) {
       return 'Informe um nome válido.';
     }
@@ -142,12 +191,14 @@ function initializeAdminProducts() {
 
   function resetForm() {
     productsForm.reset();
+    kitList.replaceChildren();
+    atualizarTipoKit();
     productIdInput.value = '';
     productAvailableInput.value = 'true';
     productFormTitle.textContent = 'Novo produto';
     productSubmitButton.textContent = 'Salvar produto';
     productSubmitButton.disabled = false;
-    productCancelEditButton.hidden = true;
+    productCancelEditButton.hidden = false;
     clearFormError();
   }
 
@@ -160,10 +211,11 @@ function initializeAdminProducts() {
     try {
       productSubmitButton.disabled = true;
       await createAdminProduct(productData);
-      await reloadProducts();
+      productModal.close();
       resetForm();
+      await reloadProducts();
     } catch (error) {
-      showFormError('Não foi possível cadastrar o produto.');
+      showFormError(error.message || 'Não foi possível cadastrar o produto.');
     } finally {
       productSubmitButton.disabled = false;
     }
@@ -186,7 +238,7 @@ function initializeAdminProducts() {
       await reloadProducts();
       resetForm();
     } catch (error) {
-      showFormError('Não foi possível salvar as alterações.');
+      showFormError(error.message || 'Não foi possível salvar as alterações.');
     } finally {
       productSubmitButton.disabled = false;
     }
@@ -202,6 +254,9 @@ function initializeAdminProducts() {
     }
 
     productIdInput.value = product.id;
+    productKitInput.checked = product.ehKit;
+    kitList.replaceChildren();
+    (product.componentes || []).forEach(adicionarComponente);
     productNameInput.value = product.nome;
     productCategoryInput.value = product.categoria;
     productPriceInput.value = product.preco;
@@ -209,11 +264,13 @@ function initializeAdminProducts() {
     productImageInput.value = product.imagem;
     productStockInput.value = product.estoque;
     productAvailableInput.value = product.disponivel === false ? 'false' : 'true';
+    atualizarTipoKit();
     productFormTitle.textContent = 'Editar produto';
     productSubmitButton.textContent = 'Salvar alterações';
     productCancelEditButton.hidden = false;
     clearFormError();
-    productsForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    productModal.showModal();
+    productNameInput.focus();
   }
 
   async function deleteProduct(productId) {
@@ -272,7 +329,7 @@ function initializeAdminProducts() {
       return product.disponivel === false;
     }).length;
     var stockTotal = produtos.reduce(function (total, product) {
-      return total + (Number(product.estoque) || 0);
+      return total + (product.ehKit ? 0 : Number(product.estoque) || 0);
     }, 0);
 
     productsTotalElement.textContent = produtos.length;
@@ -356,7 +413,7 @@ function initializeAdminProducts() {
     top.appendChild(titleGroup);
     details.appendChild(createProductInfo('Categoria', formatCategory(product.categoria)));
     details.appendChild(createProductInfo('Preço', formatPrice(product.preco)));
-    details.appendChild(createProductInfo('Estoque', String(product.estoque)));
+    details.appendChild(createProductInfo(product.ehKit ? 'Kits possíveis' : 'Estoque', String(product.estoque)));
     details.appendChild(createProductInfo('Status', formatAvailability(product)));
     actions.appendChild(editButton);
     actions.appendChild(deleteButton);
@@ -382,7 +439,7 @@ function initializeAdminProducts() {
 
     if (produtos.length === 0) {
       productsEmptyElement.querySelector('.admin-products-empty-title').textContent = 'Nenhum produto cadastrado.';
-      productsEmptyElement.querySelector('.admin-products-empty-text').textContent = 'Use o formulário acima para adicionar um produto ao cardápio.';
+      productsEmptyElement.querySelector('.admin-products-empty-text').textContent = 'Clique em Criar produto para adicionar um produto ao cardápio.';
       return;
     }
 
@@ -409,7 +466,7 @@ function initializeAdminProducts() {
 
   function showLoadError() {
     if (produtos.length > 0) {
-      showFormError('Não foi possível carregar os produtos da API. Exibindo fallback local.');
+      document.getElementById('produtos-lista-aviso').textContent = 'Não foi possível carregar os produtos da API. Exibindo fallback local.';
       return;
     }
 
@@ -450,7 +507,13 @@ function initializeAdminProducts() {
     await handleCreateProduct(productData);
   });
 
-  productCancelEditButton.addEventListener('click', resetForm);
+  createProductButton.addEventListener('click', function () {
+    resetForm();
+    productModal.showModal();
+    productNameInput.focus();
+  });
+  productCancelEditButton.addEventListener('click', function () { productModal.close(); });
+  productModal.addEventListener('close', resetForm);
 
   categoryFilterButtons.forEach(function (button) {
     button.addEventListener('click', function () {

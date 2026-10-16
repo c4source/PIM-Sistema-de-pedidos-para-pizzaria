@@ -57,6 +57,30 @@ body:has(.menu-page) {
   letter-spacing: 0.01em;
 }
 
+.menu-footer__admin-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  color: #fffaf0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 6px;
+}
+
+.menu-footer__admin-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-footer__admin-link:focus-visible {
+  outline: 2px solid #fffaf0;
+  outline-offset: 3px;
+}
+
 body.menu-modal-open {
   overflow: hidden;
 }

@@ -45,6 +45,8 @@ namespace Pim.Services
                 Categoria = dto.Categoria,
                 Status = dto.Status,
                 Estoque = dto.Estoque,
+                EhKit = dto.EhKit,
+                Componentes = dto.Componentes ?? new(),
                 ImagemUrl = dto.ImagemUrl
             };
 
@@ -66,6 +68,8 @@ namespace Pim.Services
             produto.Categoria = dto.Categoria;
             produto.Status = dto.Status;
             produto.Estoque = dto.Estoque;
+            produto.EhKit = dto.EhKit;
+            produto.Componentes = dto.Componentes ?? new();
             produto.ImagemUrl = dto.ImagemUrl;
 
             await _produtoRepository.AtualizarAsync(produto);
@@ -96,6 +100,8 @@ namespace Pim.Services
                 Categoria = produto.Categoria,
                 Status = produto.Status,
                 Estoque = produto.Estoque,
+                EhKit = produto.EhKit,
+                Componentes = produto.Componentes,
                 ImagemUrl = produto.ImagemUrl
             };
         }

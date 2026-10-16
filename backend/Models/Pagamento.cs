@@ -15,9 +15,11 @@ namespace Pim.Models
         public int IdPedido { get; set; }
 
         [Column("forma_pagamento")]
+        [Required, StringLength(20)]
         public string FormaPagamento { get; set; } = string.Empty;
 
         [Column("status_pagamento")]
+        [Required, StringLength(20)]
         public string StatusPagamento { get; set; } = "pendente";
 
         [Column("valor_pago")]

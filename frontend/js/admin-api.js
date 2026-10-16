@@ -9,6 +9,8 @@ function hasAdminSession() {
 }
 
 function clearAdminSession() {
+  sessionStorage.removeItem('trocaSenhaToken');
+  localStorage.removeItem('adminId');
   localStorage.removeItem('adminToken');
   localStorage.removeItem('adminNome');
   localStorage.removeItem('adminPerfil');
@@ -51,6 +53,8 @@ function normalizeApiProduct(product) {
 
   return {
     id: product.id || product.Id || product.codprod,
+    ehKit: Boolean(product.ehKit),
+    componentes: product.componentes || [],
     nome: product.nome || product.Nome || product.nome_produto || '',
     categoria: product.categoria || product.Categoria || '',
     preco: Number(product.preco || product.Preco || 0),
@@ -63,6 +67,8 @@ function normalizeApiProduct(product) {
 
 function createProductPayload(productData) {
   return {
+    ehKit: Boolean(productData.ehKit),
+    componentes: productData.componentes || [],
     nome: productData.nome,
     preco: productData.preco,
     descricao: productData.descricao,
@@ -189,7 +195,7 @@ async function createAdminProduct(productData) {
   }
 
   if (!response.ok) {
-    throw new Error('Não foi possível cadastrar o produto.');
+    throw new Error(await response.text() || 'Não foi possível cadastrar o produto.');
   }
 
   return normalizeApiProduct(await response.json());
@@ -210,7 +216,7 @@ async function updateAdminProduct(productId, productData) {
   }
 
   if (!response.ok) {
-    throw new Error('Não foi possível atualizar o produto.');
+    throw new Error(await response.text() || 'Não foi possível atualizar o produto.');
   }
 
   return true;
@@ -233,4 +239,22 @@ async function deleteAdminProduct(productId) {
   }
 
   return true;
+}
+
+function salvarSessaoAdmin(data) {
+  clearAdminSession();
+  localStorage.setItem('adminToken',data.token);
+  localStorage.setItem('adminId',data.id);
+  localStorage.setItem('adminNome',data.usuario);
+  localStorage.setItem('adminPerfil',data.perfil);
+  localStorage.setItem('adminLogado','true');
+}
+async function adminRequest(path,options) {
+  options=options||{};
+  options.headers=Object.assign({'Content-Type':'application/json',Authorization:'Bearer '+getAdminToken()},options.headers||{});
+  var response=await fetch(ADMIN_API_BASE_URL+path,options);
+  if(response.status===401){clearAdminSession();redirectToAdminLogin();throw new Error('Sessão expirada. Entre novamente.');}
+  if(response.status===403)throw new Error('Somente administradores podem gerenciar colaboradores.');
+  if(!response.ok){var text=await response.text();try{var problem=JSON.parse(text);text=problem.errors?Object.values(problem.errors).flat().join(' '):problem.title||text;}catch(_){}throw new Error(text);}
+  return response.status===204?null:response.json();
 }

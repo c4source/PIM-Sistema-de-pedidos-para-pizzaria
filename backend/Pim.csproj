@@ -10,10 +10,20 @@
 		<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
 		<PackageReference Include="Npgsql" Version="10.0.0" />
 	</ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="../database/migrations/002_acessos_colaboradores.sql" LogicalName="Pim.Sql.002.sql" />
+    <EmbeddedResource Include="../database/migrations/003_produtos_kit.sql" LogicalName="Pim.Sql.003.sql" />
+    <EmbeddedResource Include="../database/migrations/004_baseline_entity_framework.sql" LogicalName="Pim.Sql.004.sql" />
+  </ItemGroup>
 </Project>

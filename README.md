@@ -45,3 +45,32 @@ A organização de pastas segue os padrões de mercado para separação de respo
  ┣  database/          # Scripts SQL de criação e população do PostgreSQL
  ┣  frontend/          # Interfaces do usuário (HTML, CSS, JS) e assets
  ┗  README.md          # Documentação central do projeto
+
+## Acessos da equipe
+O painel possui a opção **Gerenciar colaboradores**, exclusiva do perfil Administrador. É possível listar, criar, editar nome/e-mail/perfil e excluir acessos. A conta existente admin@pim.com recebe o perfil Administrador na migração, mantendo sua senha.
+
+Novos acessos recebem uma senha provisória aleatória, exibida apenas na resposta do cadastro para o administrador entregar ao usuário. No primeiro login, um token restrito de 15 minutos permite apenas definir a senha pessoal (mínimo 8 caracteres, máximo 72 bytes UTF-8). O painel só é liberado após a troca; a senha provisória deixa de funcionar. Alterações no acesso e exclusões invalidam os tokens anteriores. Colaboradores continuam operando pedidos/produtos, sem gerenciar usuários. O último administrador com acesso liberado não pode ser removido ou rebaixado, e a própria conta não pode ser excluída.
+
+Em bancos existentes, aplicar somente database/migrations/002_acessos_colaboradores.sql. Não executar schema.sql, pois recria tabelas. A migração já foi aplicada ao banco local. Reiniciar a API e entrar novamente após atualizar.
+
+Testes: node --test tests/colaboradores-frontend.test.cjs; node tests/colaboradores-api.test.cjs. O teste de API usa localhost:5163 por padrão (PIM_TEST_API permite mudar) e credenciais do seed, substituíveis por PIM_TEST_ADMIN_EMAIL/PIM_TEST_ADMIN_PASSWORD. Ele cria e remove acessos próprios para testar o fluxo, sem modificar pedidos.
+
+O botão **Resetar senha** no gerenciador de colaboradores gera outra senha provisória, invalida a senha e sessões anteriores e exige nova troca no próximo acesso. Apenas administradores podem usar POST /api/Colaboradores/{id}/resetar-senha. A senha aparece uma única vez no pop-up, com Copiar senha e OK. O reset da própria conta é bloqueado: solicite a outro administrador.
+
+
+## Produtos kit / combos
+No cadastro de produtos, marque **Produto kit**, adicione os produtos individuais e a quantidade de cada componente. Cada tamanho/sabor de pizza pode ser cadastrado como um produto separado, com estoque próprio. O preço do kit é independente da soma dos componentes. O estoque exibido representa quantos kits completos podem ser montados; o kit não possui saldo próprio.
+
+Combos existentes não são convertidos automaticamente: edite cada um e vincule os componentes corretos. Não é permitido incluir outro kit, o próprio kit, componentes duplicados ou quantidades não positivas. Produtos usados em kits ou pedidos não podem ser excluídos; podem ser desativados.
+
+A venda soma componentes compartilhados por kits e itens avulsos e valida o estoque dentro da transação. Registros de baixa preservam a composição da venda, permitindo devolver os produtos originais ao cancelar mesmo após editar o kit. O cancelamento pela tela administrativa também devolve estoque; repetir cancelamento não repõe novamente.
+
+A migração database/migrations/003_produtos_kit.sql já foi aplicada ao banco local, preservando os produtos e pedidos. Para outro banco existente, execute apenas a migração. Testes: node --test tests/kits-frontend.test.cjs. O teste tests/kits-api.test.cjs exige PIM_TEST_CLEANUP_SQL apontando para um arquivo temporário; após a execução, aplicar esse SQL para remover os produtos/pedidos criados no teste.
+
+
+## Entity Framework Core e Data Annotations
+O backend usa PimDbContext com o provedor Npgsql para PostgreSQL, repositórios em LINQ e migrations do EF Core. DTOs validam os dados com Data Annotations e retornam HTTP 400 por campo. O banco local foi preservado e registrado na baseline do EF. Consulte docs/09_entity_framework.md para arquitetura, atualização de bancos existentes e comandos de migrations.
+
+
+## Instalar ou atualizar o banco em outra máquina
+Configure a conexão PostgreSQL em backend/appsettings.json e execute `./Atualizar-Banco.ps1` na raiz. Alternativa: `dotnet run --project backend --no-launch-profile -- --atualizar-banco`. O comando atende banco vazio, cópia antiga compatível e banco já versionado, preservando os dados existentes. Consulte docs/10_instalacao_banco.md.

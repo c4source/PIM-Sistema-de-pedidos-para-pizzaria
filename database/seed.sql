@@ -3,17 +3,21 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 INSERT INTO colaborador (
     nome_usuario,
     email_usuario,
-    senha_usuario
+    senha_usuario,
+    perfil
 )
 VALUES (
     'Admin',
     'admin@pim.com',
-    crypt('123456', gen_salt('bf'))
+    crypt('123456', gen_salt('bf')),
+    'Administrador'
 )
 ON CONFLICT (email_usuario) DO UPDATE
 SET
     nome_usuario = EXCLUDED.nome_usuario,
-    senha_usuario = EXCLUDED.senha_usuario;
+    senha_usuario = EXCLUDED.senha_usuario,
+    perfil = EXCLUDED.perfil,
+    versao_sessao = colaborador.versao_sessao + 1;
 
 INSERT INTO produto (
     nome_produto,
