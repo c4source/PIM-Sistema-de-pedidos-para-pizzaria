@@ -13,6 +13,8 @@ public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(op
     public DbSet<KitComponente> ComponentesKit => Set<KitComponente>();
     public DbSet<PedidoBaixaEstoque> BaixasEstoque => Set<PedidoBaixaEstoque>();
 
+    public DbSet<MovimentacaoEstoque> MovimentacoesEstoque => Set<MovimentacaoEstoque>();
+
     protected override void OnModelCreating(ModelBuilder b)
     {
         b.Entity<Produto>().ToTable(t =>
@@ -46,6 +48,39 @@ public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(op
         b.Entity<KitComponente>().HasKey(k => new { k.IdKit, k.IdProduto });
         b.Entity<KitComponente>().HasOne<Produto>().WithMany().HasForeignKey(k => k.IdKit).OnDelete(DeleteBehavior.Cascade);
         b.Entity<KitComponente>().HasOne<Produto>().WithMany().HasForeignKey(k => k.IdProduto).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<MovimentacaoEstoque>(e =>
+{
+    e.ToTable("movimentacao_estoque", t =>
+    {
+        t.HasCheckConstraint(
+            "movimentacao_estoque_quantidade_check",
+            "quantidade > 0");
+
+        t.HasCheckConstraint(
+            "movimentacao_estoque_tipo_check",
+            "tipo IN ('entrada', 'saida')");
+    });
+
+    e.Property(m => m.Tipo)
+        .HasMaxLength(10)
+        .IsRequired();
+
+    e.Property(m => m.DataHora)
+        .HasColumnType("timestamp without time zone")
+        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+    e.HasOne<Produto>()
+        .WithMany()
+        .HasForeignKey(m => m.ProdutoId)
+        .OnDelete(DeleteBehavior.Restrict)
+        .HasConstraintName("fk_movimentacao_produto");
+
+    e.HasOne<Colaborador>()
+        .WithMany()
+        .HasForeignKey(m => m.ColaboradorId)
+        .OnDelete(DeleteBehavior.Restrict)
+        .HasConstraintName("fk_movimentacao_colaborador");
+});
         b.Entity<PedidoBaixaEstoque>().HasKey(p => new { p.IdPedido, p.IdProduto });
         b.Entity<PedidoBaixaEstoque>().HasOne<Pedido>().WithMany().HasForeignKey(p => p.IdPedido).OnDelete(DeleteBehavior.Restrict);
         b.Entity<PedidoBaixaEstoque>().HasOne<Produto>().WithMany().HasForeignKey(p => p.IdProduto).OnDelete(DeleteBehavior.Restrict);

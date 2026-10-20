@@ -8,7 +8,7 @@ namespace Pim.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Colaborador")]
+    [Authorize(Roles = "Administrador,Colaborador")]
     public class MovimentacaoEstoqueController : ControllerBase
     {
         private readonly MovimentacaoEstoqueService _service;
