@@ -193,6 +193,53 @@ namespace Pim.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Pim.Models.MovimentacaoEstoque", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id_movimentacao");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ColaboradorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("id_colaborador");
+
+                    b.Property<DateTime>("DataHora")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("data_hora")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("integer")
+                        .HasColumnName("codprod");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantidade");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("tipo");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ColaboradorId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("movimentacao_estoque", null, t =>
+                        {
+                            t.HasCheckConstraint("movimentacao_estoque_quantidade_check", "quantidade > 0");
+
+                            t.HasCheckConstraint("movimentacao_estoque_tipo_check", "tipo IN ('entrada', 'saida')");
+                        });
+                });
+
             modelBuilder.Entity("Pim.Models.Pagamento", b =>
                 {
                     b.Property<int>("Id")
@@ -441,6 +488,23 @@ namespace Pim.Migrations
                         .HasForeignKey("IdProduto")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Pim.Models.MovimentacaoEstoque", b =>
+                {
+                    b.HasOne("Pim.Models.Colaborador", null)
+                        .WithMany()
+                        .HasForeignKey("ColaboradorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_movimentacao_colaborador");
+
+                    b.HasOne("Pim.Models.Produto", null)
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_movimentacao_produto");
                 });
 
             modelBuilder.Entity("Pim.Models.Pagamento", b =>
