@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'trocar_senha_screen.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../core/rotas.dart';
 
@@ -45,10 +46,29 @@ class _LoginScreenState extends State<LoginScreen> {
       final email = _emailController.text.trim();
       final senha = _senhaController.text;
 
-      await _authRepository.login(email, senha);
+      final resposta = await _authRepository.login(email, senha);
 
       if (!mounted) return;
 
+      if (resposta['trocaSenhaObrigatoria'] == true) {
+        final tokenProvisorio = resposta['token'];
+
+        if (tokenProvisorio is! String || tokenProvisorio.isEmpty) {
+          throw Exception('Token provisório não recebido.');
+        }
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                TrocarSenhaScreen(tokenProvisorio: tokenProvisorio),
+          ),
+        );
+
+        return;
+      }
+
+      // Login normal: usuário já possui senha definitiva.
       Navigator.pushReplacementNamed(context, Rotas.home);
     } catch (e) {
       if (!mounted) return;
