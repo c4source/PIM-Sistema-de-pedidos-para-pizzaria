@@ -1,5 +1,6 @@
 class Produto {
   final int id;
+  final bool ehKit;
   final String nome;
   final double preco;
   final String? descricao;
@@ -10,6 +11,7 @@ class Produto {
 
   Produto({
     required this.id,
+    this.ehKit = false,
     required this.nome,
     required this.preco,
     this.descricao,
@@ -22,6 +24,7 @@ class Produto {
   factory Produto.fromJson(Map<String, dynamic> json) {
     return Produto(
       id: json['id'],
+      ehKit: json['ehKit'] == true,
       nome: json['nome'],
       preco: (json['preco'] as num).toDouble(),
       descricao: json['descricao'],

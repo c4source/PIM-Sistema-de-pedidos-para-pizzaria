@@ -160,6 +160,15 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
         return Card(
           child: ListTile(
             onTap: () {
+              if (produto.ehKit) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Kits devem ser editados pelo sistema Web.'),
+                  ),
+                );
+                return;
+              }
+
               _abrirEdicao(produto);
             },
             title: Text(produto.nome),
@@ -167,12 +176,17 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
               'R\$ ${produto.preco.toStringAsFixed(2)}'
               ' • Estoque: ${produto.estoque ?? 0}',
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () {
-                _removerProduto(produto);
-              },
-            ),
+            trailing: produto.ehKit
+                ? const Tooltip(
+                    message: 'Kits são gerenciados pela Web',
+                    child: Icon(Icons.lock_outline),
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () {
+                      _removerProduto(produto);
+                    },
+                  ),
           ),
         );
       },

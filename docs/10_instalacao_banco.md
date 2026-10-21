@@ -117,7 +117,12 @@ $env:DOTNET_ENVIRONMENT = 'Development'
 dotnet run --project backend/Pim.csproj --no-launch-profile -- --atualizar-banco
 ```
 
-O script `Atualizar-Banco.ps1` do projeto usa `--no-launch-profile`. Enquanto ele não for ajustado para carregar o ambiente de desenvolvimento, **prefira o comando `dotnet run` recomendado acima**. Caso o PowerShell bloqueie a execução de scripts, também não é necessário alterar sua política de segurança: utilize o comando do .NET.
+O script `Atualizar-Banco.ps1` já configura automaticamente o ambiente `Development`, permitindo carregar os User Secrets mesmo utilizando `--no-launch-profile`.
+
+Portanto, também é possível atualizar o banco pela raiz do projeto executando:
+
+```powershell
+.\Atualizar-Banco.ps1
 
 ## 5. Conferir a atualização no pgAdmin
 

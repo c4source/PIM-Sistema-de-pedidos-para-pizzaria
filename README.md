@@ -73,4 +73,22 @@ O backend usa PimDbContext com o provedor Npgsql para PostgreSQL, repositórios 
 
 
 ## Instalar ou atualizar o banco em outra máquina
-Configure a conexão PostgreSQL em backend/appsettings.json e execute `./Atualizar-Banco.ps1` na raiz. Alternativa: `dotnet run --project backend --no-launch-profile -- --atualizar-banco`. O comando atende banco vazio, cópia antiga compatível e banco já versionado, preservando os dados existentes. Consulte docs/10_instalacao_banco.md.
+
+O backend utiliza PostgreSQL, Entity Framework Core e User Secrets.
+
+Cada integrante deve configurar sua própria conexão PostgreSQL
+e chave JWT utilizando User Secrets, sem armazenar senhas
+no appsettings.json.
+
+Após configurar o ambiente, execute na raiz do projeto:
+
+./Atualizar-Banco.ps1
+
+O script aplica as migrations necessárias, preservando os
+dados de bancos existentes compatíveis.
+
+Para instruções completas, consulte:
+docs/10_instalacao_banco.md
+
+ATENÇÃO: não execute database/schema.sql em bancos
+que já possuem dados.
