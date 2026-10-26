@@ -35,7 +35,9 @@ class _MovimentacaoEstoqueScreenState extends State<MovimentacaoEstoqueScreen> {
 
   Future<void> _carregarProdutos() async {
     try {
-      final produtos = await _produtoRepository.listar();
+      final produtos = (await _produtoRepository.listar())
+          .where((produto) => !produto.ehKit)
+          .toList();
 
       if (!mounted) return;
 
@@ -85,11 +87,12 @@ class _MovimentacaoEstoqueScreenState extends State<MovimentacaoEstoqueScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Não foi possível registrar a movimentação.'),
-        ),
-      );
+      final mensagem = e.toString().contains('Estoque insuficiente')
+          ? 'Estoque insuficiente! A quantidade solicitada é maior que a disponível.'
+          : 'Não foi possível registrar a movimentação.';
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(mensagem)));
     } finally {
       if (mounted) {
         setState(() {

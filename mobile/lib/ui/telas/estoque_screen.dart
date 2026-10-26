@@ -71,6 +71,22 @@ class _EstoqueScreenState extends State<EstoqueScreen> {
               }
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.remove_circle_outline),
+            tooltip: 'Registrar saída',
+            onPressed: () async {
+              final registrada = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const MovimentacaoEstoqueScreen(tipo: 'saida'),
+                ),
+              );
+
+              if (registrada == true && mounted) {
+                await _carregarEstoque();
+              }
+            },
+          ),
         ],
       ),
       body: _construirConteudo(),
