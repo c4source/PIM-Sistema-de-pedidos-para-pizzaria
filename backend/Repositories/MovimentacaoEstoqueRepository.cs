@@ -1,4 +1,4 @@
- using Npgsql;
+using Npgsql;
 using Pim.Models;
 
 namespace Pim.Repositories
@@ -32,11 +32,11 @@ namespace Pim.Repositories
                 // Busca o estoque atual e bloqueia o produto
                 // durante esta movimentação.
                 const string sqlEstoque = @"
-                    SELECT estoque
-                    FROM produto
-                    WHERE codprod = @produtoId
-                    FOR UPDATE;
-                ";
+    SELECT estoque, eh_kit
+    FROM produto
+    WHERE codprod = @produtoId
+    FOR UPDATE;
+";
 
                 await using var commandEstoque =
                     new NpgsqlCommand(
@@ -50,18 +50,34 @@ namespace Pim.Repositories
                     movimentacao.ProdutoId
                 );
 
-                var resultadoEstoque =
-                    await commandEstoque.ExecuteScalarAsync();
+                int estoqueAtual;
+                bool ehKit;
 
-                if (resultadoEstoque == null)
+                await using (var readerEstoque =
+                    await commandEstoque.ExecuteReaderAsync())
                 {
-                    throw new KeyNotFoundException(
-                        "Produto não encontrado."
+                    if (!await readerEstoque.ReadAsync())
+                    {
+                        throw new KeyNotFoundException(
+                            "Produto não encontrado."
+                        );
+                    }
+
+                    estoqueAtual = readerEstoque.GetInt32(
+                        readerEstoque.GetOrdinal("estoque")
+                    );
+
+                    ehKit = readerEstoque.GetBoolean(
+                        readerEstoque.GetOrdinal("eh_kit")
                     );
                 }
 
-                var estoqueAtual =
-                    Convert.ToInt32(resultadoEstoque);
+                if (ehKit)
+                {
+                    throw new InvalidOperationException(
+                        "Kits não permitem movimentação direta de estoque."
+                    );
+                }
 
                 var novoEstoque = movimentacao.Tipo switch
                 {
