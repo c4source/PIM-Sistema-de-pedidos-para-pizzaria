@@ -57,7 +57,7 @@ qual funcionário realizou a operação.
 O funcionário pode consultar pelo aplicativo a quantidade atual dos
 produtos armazenados no sistema.
 
-A funcionalidade de entrada de estoque (RF37) foi implementada e testada no aplicativo mobile. O backend também possui suporte para saídas de estoque, cuja integração com o Flutter será concluída no RF38.
+As funcionalidades de entrada (RF37) e saída (RF38) de estoque foram implementadas e testadas no aplicativo mobile, com integração à API ASP.NET Core e ao PostgreSQL.
 
 
 ---
@@ -122,4 +122,54 @@ O RF37 está implementado e teve seu fluxo online validado com Flutter, API ASP.
 
 A persistência offline e a sincronização com SQLite serão desenvolvidas no RF40.
 
-A integração de saída de estoque pelo Flutter será concluída no RF38.
+
+---
+
+# RF38 — Registro de Saída de Estoque
+
+## Descrição
+
+Foi implementado o registro de saída de estoque pelo aplicativo Flutter.
+
+O funcionário autenticado pode selecionar um produto, informar a quantidade e registrar uma saída, reduzindo o estoque disponível.
+
+## Implementação
+
+A tela `EstoqueScreen` recebeu um botão para registrar saídas.
+
+Foi reutilizada a tela `MovimentacaoEstoqueScreen`, utilizando o parâmetro `tipo: 'saida'`.
+
+A movimentação é enviada para a API por meio do endpoint:
+
+`POST /api/MovimentacaoEstoque`
+
+O backend utiliza uma transação PostgreSQL para atualizar o estoque e registrar a movimentação.
+
+## Validações
+
+- Quantidade inteira maior que zero.
+- Produto existente.
+- Funcionário autenticado via JWT.
+- Estoque suficiente para realizar a saída.
+- Produtos kit não permitem movimentações diretas.
+- Atualização do estoque e registro do histórico na mesma transação.
+
+## Testes realizados
+
+- Compilação do backend .NET com sucesso.
+- `flutter analyze` sem erros.
+- Registro de saída pelo Flutter.
+- Produto "Agua com gas" reduzido de 65 para 64 unidades.
+- Movimentação confirmada no PostgreSQL.
+- Tentativa de retirar 65 unidades recusada por estoque insuficiente.
+- Estoque preservado em 64 unidades após a tentativa inválida.
+- Mensagem de estoque insuficiente exibida no Flutter.
+- Tentativa de movimentar o kit de código 27 recusada pela API com HTTP 400.
+
+## Resultado
+
+O RF38 foi implementado e testado com sucesso no fluxo online:
+
+Flutter → API ASP.NET Core → PostgreSQL.
+
+A sincronização offline utilizando SQLite será desenvolvida no RF40.
