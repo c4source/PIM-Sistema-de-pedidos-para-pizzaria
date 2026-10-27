@@ -47,7 +47,7 @@ campos e o formulário realiza a atualização utilizando PUT.
 
 ## Exclusão
 
-A listagem possui uma opção de exclusão para cada produto.
+A listagem possui uma opção de exclusão para produtos comuns. Para produtos kit, o aplicativo exibe um cadeado e impede a exclusão, mantendo seu gerenciamento exclusivamente na Web.
 
 Antes da remoção, o aplicativo apresenta uma confirmação ao usuário.
 Após a exclusão ser concluída pela API, a lista de produtos é carregada
@@ -103,8 +103,68 @@ As validações do backend impedem que dados inválidos sejam encaminhados ao Po
 Os testes de validação foram realizados pelo Swagger.
 
 ## Pendências relacionadas
-
-- Melhorar o tratamento de tokens JWT expirados e das mensagens de erro no aplicativo.
+git
 - Implementar persistência local com SQLite e sincronização no RF40.
 - A exclusão já está implementada, mas seu teste funcional não foi realizado nesta etapa de validação.
   
+
+---
+
+## Proteção dos Produtos Kit
+
+### Descrição
+
+O backend permite cadastrar produtos kit, compostos por
+outros produtos individuais.
+
+A criação e a edição da composição dos kits são realizadas
+exclusivamente pelo sistema Web.
+
+No aplicativo Flutter, foi implementada uma proteção para
+impedir alterações indevidas nesses produtos.
+
+### Implementação no Flutter
+
+O modelo `Produto` recebeu o atributo `ehKit`, que identifica
+se o produto é um kit a partir da resposta da API.
+
+Na tela `ProdutosScreen`:
+
+- Produtos comuns continuam permitindo edição e exclusão.
+- Produtos kit exibem um cadeado no lugar da lixeira.
+- Ao tocar em um kit, o aplicativo bloqueia sua edição.
+- É apresentada a mensagem:
+  "Kits devem ser editados pelo sistema Web."
+
+Essa proteção evita que o aplicativo envie atualizações
+incompletas que possam comprometer a composição dos kits.
+
+### Integração
+
+Flutter → ProdutoRepository → ProdutoApi
+→ API ASP.NET Core → PostgreSQL
+
+O aplicativo consulta normalmente todos os produtos,
+incluindo kits, mas restringe suas operações de edição
+e exclusão na interface.
+
+### Testes realizados
+
+- Criação do produto "Kit Teste Mobile" pela interface Web.
+- Cadastro do kit com um componente: Água sem gás.
+- Confirmação de `eh_kit = true` no PostgreSQL.
+- Listagem do kit no aplicativo Flutter.
+- Exibição do cadeado no lugar do botão de exclusão.
+- Bloqueio da abertura da tela de edição.
+- Exibição da mensagem informando que kits são
+  gerenciados pelo sistema Web.
+- `flutter analyze` sem erros.
+
+### Resultado
+
+A proteção dos produtos kit foi implementada e testada
+com sucesso no aplicativo mobile.
+
+O gerenciamento da composição dos kits permanece na Web,
+enquanto o Flutter continua permitindo as operações
+de produtos comuns.
