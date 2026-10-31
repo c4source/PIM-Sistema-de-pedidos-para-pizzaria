@@ -16,7 +16,7 @@ body:has(.confirmation-app) {
   max-width: 720px;
   margin: 0 auto;
   overflow: hidden;
-  background: #F8F9FA;
+  background: #f8f9fa;
   border: 1px solid rgba(33, 37, 41, 0.08);
   border-radius: 26px;
   box-shadow: 0 18px 48px rgba(33, 37, 41, 0.08);
@@ -44,13 +44,18 @@ body:has(.confirmation-app) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(33, 37, 41, 0.1);
   border-radius: 14px;
   color: #5d2417;
   box-shadow: 0 8px 20px rgba(33, 37, 41, 0.08);
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .confirmation-hero {
@@ -65,10 +70,10 @@ body:has(.confirmation-app) {
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(22, 163, 74, 0.18);
   border-radius: 999px;
-  color: #16A34A;
+  color: #16a34a;
   box-shadow: 0 10px 24px rgba(22, 163, 74, 0.13);
 }
 
@@ -105,7 +110,7 @@ body:has(.confirmation-app) {
 
 .confirmation-order-card,
 .confirmation-summary {
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(84, 88, 47, 0.1);
   border-radius: 20px;
   box-shadow: 0 12px 30px rgba(33, 37, 41, 0.06);
@@ -266,19 +271,23 @@ body:has(.confirmation-app) {
   background: linear-gradient(135deg, #d4515f, #c73f4d);
   border: 1px solid #c94f4f;
   border-radius: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 800;
   box-shadow: 0 10px 22px rgba(199, 63, 77, 0.22);
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 @media (hover: hover) {
   .confirmation-header .back-button:hover {
-    background: #FFFFFF;
+    background: #ffffff;
     border-color: rgba(230, 57, 70, 0.2);
-    color: #E63946;
+    color: #e63946;
     box-shadow: 0 10px 22px rgba(33, 37, 41, 0.12);
     transform: translateY(-1px);
   }

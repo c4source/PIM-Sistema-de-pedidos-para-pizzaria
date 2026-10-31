@@ -1,162 +1,335 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produtos | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/admin.css">
-<link rel="stylesheet" href="../css/admin-kits.css">
-</head>
-<body>
-  <div class="app admin-products-app">
-    <header class="admin-products-header">
-      <div class="admin-products-heading">
-        <h1 class="admin-products-title">Produtos</h1>
-        <p class="admin-products-subtitle">Gerencie o cardápio da pizzaria</p>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/admin-kits.css" />
+    <link rel="stylesheet" href="../css/admin-produtos-lista.css" />
+  </head>
+  <body>
+    <div class="app admin-products-app">
+      <header class="admin-products-header">
+        <div class="admin-products-heading">
+          <h1 class="admin-products-title">Produtos</h1>
+          <p class="admin-products-subtitle">Gerencie o cardápio da pizzaria</p>
+        </div>
 
-      <div class="admin-products-header-actions">
-        <button class="secondary-button admin-products-secondary-button" id="admin-products-back-dashboard" type="button">Voltar ao painel</button>
-        <button class="primary-button admin-products-logout-button" id="admin-products-logout" type="button">Sair</button>
-      </div>
-    </header>
+        <div class="admin-products-header-actions">
+          <button
+            class="secondary-button admin-products-secondary-button"
+            id="admin-products-back-dashboard"
+            type="button"
+          >
+            Voltar ao painel
+          </button>
+          <button
+            class="primary-button admin-products-logout-button"
+            id="admin-products-logout"
+            type="button"
+          >
+            Sair
+          </button>
+        </div>
+      </header>
 
-    <main class="admin-products-main">
-      <section class="admin-products-summary" aria-label="Resumo de produtos">
-        <article class="admin-products-summary-card">
-          <span class="admin-products-summary-label">Total de produtos</span>
-          <strong class="admin-products-summary-value" id="admin-products-total">0</strong>
-        </article>
+      <main class="admin-products-main">
+        <section class="admin-products-summary" aria-label="Resumo de produtos">
+          <article class="admin-products-summary-card">
+            <span class="admin-products-summary-label">Total de produtos</span>
+            <strong class="admin-products-summary-value" id="admin-products-total">0</strong>
+          </article>
 
-        <article class="admin-products-summary-card">
-          <span class="admin-products-summary-label">Disponíveis</span>
-          <strong class="admin-products-summary-value" id="admin-products-available">0</strong>
-        </article>
+          <article class="admin-products-summary-card">
+            <span class="admin-products-summary-label">Disponíveis</span>
+            <strong class="admin-products-summary-value" id="admin-products-available">0</strong>
+          </article>
 
-        <article class="admin-products-summary-card">
-          <span class="admin-products-summary-label">Indisponíveis</span>
-          <strong class="admin-products-summary-value" id="admin-products-unavailable">0</strong>
-        </article>
+          <article class="admin-products-summary-card">
+            <span class="admin-products-summary-label">Fora de venda</span>
+            <strong class="admin-products-summary-value" id="admin-products-unavailable">0</strong>
+          </article>
 
-        <article class="admin-products-summary-card">
-          <span class="admin-products-summary-label">Estoque total</span>
-          <strong class="admin-products-summary-value" id="admin-products-stock-total">0</strong>
-        </article>
-      </section>
+          <article class="admin-products-summary-card">
+            <span class="admin-products-summary-label">Estoque total</span>
+            <strong class="admin-products-summary-value" id="admin-products-stock-total">0</strong>
+          </article>
+        </section>
 
-      <section class="admin-products-filters" aria-label="Filtros de produtos">
-        <div class="admin-products-filter-group" aria-label="Filtro por categoria">
-          <span class="admin-products-filter-label">Categoria</span>
-          <div class="admin-products-filter-options">
-            <button class="admin-products-filter-chip is-active" type="button" data-category="todos">Todos</button>
-            <button class="admin-products-filter-chip" type="button" data-category="pizza">Pizza</button>
-            <button class="admin-products-filter-chip" type="button" data-category="doce">Doce</button>
-            <button class="admin-products-filter-chip" type="button" data-category="bebida">Bebida</button>
-            <button class="admin-products-filter-chip" type="button" data-category="combo">Combo</button>
+        <section class="produtos-filtros-unificados" aria-label="Buscar e filtrar produtos">
+          <div class="produtos-pesquisa">
+            <label
+              >Buscar produto<input
+                id="produtos-busca"
+                type="search"
+                placeholder="Nome do produto ou combo"
+                autocomplete="off"
+            /></label>
+            <label
+              >Tipo<select id="produtos-tipo">
+                <option value="todos">Todos os tipos</option>
+                <option value="produto">Produtos individuais</option>
+                <option value="kit">Kits / combos</option>
+              </select></label
+            >
+            <label
+              >Estoque<select id="produtos-estoque">
+                <option value="todos">Todos os saldos</option>
+                <option value="positivo">Com estoque</option>
+                <option value="baixo">Baixo (1 a 5)</option>
+                <option value="zerado">Zerado</option>
+              </select></label
+            >
+            <button id="produtos-limpar-filtros" class="produtos-botao-neutro" type="button">
+              Limpar filtros
+            </button>
           </div>
-        </div>
+          <div class="admin-products-filters">
+            <div class="admin-products-filter-group" aria-label="Filtro por categoria">
+              <span class="admin-products-filter-label">Categoria</span>
+              <div class="admin-products-filter-options">
+                <button
+                  class="admin-products-filter-chip is-active"
+                  type="button"
+                  data-category="todos"
+                >
+                  Todos
+                </button>
+                <button class="admin-products-filter-chip" type="button" data-category="pizza">
+                  Pizza
+                </button>
+                <button class="admin-products-filter-chip" type="button" data-category="doce">
+                  Doce
+                </button>
+                <button class="admin-products-filter-chip" type="button" data-category="bebida">
+                  Bebida
+                </button>
+                <button class="admin-products-filter-chip" type="button" data-category="combo">
+                  Combo
+                </button>
+              </div>
+            </div>
 
-        <div class="admin-products-filter-group" aria-label="Filtro por disponibilidade">
-          <span class="admin-products-filter-label">Disponibilidade</span>
-          <div class="admin-products-filter-options">
-            <button class="admin-products-status-chip is-active" type="button" data-status="todos">Todos</button>
-            <button class="admin-products-status-chip" type="button" data-status="disponivel">Disponíveis</button>
-            <button class="admin-products-status-chip" type="button" data-status="indisponivel">Indisponíveis</button>
+            <div class="admin-products-filter-group" aria-label="Filtro por situação de venda">
+              <span class="admin-products-filter-label">Situação de venda</span>
+              <div class="admin-products-filter-options">
+                <button
+                  class="admin-products-status-chip is-active"
+                  type="button"
+                  data-status="todos"
+                >
+                  Todos
+                </button>
+                <button class="admin-products-status-chip" type="button" data-status="disponivel">
+                  Disponíveis
+                </button>
+                <button class="admin-products-status-chip" type="button" data-status="sem_estoque">
+                  Sem estoque
+                </button>
+                <button class="admin-products-status-chip" type="button" data-status="desativado">
+                  Desativados
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        <section class="admin-products-list-section" aria-label="Lista de produtos">
+          <div class="produtos-lista-cabecalho">
+            <h2>Produtos cadastrados</h2>
+            <button id="criar-produto" type="button" class="admin-products-submit-button">
+              <span aria-hidden="true">＋</span> Criar produto
+            </button>
+          </div>
+          <p id="produtos-resultados" role="status"></p>
+          <p id="produtos-lista-aviso" role="status"></p>
+          <div class="admin-products-list" id="admin-products-list"></div>
 
+          <div class="admin-products-empty-state" id="admin-products-empty" hidden>
+            <h2 class="admin-products-empty-title">Nenhum produto cadastrado.</h2>
+            <p class="admin-products-empty-text">
+              Clique em Criar produto para adicionar um produto ao cardápio.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
 
-      <section class="admin-products-list-section" aria-label="Lista de produtos">
-        <div class="produtos-lista-cabecalho"><h2>Produtos cadastrados</h2><button id="criar-produto" type="button" class="admin-products-submit-button"><span aria-hidden="true">＋</span> Criar produto</button></div>
-        <p id="produtos-lista-aviso" role="status"></p>
-        <div class="admin-products-list" id="admin-products-list"></div>
-
-        <div class="admin-products-empty-state" id="admin-products-empty" hidden>
-          <h2 class="admin-products-empty-title">Nenhum produto cadastrado.</h2>
-          <p class="admin-products-empty-text">Clique em Criar produto para adicionar um produto ao cardápio.</p>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <dialog id="produto-form-modal" aria-labelledby="product-form-title">
+    <dialog id="produto-form-modal" aria-labelledby="product-form-title">
       <section class="admin-products-form-section" aria-label="Formulario de produto">
         <form class="admin-products-form" id="admin-products-form" novalidate>
           <div class="admin-products-form-heading">
             <h2 class="admin-products-form-title" id="product-form-title">Novo produto</h2>
           </div>
 
-          <input id="product-id" type="hidden">
+          <p class="produto-form-orientacao">
+            Preencha os dados básicos e defina o preço e o estoque. Para combos, vincule os
+            componentes na seção abaixo.
+          </p>
+          <input id="product-id" type="hidden" />
 
-          <div class="admin-products-form-grid">
-            <label class="admin-products-field" for="product-name">
-              <span class="admin-products-label">Nome</span>
-              <input class="admin-products-input" id="product-name" type="text" autocomplete="off">
-            </label>
-
-            <label class="admin-products-field" for="product-category">
-              <span class="admin-products-label">Categoria</span>
-              <select class="admin-products-input" id="product-category">
-                <option value="">Selecione</option>
-                <option value="pizza">Pizza</option>
-                <option value="doce">Doce</option>
-                <option value="bebida">Bebida</option>
-                <option value="combo">Combo</option>
-              </select>
-            </label>
-
-            <label class="admin-products-field" for="product-price">
-              <span class="admin-products-label">Preço</span>
-              <input class="admin-products-input" id="product-price" type="number" min="0" step="0.01" inputmode="decimal">
-            </label>
-
-            <label class="admin-products-field" for="product-stock">
-              <span class="admin-products-label">Estoque</span>
-              <input class="admin-products-input" id="product-stock" type="number" min="0" step="1" inputmode="numeric">
-            </label>
-
-            <label class="admin-products-field" for="product-image">
-              <span class="admin-products-label">Imagem/URL</span>
-              <input class="admin-products-input" id="product-image" type="text" autocomplete="off">
-            </label>
-
-            <label class="admin-products-field" for="product-available">
-              <span class="admin-products-label">Disponibilidade</span>
-              <select class="admin-products-input" id="product-available">
-                <option value="">Selecione</option>
-                <option value="true">Disponível</option>
-                <option value="false">Indisponível</option>
-              </select>
-            </label>
-
-            <label class="admin-products-field admin-products-field-wide" for="product-description">
-              <span class="admin-products-label">Descrição</span>
-              <textarea class="admin-products-input admin-products-textarea" id="product-description" rows="4"></textarea>
-            </label>
-          </div>
-
+          <fieldset class="produto-form-grupo">
+            <legend>Dados básicos</legend>
+            <div class="admin-products-form-grid">
+              <label class="admin-products-field" for="product-name">
+                <span class="admin-products-label">Nome</span>
+                <input
+                  class="admin-products-input"
+                  id="product-name"
+                  type="text"
+                  autocomplete="off"
+                />
+              </label>
+              <label class="admin-products-field" for="product-category">
+                <span class="admin-products-label">Categoria</span>
+                <select class="admin-products-input" id="product-category">
+                  <option value="">Selecione</option>
+                  <option value="pizza">Pizza</option>
+                  <option value="doce">Doce</option>
+                  <option value="bebida">Bebida</option>
+                  <option value="combo">Combo</option>
+                </select>
+              </label>
+              <label
+                class="admin-products-field admin-products-field-wide"
+                for="product-description"
+              >
+                <span class="admin-products-label">Descrição</span>
+                <textarea
+                  class="admin-products-input admin-products-textarea"
+                  id="product-description"
+                  rows="4"
+                ></textarea>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="produto-form-grupo">
+            <legend>Preço e estoque</legend>
+            <div class="admin-products-form-grid">
+              <label class="admin-products-field" for="product-price">
+                <span class="admin-products-label">Preço</span>
+                <input
+                  class="admin-products-input"
+                  id="product-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputmode="decimal"
+                />
+              </label>
+              <label class="admin-products-field" for="product-stock">
+                <span class="admin-products-label">Estoque</span>
+                <input
+                  class="admin-products-input"
+                  id="product-stock"
+                  type="number"
+                  min="0"
+                  step="1"
+                  inputmode="numeric"
+                />
+              </label>
+              <label class="admin-products-field" for="product-available">
+                <span class="admin-products-label">Liberado para venda</span>
+                <select
+                  class="admin-products-input"
+                  id="product-available"
+                  aria-describedby="product-available-ajuda"
+                >
+                  <option value="">Selecione</option>
+                  <option value="true">Sim</option>
+                  <option value="false">Não</option>
+                </select>
+                <small id="product-available-ajuda"
+                  >Mesmo liberado, o produto só pode ser vendido com estoque. Kits dependem dos
+                  componentes.</small
+                >
+              </label>
+            </div>
+          </fieldset>
+          <fieldset class="produto-form-grupo">
+            <legend>Imagem</legend>
+            <div class="admin-products-form-grid">
+              <label class="admin-products-field" for="product-image">
+                <span class="admin-products-label">Imagem/URL</span>
+                <input
+                  class="admin-products-input"
+                  id="product-image"
+                  type="text"
+                  autocomplete="off"
+                />
+              </label>
+            </div>
+            <figure id="produto-imagem-previa" hidden>
+              <img alt="Prévia da imagem do produto" />
+              <figcaption>Prévia da imagem</figcaption>
+            </figure>
+          </fieldset>
           <fieldset class="kit-editor">
             <legend>Tipo de produto</legend>
-            <label class="kit-opcao"><input type="checkbox" id="product-is-kit"> Produto kit (combo com produtos vinculados)</label>
+            <label class="kit-opcao"
+              ><input type="checkbox" id="product-is-kit" /> Produto kit (combo com produtos
+              vinculados)</label
+            >
             <div id="kit-components-panel" hidden>
-              <p>Selecione os produtos individuais e a quantidade de cada um. O estoque do kit será calculado pelos componentes, sem estoque próprio.</p>
+              <p>
+                Selecione os produtos individuais e a quantidade de cada um. O estoque do kit será
+                calculado pelos componentes, sem estoque próprio.
+              </p>
               <div id="kit-components-list"></div>
-              <button type="button" id="kit-add-component" class="admin-products-cancel-button">Adicionar componente</button>
+              <button type="button" id="kit-add-component" class="admin-products-cancel-button">
+                Adicionar componente
+              </button>
             </div>
           </fieldset>
           <p class="admin-products-form-error" id="product-form-error" aria-live="polite"></p>
 
           <div class="admin-products-form-actions">
-            <button class="admin-products-submit-button" id="product-submit-button" type="submit">Salvar produto</button>
-            <button class="admin-products-cancel-button" id="product-cancel-edit-button" type="button">Cancelar</button>
+            <button class="admin-products-submit-button" id="product-submit-button" type="submit">
+              Salvar produto
+            </button>
+            <button
+              class="admin-products-cancel-button"
+              id="product-cancel-edit-button"
+              type="button"
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       </section>
-  </dialog>
-  <script src="../js/admin-api.js"></script>
-  <script src="../js/admin-produtos.js"></script>
-</body>
+    </dialog>
+    <dialog id="produto-sucesso-modal" aria-labelledby="produto-sucesso-texto">
+      <div class="produto-sucesso-simbolo" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path
+            d="m13 24 7 7 15-16"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <h2 id="produto-sucesso-texto"></h2>
+      <p>As alterações foram salvas.</p>
+      <form method="dialog"><button type="submit" autofocus>OK, entendi</button></form>
+    </dialog>
+    <dialog id="produto-excluir-modal" aria-labelledby="produto-excluir-titulo">
+      <form method="dialog">
+        <h2 id="produto-excluir-titulo">Excluir produto?</h2>
+        <p id="produto-excluir-descricao"></p>
+        <p>Produtos vinculados a kits ou pedidos devem ser desativados em vez de excluídos.</p>
+        <div>
+          <button class="produtos-botao-neutro" value="cancelar" autofocus>Cancelar</button
+          ><button class="produtos-botao-perigo" value="excluir">Excluir produto</button>
+        </div>
+      </form>
+    </dialog>
+    <script src="../js/admin-produtos-ui.js"></script>
+    <script src="../js/admin-api.js"></script>
+    <script src="../js/admin-session.js"></script>
+    <script src="../js/admin-produtos.js"></script>
+  </body>
 </html>

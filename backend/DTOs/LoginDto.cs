@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-﻿namespace Pim.DTOs
+namespace Pim.DTOs
 {
     public class LoginDto
     {

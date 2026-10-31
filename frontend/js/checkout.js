@@ -30,7 +30,8 @@ function renderCheckoutSummary() {
   checkoutSummaryList.innerHTML = '';
 
   if (cart.length === 0) {
-    checkoutSummaryList.innerHTML = '<li class="checkout-summary-item">Nenhum item no carrinho</li>';
+    checkoutSummaryList.innerHTML =
+      '<li class="checkout-summary-item">Nenhum item no carrinho</li>';
     checkoutTotalElement.textContent = 'Total: R$ 0,00';
     return;
   }
@@ -83,10 +84,9 @@ function isValidName(name) {
   var hasOnlyLettersAndSpaces = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(cleanedName);
   var hasAtLeastTwoWords = cleanedName.split(' ').length >= 2;
 
-  return cleanedName.length >= 3 &&
-         letters.length >= 3 &&
-         hasOnlyLettersAndSpaces &&
-         hasAtLeastTwoWords;
+  return (
+    cleanedName.length >= 3 && letters.length >= 3 && hasOnlyLettersAndSpaces && hasAtLeastTwoWords
+  );
 }
 
 function isValidPhone(phoneDigits) {
@@ -337,11 +337,54 @@ checkoutConfirmButton.addEventListener('click', async function () {
     localStorage.setItem('pedidoAtual', JSON.stringify(pedidoAtual));
     saveOrderToHistory(pedidoAtual);
     localStorage.removeItem('carrinho');
+    sessionStorage.removeItem('checkoutRascunho');
 
     window.location.href = './confirmacao.html';
   } catch (error) {
     checkoutConfirmButton.disabled = false;
     console.error('Erro ao finalizar pedido.', error);
-    alert('Nao foi possivel finalizar o pedido. Tente novamente.');
+    document.getElementById('checkout-falha-mensagem').textContent =
+      error instanceof TypeError
+        ? 'Não foi possível conectar ao servidor. Confira sua conexão e tente novamente.'
+        : error.message || 'Não foi possível finalizar o pedido.';
+    document.getElementById('checkout-falha-modal').showModal();
   }
+});
+
+// Mantém os dados nesta aba ao voltar ao carrinho para corrigir quantidades.
+var checkoutDraftFields = [nomeInput, telefoneInput, ruaInput, numeroInput, bairroInput];
+function guardarRascunhoCheckout() {
+  var dados = {};
+  checkoutDraftFields.forEach(function (input) {
+    dados[input.id] = input.value;
+  });
+  dados.tipoEntrega = getSelectedDeliveryType();
+  dados.formaPagamento = getSelectedPaymentMethod();
+  sessionStorage.setItem('checkoutRascunho', JSON.stringify(dados));
+}
+try {
+  var rascunhoCheckout = JSON.parse(sessionStorage.getItem('checkoutRascunho') || 'null');
+  if (rascunhoCheckout) {
+    checkoutDraftFields.forEach(function (input) {
+      input.value = rascunhoCheckout[input.id] || '';
+    });
+    deliveryOptions.forEach(function (input) {
+      input.checked = input.value === rascunhoCheckout.tipoEntrega;
+    });
+    paymentOptions.forEach(function (input) {
+      input.checked = input.value === rascunhoCheckout.formaPagamento;
+    });
+    updateAddressSection();
+  }
+} catch (_) {
+  sessionStorage.removeItem('checkoutRascunho');
+}
+checkoutDraftFields.forEach(function (input) {
+  input.addEventListener('input', guardarRascunhoCheckout);
+});
+deliveryOptions.forEach(function (input) {
+  input.addEventListener('change', guardarRascunhoCheckout);
+});
+paymentOptions.forEach(function (input) {
+  input.addEventListener('change', guardarRascunhoCheckout);
 });

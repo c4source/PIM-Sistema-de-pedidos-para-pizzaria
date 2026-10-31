@@ -11,21 +11,36 @@ namespace Pim.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id_movimentacao")]
-        public int Id { get; set; }
+        public int Id
+        {
+            get; set;
+        }
 
         [Column("codprod")]
-        public int ProdutoId { get; set; }
+        public int ProdutoId
+        {
+            get; set;
+        }
 
         [Column("id_colaborador")]
-        public int ColaboradorId { get; set; }
+        public int ColaboradorId
+        {
+            get; set;
+        }
 
         [Column("tipo")]
         public string Tipo { get; set; } = string.Empty;
 
         [Column("quantidade")]
-        public int Quantidade { get; set; }
+        public int Quantidade
+        {
+            get; set;
+        }
 
         [Column("data_hora")]
-        public DateTime DataHora { get; set; }
+        public DateTime DataHora
+        {
+            get; set;
+        }
     }
 }

@@ -94,7 +94,10 @@ namespace Pim.Services
                 DataHoraPagamento = DateTime.Now
             };
 
-            try { await _pedidoRepository.SalvarPedidoAsync(pedido); }
+            try
+            {
+                await _pedidoRepository.SalvarPedidoAsync(pedido);
+            }
             catch (InvalidOperationException ex) { return PedidoResultadoDto.Falha(ex.Message); }
             catch (OverflowException) { return PedidoResultadoDto.Falha("Quantidade informada muito grande."); }
 
@@ -144,8 +147,10 @@ namespace Pim.Services
             if (novoStatus == null)
                 return (false, "Status invalido. Use: recebido, em_preparo, pronto, finalizado ou cancelado.");
 
-            if (novoStatus == PedidoStatus.Cancelado) return await CancelarPelaLojaAsync(id);
-            if (pedido.Status == PedidoStatus.Cancelado || pedido.Status == PedidoStatus.Finalizado) return (false,"Pedido cancelado ou finalizado não pode mudar de status.");
+            if (novoStatus == PedidoStatus.Cancelado)
+                return await CancelarPelaLojaAsync(id);
+            if (pedido.Status == PedidoStatus.Cancelado || pedido.Status == PedidoStatus.Finalizado)
+                return (false, "Pedido cancelado ou finalizado não pode mudar de status.");
             await _pedidoRepository.AtualizarStatusAsync(id, novoStatus);
 
             return (true, $"Status do pedido {id} atualizado para {novoStatus}.");
@@ -164,8 +169,11 @@ namespace Pim.Services
             if (pedido.Status == PedidoStatus.Cancelado)
                 return (false, "Pedido ja esta cancelado.");
 
-            try { await _pedidoRepository.CancelarPedidoAsync(pedido); }
-            catch (InvalidOperationException ex) { return (false,ex.Message); }
+            try
+            {
+                await _pedidoRepository.CancelarPedidoAsync(pedido);
+            }
+            catch (InvalidOperationException ex) { return (false, ex.Message); }
 
             return (true, $"Pedido {id} cancelado.");
         }

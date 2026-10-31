@@ -1,6 +1,6 @@
 using Pim.DTOs;
 using Pim.Models;
-using Pim. Repositories; 
+using Pim.Repositories;
 
 namespace Pim.Services
 {

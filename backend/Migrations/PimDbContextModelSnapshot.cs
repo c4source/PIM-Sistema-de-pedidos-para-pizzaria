@@ -456,6 +456,28 @@ namespace Pim.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Pim.Models.SessaoAcesso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ColaboradorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("id_colaborador");
+
+                    b.Property<DateTime>("UltimaAtividade")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ultima_atividade");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ColaboradorId");
+
+                    b.ToTable("sessao_acesso");
+                });
+
             modelBuilder.Entity("Pim.Models.ItemPedido", b =>
                 {
                     b.HasOne("Pim.Models.Produto", "Produto")
@@ -530,6 +552,15 @@ namespace Pim.Migrations
                         .WithMany()
                         .HasForeignKey("IdProduto")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Pim.Models.SessaoAcesso", b =>
+                {
+                    b.HasOne("Pim.Models.Colaborador", null)
+                        .WithMany()
+                        .HasForeignKey("ColaboradorId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

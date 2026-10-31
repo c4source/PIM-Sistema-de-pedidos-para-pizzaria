@@ -9,6 +9,19 @@ function hasAdminSession() {
 }
 
 function clearAdminSession() {
+  var tokenAnterior = getAdminToken();
+  if (tokenAnterior) {
+    try {
+      Promise.resolve(
+        fetch(ADMIN_API_BASE_URL + '/Auth/sair', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + tokenAnterior },
+          keepalive: true
+        })
+      ).catch(function () {});
+    } catch (_) {}
+  }
+  localStorage.removeItem('adminUltimaAtividade');
   sessionStorage.removeItem('trocaSenhaToken');
   localStorage.removeItem('adminId');
   localStorage.removeItem('adminToken');
@@ -41,12 +54,18 @@ function handleUnauthorized(response) {
 }
 
 function normalizeApiStatus(status) {
-  return String(status || '').trim().toLowerCase().replace(/\s+/g, '_');
+  return String(status || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '_');
 }
 
 function normalizeApiProduct(product) {
-  var status = String(product.status || product.Status || product.status_disponibilidade || '').toLowerCase();
-  var isUnavailable = product.disponivel === false ||
+  var status = String(
+    product.status || product.Status || product.status_disponibilidade || ''
+  ).toLowerCase();
+  var isUnavailable =
+    product.disponivel === false ||
     status === 'false' ||
     status === 'indisponivel' ||
     status === 'indisponível';
@@ -60,7 +79,11 @@ function normalizeApiProduct(product) {
     preco: Number(product.preco || product.Preco || 0),
     imagem: product.imagemUrl || product.ImagemUrl || product.imagem || product.imagem_url || '',
     descricao: product.descricao || product.Descricao || '',
-    estoque: Number.isInteger(Number(product.estoque || product.Estoque)) && Number(product.estoque || product.Estoque) >= 0 ? Number(product.estoque || product.Estoque) : 0,
+    estoque:
+      Number.isInteger(Number(product.estoque || product.Estoque)) &&
+      Number(product.estoque || product.Estoque) >= 0
+        ? Number(product.estoque || product.Estoque)
+        : 0,
     disponivel: !isUnavailable
   };
 }
@@ -98,12 +121,15 @@ function normalizeApiOrder(apiOrder) {
     status: normalizeApiStatus(apiOrder.status || apiOrder.Status),
     total: Number(apiOrder.valorTotal || apiOrder.ValorTotal || 0),
     tipoEntrega: apiOrder.tipoEntrega || apiOrder.TipoEntrega,
-    endereco: rua || numero || bairro || complemento ? {
-      rua: rua,
-      numero: numero,
-      bairro: bairro,
-      complemento: complemento
-    } : null,
+    endereco:
+      rua || numero || bairro || complemento
+        ? {
+            rua: rua,
+            numero: numero,
+            bairro: bairro,
+            complemento: complemento
+          }
+        : null,
     pagamento: {
       formaPagamento: apiOrder.formaPagamento || apiOrder.FormaPagamento,
       statusPagamento: apiOrder.statusPagamento || apiOrder.StatusPagamento
@@ -195,7 +221,7 @@ async function createAdminProduct(productData) {
   }
 
   if (!response.ok) {
-    throw new Error(await response.text() || 'Não foi possível cadastrar o produto.');
+    throw new Error((await response.text()) || 'Não foi possível cadastrar o produto.');
   }
 
   return normalizeApiProduct(await response.json());
@@ -216,7 +242,7 @@ async function updateAdminProduct(productId, productData) {
   }
 
   if (!response.ok) {
-    throw new Error(await response.text() || 'Não foi possível atualizar o produto.');
+    throw new Error((await response.text()) || 'Não foi possível atualizar o produto.');
   }
 
   return true;
@@ -235,7 +261,7 @@ async function deleteAdminProduct(productId) {
   }
 
   if (!response.ok) {
-    throw new Error('Não foi possível excluir o produto.');
+    throw new Error((await response.text()) || 'Não foi possível excluir o produto.');
   }
 
   return true;
@@ -243,18 +269,35 @@ async function deleteAdminProduct(productId) {
 
 function salvarSessaoAdmin(data) {
   clearAdminSession();
-  localStorage.setItem('adminToken',data.token);
-  localStorage.setItem('adminId',data.id);
-  localStorage.setItem('adminNome',data.usuario);
-  localStorage.setItem('adminPerfil',data.perfil);
-  localStorage.setItem('adminLogado','true');
+  localStorage.setItem('adminToken', data.token);
+  localStorage.setItem('adminId', data.id);
+  localStorage.setItem('adminNome', data.usuario);
+  localStorage.setItem('adminPerfil', data.perfil);
+  localStorage.setItem('adminLogado', 'true');
 }
-async function adminRequest(path,options) {
-  options=options||{};
-  options.headers=Object.assign({'Content-Type':'application/json',Authorization:'Bearer '+getAdminToken()},options.headers||{});
-  var response=await fetch(ADMIN_API_BASE_URL+path,options);
-  if(response.status===401){clearAdminSession();redirectToAdminLogin();throw new Error('Sessão expirada. Entre novamente.');}
-  if(response.status===403)throw new Error('Somente administradores podem gerenciar colaboradores.');
-  if(!response.ok){var text=await response.text();try{var problem=JSON.parse(text);text=problem.errors?Object.values(problem.errors).flat().join(' '):problem.title||text;}catch(_){}throw new Error(text);}
-  return response.status===204?null:response.json();
+async function adminRequest(path, options) {
+  options = options || {};
+  options.headers = Object.assign(
+    { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getAdminToken() },
+    options.headers || {}
+  );
+  var response = await fetch(ADMIN_API_BASE_URL + path, options);
+  if (response.status === 401) {
+    clearAdminSession();
+    redirectToAdminLogin();
+    throw new Error('Sessão expirada. Entre novamente.');
+  }
+  if (response.status === 403)
+    throw new Error('Somente administradores podem gerenciar colaboradores.');
+  if (!response.ok) {
+    var text = await response.text();
+    try {
+      var problem = JSON.parse(text);
+      text = problem.errors
+        ? Object.values(problem.errors).flat().join(' ')
+        : problem.title || text;
+    } catch (_) {}
+    throw new Error(text);
+  }
+  return response.status === 204 ? null : response.json();
 }

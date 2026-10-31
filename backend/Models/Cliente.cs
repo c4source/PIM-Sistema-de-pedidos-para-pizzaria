@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pim.Models
@@ -9,7 +9,10 @@ namespace Pim.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id_cliente")]
-        public int Id { get; set; }
+        public int Id
+        {
+            get; set;
+        }
 
         [Column("nome_cliente")]
         [Required, StringLength(100)]
@@ -17,18 +20,30 @@ namespace Pim.Models
 
         [Column("cpf_cliente")]
         [StringLength(11)]
-        public string? Cpf { get; set; }
+        public string? Cpf
+        {
+            get; set;
+        }
 
         [Column("celular_cliente")]
         [StringLength(20)]
-        public string? Celular { get; set; }
+        public string? Celular
+        {
+            get; set;
+        }
 
         [Column("email_cliente")]
         [EmailAddress, StringLength(100)]
-        public string? Email { get; set; }
+        public string? Email
+        {
+            get; set;
+        }
 
         [Column("senha_cliente")]
         [StringLength(100)]
-        public string? Senha { get; set; }
+        public string? Senha
+        {
+            get; set;
+        }
     }
 }

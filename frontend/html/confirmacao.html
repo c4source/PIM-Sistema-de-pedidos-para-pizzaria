@@ -1,94 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedido Confirmado | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/confirmacao.css">
-</head>
-<body>
-  <div class="app confirmation-app">
-    <header class="confirmation-header">
-      <button class="back-button" id="confirmation-back-button" type="button" aria-label="Voltar">
-        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15 18 9 12l6-6"></path>
-        </svg>
-      </button>
-    </header>
-
-    <main class="confirmation-main">
-      <section class="confirmation-hero" aria-label="Mensagem de confirmação">
-        <div class="confirmation-icon" aria-hidden="true">
-          <svg class="confirmation-check-icon" viewBox="0 0 24 24">
-            <path d="M20 6 9 17l-5-5"></path>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido Confirmado | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/confirmacao.css" />
+  </head>
+  <body>
+    <div class="app confirmation-app">
+      <header class="confirmation-header">
+        <button class="back-button" id="confirmation-back-button" type="button" aria-label="Voltar">
+          <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 18 9 12l6-6"></path>
           </svg>
-        </div>
-        <h1 class="confirmation-title">Pedido confirmado!</h1>
-        <div class="confirmation-message">
-          <p>Recebemos seu pedido com sucesso.</p>
-          <p>Estamos preparando tudo para você.</p>
-        </div>
-      </section>
+        </button>
+      </header>
 
-      <section class="confirmation-order-card" aria-label="Dados do pedido">
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">📦 Pedido</span>
-          <strong class="confirmation-order-value" id="confirmation-order-code">PED-000000</strong>
-        </div>
+      <main class="confirmation-main">
+        <section class="confirmation-hero" aria-label="Mensagem de confirmação">
+          <div class="confirmation-icon" aria-hidden="true">
+            <svg class="confirmation-check-icon" viewBox="0 0 24 24">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          </div>
+          <h1 class="confirmation-title">Pedido confirmado!</h1>
+          <div class="confirmation-message">
+            <p>Recebemos seu pedido com sucesso.</p>
+            <p>Estamos preparando tudo para você.</p>
+          </div>
+        </section>
 
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">✅ Status</span>
-          <strong class="confirmation-status-badge" id="confirmation-order-status">Recebido</strong>
-        </div>
+        <section class="confirmation-order-card" aria-label="Dados do pedido">
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">📦 Pedido</span>
+            <strong class="confirmation-order-value" id="confirmation-order-code"
+              >PED-000000</strong
+            >
+          </div>
 
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">🛍️ Tipo</span>
-          <strong class="confirmation-order-value" id="confirmation-order-type">Retirada</strong>
-        </div>
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">✅ Status</span>
+            <strong class="confirmation-status-badge" id="confirmation-order-status"
+              >Recebido</strong
+            >
+          </div>
 
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">💳 Pagamento</span>
-          <strong class="confirmation-order-value" id="confirmation-payment-method">Não informado</strong>
-        </div>
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">🛍️ Tipo</span>
+            <strong class="confirmation-order-value" id="confirmation-order-type">Retirada</strong>
+          </div>
 
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">🧾 Status do pagamento</span>
-          <strong class="confirmation-order-value" id="confirmation-payment-status">Não informado</strong>
-        </div>
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">💳 Pagamento</span>
+            <strong class="confirmation-order-value" id="confirmation-payment-method"
+              >Não informado</strong
+            >
+          </div>
 
-        <div class="confirmation-order-row">
-          <span class="confirmation-order-label">⏱️ Tempo estimado</span>
-          <strong class="confirmation-order-value" id="confirmation-order-time">30-45 min</strong>
-        </div>
-      </section>
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">🧾 Status do pagamento</span>
+            <strong class="confirmation-order-value" id="confirmation-payment-status"
+              >Não informado</strong
+            >
+          </div>
 
-      <section class="confirmation-summary" aria-label="Resumo do pedido">
-        <h2 class="confirmation-summary-title">Resumo do pedido</h2>
+          <div class="confirmation-order-row">
+            <span class="confirmation-order-label">⏱️ Tempo estimado</span>
+            <strong class="confirmation-order-value" id="confirmation-order-time">30-45 min</strong>
+          </div>
+        </section>
 
-        <ul class="confirmation-summary-list">
-          <li class="confirmation-summary-item">
-            <span>Pizza Calabresa</span>
-            <strong>x1</strong>
-          </li>
-          <li class="confirmation-summary-item">
-            <span>Pizza Frango</span>
-            <strong>x2</strong>
-          </li>
-        </ul>
+        <section class="confirmation-summary" aria-label="Resumo do pedido">
+          <h2 class="confirmation-summary-title">Resumo do pedido</h2>
 
-        <p class="confirmation-total">
-          <span>Total do pedido</span>
-          <strong>R$ 100,00</strong>
-        </p>
-      </section>
+          <ul class="confirmation-summary-list">
+            <li class="confirmation-summary-item">
+              <span>Pizza Calabresa</span>
+              <strong>x1</strong>
+            </li>
+            <li class="confirmation-summary-item">
+              <span>Pizza Frango</span>
+              <strong>x2</strong>
+            </li>
+          </ul>
 
-      <section class="confirmation-footer" aria-label="Ação principal">
-        <button class="primary-button" id="confirmation-home-button" type="button">Voltar ao Cardápio</button>
-      </section>
-    </main>
-  </div>
+          <p class="confirmation-total">
+            <span>Total do pedido</span>
+            <strong>R$ 100,00</strong>
+          </p>
+        </section>
 
-  <script src="../js/confirmacao.js"></script>
-</body>
+        <section class="confirmation-footer" aria-label="Ação principal">
+          <button class="primary-button" id="confirmation-home-button" type="button">
+            Voltar ao Cardápio
+          </button>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/confirmacao.js"></script>
+  </body>
 </html>

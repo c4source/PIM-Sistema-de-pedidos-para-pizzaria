@@ -1,4 +1,4 @@
-﻿namespace Pim.DTOs
+namespace Pim.DTOs
 {
     public class ResetSenhaDto
     {

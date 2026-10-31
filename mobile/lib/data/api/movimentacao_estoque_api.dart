@@ -5,17 +5,13 @@ import 'package:http/http.dart' as http;
 import 'api_config.dart';
 
 class MovimentacaoEstoqueApi {
-
   Future<void> registrar({
     required int produtoId,
     required String tipo,
     required int quantidade,
     required String token,
   }) async {
-
-    final url = Uri.parse(
-      '${ApiConfig.baseUrl}/api/MovimentacaoEstoque',
-    );
+    final url = Uri.parse('${ApiConfig.baseUrl}/api/MovimentacaoEstoque');
 
     final response = await http.post(
       url,
@@ -34,8 +30,7 @@ class MovimentacaoEstoqueApi {
       return;
     }
 
-    if (response.statusCode == 401 ||
-        response.statusCode == 403) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
       throw Exception('Usuário não autorizado');
     }
 

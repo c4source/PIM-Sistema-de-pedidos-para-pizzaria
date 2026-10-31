@@ -1,43 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Admin | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/admin.css">
-</head>
-<body>
-  <div class="app admin-login-app">
-    <main class="admin-login-main">
-      <section class="admin-login-card" aria-label="Login administrativo">
-        <div class="admin-login-heading">
-          <h1 class="admin-login-title">Login Admin</h1>
-          <p class="admin-login-subtitle">Acesse o painel administrativo</p>
-        </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Admin | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <div class="app admin-login-app">
+      <main class="admin-login-main">
+        <section class="admin-login-card" aria-label="Login administrativo">
+          <div class="admin-login-heading">
+            <h1 class="admin-login-title">Login Admin</h1>
+            <p class="admin-login-subtitle">Acesse o painel administrativo</p>
+          </div>
 
-        <div class="admin-login-field">
-          <label class="admin-login-label" for="admin-username">E-mail</label>
-          <input class="admin-login-input" id="admin-username" name="admin-username" type="email" autocomplete="username">
-        </div>
+          <div class="admin-login-field">
+            <label class="admin-login-label" for="admin-username">E-mail</label>
+            <input
+              class="admin-login-input"
+              id="admin-username"
+              name="admin-username"
+              type="email"
+              autocomplete="username"
+            />
+          </div>
 
-        <div class="admin-login-field">
-          <label class="admin-login-label" for="admin-password">Senha</label>
-          <input class="admin-login-input" id="admin-password" name="admin-password" type="password" autocomplete="current-password">
-        </div>
+          <div class="admin-login-field">
+            <label class="admin-login-label" for="admin-password">Senha</label>
+            <input
+              class="admin-login-input"
+              id="admin-password"
+              name="admin-password"
+              type="password"
+              autocomplete="current-password"
+            />
+          </div>
 
-        <p class="admin-login-error" id="admin-login-error" aria-live="polite"></p>
+          <p class="admin-login-error" id="admin-login-error" aria-live="polite"></p>
 
-        <div class="admin-login-actions">
-          <button class="primary-button admin-login-primary-button" id="admin-login-button" type="button">Entrar</button>
-          <button class="secondary-button admin-login-secondary-button" id="admin-back-button" type="button">Voltar ao cardápio</button>
-        </div>
-      </section>
-    </main>
-  </div>
+          <div class="admin-login-actions">
+            <button
+              class="primary-button admin-login-primary-button"
+              id="admin-login-button"
+              type="button"
+            >
+              Entrar
+            </button>
+            <button
+              class="secondary-button admin-login-secondary-button"
+              id="admin-back-button"
+              type="button"
+            >
+              Voltar ao cardápio
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
 
-  <script src="../js/admin-api.js"></script>
-  <script src="../js/admin-login.js"></script>
-</body>
+    <script src="../js/admin-api.js"></script>
+    <script src="../js/admin-session.js"></script>
+    <script src="../js/admin-login.js"></script>
+  </body>
 </html>
-

@@ -1,122 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/checkout.css">
-</head>
-<body>
-  <div class="app checkout-app">
-    <header class="checkout-header">
-      <button class="back-button" id="checkout-back-button" type="button" aria-label="Voltar">
-        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15 18 9 12l6-6"></path>
-        </svg>
-      </button>
-      <h1 class="checkout-title">Checkout</h1>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/checkout.css" />
+  </head>
+  <body>
+    <div class="app checkout-app">
+      <header class="checkout-header">
+        <button class="back-button" id="checkout-back-button" type="button" aria-label="Voltar">
+          <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 18 9 12l6-6"></path>
+          </svg>
+        </button>
+        <h1 class="checkout-title">Checkout</h1>
+      </header>
 
-    <main class="checkout-main">
-      <div class="checkout-form-card">
-      <section class="checkout-section" aria-label="Dados do cliente">
-        <h2 class="checkout-section-title">Dados do cliente</h2>
+      <main class="checkout-main">
+        <div class="checkout-form-card">
+          <section class="checkout-section" aria-label="Dados do cliente">
+            <h2 class="checkout-section-title">Dados do cliente</h2>
 
-        <div class="checkout-field">
-          <label class="checkout-label" for="nome">Nome:</label>
-          <input class="checkout-input" id="nome" name="nome" type="text">
-          <span class="checkout-error-message" id="nome-error"></span>
+            <div class="checkout-field">
+              <label class="checkout-label" for="nome">Nome:</label>
+              <input class="checkout-input" id="nome" name="nome" type="text" />
+              <span class="checkout-error-message" id="nome-error"></span>
+            </div>
+
+            <div class="checkout-field">
+              <label class="checkout-label" for="telefone">Telefone:</label>
+              <input
+                class="checkout-input"
+                id="telefone"
+                name="telefone"
+                type="tel"
+                placeholder="(11) 91234-5678"
+                maxlength="15"
+              />
+              <span class="checkout-error-message" id="telefone-error"></span>
+            </div>
+          </section>
+
+          <section class="checkout-section" aria-label="Tipo de entrega">
+            <h2 class="checkout-section-title">Tipo de entrega</h2>
+
+            <div class="checkout-radio-group">
+              <label class="checkout-radio">
+                <input type="radio" name="tipo-entrega" value="entrega" checked />
+                <span>Entrega</span>
+              </label>
+
+              <label class="checkout-radio">
+                <input type="radio" name="tipo-entrega" value="retirada" />
+                <span>Retirada</span>
+              </label>
+            </div>
+          </section>
+
+          <section
+            class="checkout-section checkout-address-section"
+            id="checkout-address-section"
+            aria-label="Endereço de entrega"
+          >
+            <p class="checkout-address-note">Endereço:</p>
+
+            <div class="checkout-field">
+              <label class="checkout-label" for="rua">Rua:</label>
+              <input class="checkout-input" id="rua" name="rua" type="text" />
+              <span class="checkout-error-message" id="rua-error"></span>
+            </div>
+
+            <div class="checkout-field checkout-number-field">
+              <label class="checkout-label" for="numero">Número:</label>
+              <input class="checkout-input" id="numero" name="numero" type="text" />
+              <span class="checkout-error-message" id="numero-error"></span>
+            </div>
+
+            <div class="checkout-field">
+              <label class="checkout-label" for="bairro">Bairro:</label>
+              <input class="checkout-input" id="bairro" name="bairro" type="text" />
+              <span class="checkout-error-message" id="bairro-error"></span>
+            </div>
+          </section>
+
+          <section
+            class="checkout-section checkout-payment-section"
+            id="checkout-payment-section"
+            aria-label="Forma de pagamento"
+          >
+            <h2 class="checkout-section-title">Forma de pagamento</h2>
+
+            <div class="checkout-radio-group checkout-payment-group">
+              <label class="checkout-radio checkout-payment-option">
+                <input type="radio" name="forma-pagamento" value="dinheiro" />
+                <span>💵 Dinheiro</span>
+              </label>
+
+              <label class="checkout-radio checkout-payment-option">
+                <input type="radio" name="forma-pagamento" value="cartao" />
+                <span>💳 Cart&atilde;o</span>
+              </label>
+
+              <label class="checkout-radio checkout-payment-option">
+                <input type="radio" name="forma-pagamento" value="pix" checked />
+                <span>◇ Pix</span>
+              </label>
+            </div>
+
+            <span class="checkout-error-message" id="payment-error"></span>
+          </section>
         </div>
 
-        <div class="checkout-field">
-          <label class="checkout-label" for="telefone">Telefone:</label>
-          <input class="checkout-input" id="telefone" name="telefone" type="tel" placeholder="(11) 91234-5678" maxlength="15">
-          <span class="checkout-error-message" id="telefone-error"></span>
-        </div>
-      </section>
+        <section class="checkout-section checkout-summary-section" aria-label="Resumo do pedido">
+          <h2 class="checkout-section-title">Resumo do pedido</h2>
 
-      <section class="checkout-section" aria-label="Tipo de entrega">
-        <h2 class="checkout-section-title">Tipo de entrega</h2>
+          <ul class="checkout-summary-list">
+            <li class="checkout-summary-item">- Pizza Calabresa x1</li>
+            <li class="checkout-summary-item">- Pizza Frango x2</li>
+          </ul>
 
-        <div class="checkout-radio-group">
-          <label class="checkout-radio">
-            <input type="radio" name="tipo-entrega" value="entrega" checked>
-            <span>Entrega</span>
-          </label>
+          <p class="checkout-total">Total: R$ 100,00</p>
+        </section>
 
-          <label class="checkout-radio">
-            <input type="radio" name="tipo-entrega" value="retirada">
-            <span>Retirada</span>
-          </label>
-        </div>
-      </section>
+        <section class="checkout-footer" aria-label="Ação principal">
+          <button class="primary-button" id="checkout-confirm-button" type="button">
+            Confirmar Pedido
+          </button>
+        </section>
+      </main>
+    </div>
 
-      <section class="checkout-section checkout-address-section" id="checkout-address-section" aria-label="Endereço de entrega">
-        <p class="checkout-address-note">Endereço:</p>
-
-        <div class="checkout-field">
-          <label class="checkout-label" for="rua">Rua:</label>
-          <input class="checkout-input" id="rua" name="rua" type="text">
-          <span class="checkout-error-message" id="rua-error"></span>
-        </div>
-
-        <div class="checkout-field checkout-number-field">
-          <label class="checkout-label" for="numero">Número:</label>
-          <input class="checkout-input" id="numero" name="numero" type="text">
-          <span class="checkout-error-message" id="numero-error"></span>
-        </div>
-
-        <div class="checkout-field">
-          <label class="checkout-label" for="bairro">Bairro:</label>
-          <input class="checkout-input" id="bairro" name="bairro" type="text">
-          <span class="checkout-error-message" id="bairro-error"></span>
-        </div>
-      </section>
-
-      <section class="checkout-section checkout-payment-section" id="checkout-payment-section" aria-label="Forma de pagamento">
-        <h2 class="checkout-section-title">Forma de pagamento</h2>
-
-        <div class="checkout-radio-group checkout-payment-group">
-          <label class="checkout-radio checkout-payment-option">
-            <input type="radio" name="forma-pagamento" value="dinheiro">
-            <span>💵 Dinheiro</span>
-          </label>
-
-          <label class="checkout-radio checkout-payment-option">
-            <input type="radio" name="forma-pagamento" value="cartao">
-            <span>💳 Cart&atilde;o</span>
-          </label>
-
-          <label class="checkout-radio checkout-payment-option">
-            <input type="radio" name="forma-pagamento" value="pix" checked>
-            <span>◇ Pix</span>
-          </label>
-        </div>
-
-        <span class="checkout-error-message" id="payment-error"></span>
-      </section>
-
+    <dialog
+      id="checkout-falha-modal"
+      aria-labelledby="checkout-falha-titulo"
+      aria-describedby="checkout-falha-mensagem"
+    >
+      <div class="checkout-falha-icone" aria-hidden="true">!</div>
+      <h2 id="checkout-falha-titulo">Não foi possível concluir o pedido</h2>
+      <p id="checkout-falha-mensagem"></p>
+      <div class="checkout-falha-acoes">
+        <a href="./carrinho.html">Ajustar carrinho</a>
+        <form method="dialog"><button type="submit" autofocus>Continuar no checkout</button></form>
       </div>
-
-      <section class="checkout-section checkout-summary-section" aria-label="Resumo do pedido">
-        <h2 class="checkout-section-title">Resumo do pedido</h2>
-
-        <ul class="checkout-summary-list">
-          <li class="checkout-summary-item">- Pizza Calabresa x1</li>
-          <li class="checkout-summary-item">- Pizza Frango x2</li>
-        </ul>
-
-        <p class="checkout-total">Total: R$ 100,00</p>
-      </section>
-
-      <section class="checkout-footer" aria-label="Ação principal">
-        <button class="primary-button" id="checkout-confirm-button" type="button">Confirmar Pedido</button>
-      </section>
-    </main>
-  </div>
-
-  <script src="../js/api.js"></script>
-  <script src="../js/checkout.js"></script>
-</body>
+    </dialog>
+    <script src="../js/api.js"></script>
+    <script src="../js/checkout.js"></script>
+  </body>
 </html>

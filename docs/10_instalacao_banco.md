@@ -40,7 +40,7 @@ Tenha um banco local criado no pgAdmin, como `pim`, `pim_3` ou outro nome de sua
 $banco = Read-Host "Nome do seu banco PostgreSQL (ex.: pim_3)"
 $senhaSegura = Read-Host "Senha do PostgreSQL" -AsSecureString
 $senha = [System.Net.NetworkCredential]::new('', $senhaSegura).Password
-$conexao = "Host=localhost;Port=5432;Database=$banco;Username=postgres;Password=$senha"
+$conexao = "Host=localhost;Port=5432;Database=$banco;Username=postgres;Password=${senha}"
 
 @{ ConnectionStrings = @{ DefaultConnection = $conexao } } |
     ConvertTo-Json -Depth 3 |
@@ -207,3 +207,7 @@ Para futuras mudanças de modelo, a equipe deve revisar toda migration gerada an
 - **Segredo já publicado no GitHub:** remover do `appsettings.json` não apaga os commits antigos. Se a credencial era real, ela deve ser alterada/rotacionada.
 
 **Nunca faça commit de senhas, strings de conexão com credenciais ou chaves JWT reais.**
+
+## Alternativa: arquivo local ignorado
+
+Também é possível copiar backend/appsettings.Local.example.json para backend/appsettings.Local.json e preencher a conexão e uma chave JWT aleatória. Esse arquivo não deve ser commitado nem publicado. Em Development, User Secrets tem precedência sobre esse arquivo. Variáveis de ambiente têm precedência sobre ambos. Para detalhes da proteção antes dos commits, consulte 12_seguranca_git.md.

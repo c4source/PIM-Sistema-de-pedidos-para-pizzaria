@@ -1,3 +1,5 @@
+using Pim.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -8,33 +10,98 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 namespace Pim.Controllers;
-[Route("api/[controller]"),ApiController]
-public class AuthController(IConfiguration config,ColaboradorRepository repository):ControllerBase
+
+[Route("api/[controller]"), ApiController]
+public class AuthController(IConfiguration config, ColaboradorRepository repository, PimDbContext db) : ControllerBase
 {
     [HttpPost("login-colaborador")]
-    public async Task<IActionResult> LoginColaborador(LoginDto dto){
-        if(string.IsNullOrWhiteSpace(dto.Email)||string.IsNullOrEmpty(dto.Senha))return BadRequest("Informe e-mail e senha.");
-        var u=await repository.BuscarPorEmailAsync(dto.Email);bool valido=false;
-        if(u!=null){try{valido=BCrypt.Net.BCrypt.Verify(dto.Senha,u.Senha);}catch(BCrypt.Net.SaltParseException){}}
-        if(!valido)return Unauthorized("E-mail ou senha incorretos.");
-        return Ok(Sessao(u!));
+    public async Task<IActionResult> LoginColaborador(LoginDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrEmpty(dto.Senha))
+            return BadRequest("Informe e-mail e senha.");
+        var u = await repository.BuscarPorEmailAsync(dto.Email);
+        bool valido = false;
+        if (u != null)
+        {
+            try
+            {
+                valido = BCrypt.Net.BCrypt.Verify(dto.Senha, u.Senha);
+            }
+            catch (BCrypt.Net.SaltParseException) { }
+        }
+        if (!valido)
+            return Unauthorized("E-mail ou senha incorretos.");
+        return Ok(await Sessao(u!));
     }
-    [HttpGet("sessao"),Authorize(Roles="Administrador,Colaborador")]
-    public async Task<IActionResult> SessaoAtual(){var u=await repository.BuscarPorIdAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));return Ok(new {id=u!.Id,usuario=u.Nome,perfil=u.Perfil});}
-    [HttpPost("trocar-senha"),Authorize(Roles="TrocaSenha")]
-    public async Task<IActionResult> TrocarSenha(TrocarSenhaDto dto){
-        if(Encoding.UTF8.GetByteCount(dto.NovaSenha)>72 || string.IsNullOrWhiteSpace(dto.NovaSenha))return BadRequest("A senha deve ter de 8 a 72 caracteres e no máximo 72 bytes.");
-        var id=int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);var u=await repository.BuscarPorIdAsync(id);
-        if(u==null)return Unauthorized();
-        if(BCrypt.Net.BCrypt.Verify(dto.NovaSenha,u.Senha))return BadRequest("Escolha uma senha diferente da provisória.");
-        if(!await repository.TrocarSenhaAsync(id,int.Parse(User.FindFirstValue("versao")!),BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha)))return Unauthorized("Esta solicitação já foi utilizada. Entre novamente.");
-        u.TrocarSenha=false;u.VersaoSessao++;return Ok(Sessao(u));
+    [HttpGet("sessao"), Authorize(Roles = "Administrador,Colaborador")]
+    public async Task<IActionResult> SessaoAtual()
+    {
+        var u = await repository.BuscarPorIdAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
+        return Ok(new
+        {
+            id = u!.Id,
+            usuario = u.Nome,
+            perfil = u.Perfil
+        });
     }
-    private object Sessao(Colaborador u){
-        var papel=u.TrocarSenha?"TrocaSenha":u.Perfil;
-        var claims=new[]{new Claim(ClaimTypes.NameIdentifier,u.Id.ToString()),new Claim(ClaimTypes.Name,u.Nome),new Claim(ClaimTypes.Email,u.Email),new Claim(ClaimTypes.Role,papel),new Claim("versao",u.VersaoSessao.ToString())};
-        var key=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
-        var jwt=new JwtSecurityToken(config["Jwt:Issuer"],config["Jwt:Audience"],claims,expires:DateTime.UtcNow.AddMinutes(u.TrocarSenha?15:480),signingCredentials:new SigningCredentials(key,SecurityAlgorithms.HmacSha256));
-        return new {token=new JwtSecurityTokenHandler().WriteToken(jwt),id=u.Id,usuario=u.Nome,perfil=u.Perfil,trocaSenhaObrigatoria=u.TrocarSenha};
+    [HttpPost("trocar-senha"), Authorize(Roles = "TrocaSenha")]
+    public async Task<IActionResult> TrocarSenha(TrocarSenhaDto dto)
+    {
+        if (Encoding.UTF8.GetByteCount(dto.NovaSenha) > 72 || string.IsNullOrWhiteSpace(dto.NovaSenha))
+            return BadRequest("A senha deve ter de 8 a 72 caracteres e no máximo 72 bytes.");
+        var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var u = await repository.BuscarPorIdAsync(id);
+        if (u == null)
+            return Unauthorized();
+        if (BCrypt.Net.BCrypt.Verify(dto.NovaSenha, u.Senha))
+            return BadRequest("Escolha uma senha diferente da provisória.");
+        if (!await repository.TrocarSenhaAsync(id, int.Parse(User.FindFirstValue("versao")!), BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha)))
+            return Unauthorized("Esta solicitação já foi utilizada. Entre novamente.");
+        u.TrocarSenha = false;
+        u.VersaoSessao++;
+        return Ok(await Sessao(u));
+    }
+    [HttpPost("atividade"), Authorize(Roles = "Administrador,Colaborador")]
+    public async Task<IActionResult> Atividade()
+    {
+        if (!Guid.TryParse(User.FindFirstValue("sid"), out var sid))
+            return Unauthorized();
+        var agora = DateTime.UtcNow;
+        var limite = agora.AddMinutes(-30);
+        var alteradas = await db.Sessoes.Where(s => s.Id == sid && s.UltimaAtividade > limite).ExecuteUpdateAsync(s => s.SetProperty(x => x.UltimaAtividade, agora));
+        return alteradas == 1 ? Ok(new
+        {
+            ultimaAtividade = agora,
+            inatividadeMinutos = 30
+        }) : Unauthorized();
+    }
+    [HttpPost("sair"), Authorize]
+    public async Task<IActionResult> Sair()
+    {
+        if (Guid.TryParse(User.FindFirstValue("sid"), out var sid))
+            await db.Sessoes.Where(s => s.Id == sid).ExecuteDeleteAsync();
+        return NoContent();
+    }
+    private async Task<object> Sessao(Colaborador u)
+    {
+        var sid = Guid.NewGuid();
+        if (!u.TrocarSenha)
+        {
+            await db.Sessoes.Where(s => s.UltimaAtividade <= DateTime.UtcNow.AddMinutes(-30)).ExecuteDeleteAsync();
+            db.Sessoes.Add(new SessaoAcesso { Id = sid, ColaboradorId = u.Id, UltimaAtividade = DateTime.UtcNow });
+            await db.SaveChangesAsync();
+        }
+        var papel = u.TrocarSenha ? "TrocaSenha" : u.Perfil;
+        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()), new Claim(ClaimTypes.Name, u.Nome), new Claim(ClaimTypes.Email, u.Email), new Claim(ClaimTypes.Role, papel), new Claim("versao", u.VersaoSessao.ToString()), new Claim("sid", sid.ToString()) };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var jwt = new JwtSecurityToken(config["Jwt:Issuer"], config["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddMinutes(u.TrocarSenha ? 15 : 480), signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
+        return new
+        {
+            token = new JwtSecurityTokenHandler().WriteToken(jwt),
+            id = u.Id,
+            usuario = u.Nome,
+            perfil = u.Perfil,
+            trocaSenhaObrigatoria = u.TrocarSenha
+        };
     }
 }

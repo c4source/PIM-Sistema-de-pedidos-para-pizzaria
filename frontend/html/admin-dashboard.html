@@ -1,104 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Administrativo | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/admin.css">
-<link rel="stylesheet" href="../css/admin-colaboradores.css">
-</head>
-<body>
-  <div class="app admin-dashboard-app">
-    <header class="admin-dashboard-header">
-      <div class="admin-dashboard-heading">
-        <h1 class="admin-dashboard-title">Painel Administrativo</h1>
-        <p class="admin-dashboard-subtitle">Visão geral dos pedidos e operação</p>
-      </div>
-
-      <div class="admin-dashboard-header-actions">
-        <button class="secondary-button admin-dashboard-secondary-button" id="admin-menu-button" type="button">Ver cardápio</button>
-        <button class="primary-button admin-dashboard-logout-button" id="admin-logout-button" type="button">Sair</button>
-      </div>
-    </header>
-
-    <main class="admin-dashboard-main">
-      <section class="admin-dashboard-metrics" aria-label="Métricas administrativas">
-        <article class="admin-metric-card">
-          <span class="admin-metric-label">Total de pedidos</span>
-          <strong class="admin-metric-value" id="admin-total-orders">0</strong>
-          <span class="admin-metric-description">Pedidos registrados no sistema</span>
-        </article>
-
-        <article class="admin-metric-card">
-          <span class="admin-metric-label">Recebidos</span>
-          <strong class="admin-metric-value" id="admin-received-orders">0</strong>
-          <span class="admin-metric-description">Pedidos aguardando preparo</span>
-        </article>
-
-        <article class="admin-metric-card">
-          <span class="admin-metric-label">Em preparo</span>
-          <strong class="admin-metric-value" id="admin-preparing-orders">0</strong>
-          <span class="admin-metric-description">Pedidos em andamento</span>
-        </article>
-
-        <article class="admin-metric-card">
-          <span class="admin-metric-label">Finalizados</span>
-          <strong class="admin-metric-value" id="admin-finished-orders">0</strong>
-          <span class="admin-metric-description">Pedidos concluídos</span>
-        </article>
-
-        <article class="admin-metric-card admin-metric-card-wide">
-          <span class="admin-metric-label">Faturamento total</span>
-          <strong class="admin-metric-value" id="admin-total-revenue">R$ 0,00</strong>
-          <span class="admin-metric-description">Soma dos pedidos registrados</span>
-        </article>
-      </section>
-
-      <section class="admin-dashboard-section" aria-label="Ações rápidas">
-        <div class="admin-section-heading">
-          <h2 class="admin-section-title">Ações rápidas</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/admin-colaboradores.css" />
+  </head>
+  <body>
+    <div class="app admin-dashboard-app">
+      <header class="admin-dashboard-header">
+        <div class="admin-dashboard-heading">
+          <h1 class="admin-dashboard-title">Painel Administrativo</h1>
+          <p class="admin-dashboard-subtitle">Visão geral dos pedidos e operação</p>
         </div>
 
-        <div class="admin-quick-actions">
-          <a class="admin-action-card" id="admin-colaboradores-link" href="./admin-colaboradores.html" hidden>
-            <span class="admin-action-title">Gerenciar colaboradores</span>
-            <span class="admin-action-description">Criar acessos e administrar a equipe</span>
-          </a>
-          <button class="admin-action-card" id="admin-orders-link" type="button">
-            <span class="admin-action-title">Ver pedidos</span>
-            <span class="admin-action-description">Acompanhar histórico e status</span>
+        <div class="admin-dashboard-header-actions">
+          <button
+            class="secondary-button admin-dashboard-secondary-button"
+            id="admin-menu-button"
+            type="button"
+          >
+            Ver cardápio
           </button>
-
-          <button class="admin-action-card" id="admin-products-link" type="button">
-            <span class="admin-action-title">Gerenciar produtos</span>
-            <span class="admin-action-description">Preparar cadastro do cardápio</span>
-          </button>
-
-          <button class="admin-action-card" id="admin-kitchen-link" type="button">
-            <span class="admin-action-title">Fila da cozinha</span>
-            <span class="admin-action-description">Visualizar pedidos de preparo</span>
+          <button
+            class="primary-button admin-dashboard-logout-button"
+            id="admin-logout-button"
+            type="button"
+          >
+            Sair
           </button>
         </div>
-      </section>
+      </header>
 
-      <section class="admin-dashboard-section" aria-label="Pedidos recentes">
-        <div class="admin-section-heading">
-          <h2 class="admin-section-title">Pedidos recentes</h2>
-        </div>
+      <main class="admin-dashboard-main">
+        <section class="admin-dashboard-metrics" aria-label="Métricas administrativas">
+          <article class="admin-metric-card">
+            <span class="admin-metric-label">Total de pedidos</span>
+            <strong class="admin-metric-value" id="admin-total-orders">0</strong>
+            <span class="admin-metric-description">Pedidos registrados no sistema</span>
+          </article>
 
-        <div class="admin-recent-orders-list" id="admin-recent-orders-list"></div>
+          <article class="admin-metric-card">
+            <span class="admin-metric-label">Recebidos</span>
+            <strong class="admin-metric-value" id="admin-received-orders">0</strong>
+            <span class="admin-metric-description">Pedidos aguardando preparo</span>
+          </article>
 
-        <div class="admin-empty-state" id="admin-empty-orders">
-          <h3 class="admin-empty-title">Nenhum pedido registrado ainda.</h3>
-          <p class="admin-empty-text">Quando um cliente finalizar um pedido, ele aparecerá aqui.</p>
-        </div>
-      </section>
-    </main>
-  </div>
+          <article class="admin-metric-card">
+            <span class="admin-metric-label">Em preparo</span>
+            <strong class="admin-metric-value" id="admin-preparing-orders">0</strong>
+            <span class="admin-metric-description">Pedidos em andamento</span>
+          </article>
 
-  <script src="../js/admin-api.js"></script>
-  <script src="../js/admin-dashboard.js"></script>
-<script src="../js/admin-perfil.js"></script>
-</body>
+          <article class="admin-metric-card">
+            <span class="admin-metric-label">Finalizados</span>
+            <strong class="admin-metric-value" id="admin-finished-orders">0</strong>
+            <span class="admin-metric-description">Pedidos concluídos</span>
+          </article>
+
+          <article class="admin-metric-card admin-metric-card-wide">
+            <span class="admin-metric-label">Faturamento total</span>
+            <strong class="admin-metric-value" id="admin-total-revenue">R$ 0,00</strong>
+            <span class="admin-metric-description">Soma dos pedidos registrados</span>
+          </article>
+        </section>
+
+        <section class="admin-dashboard-section" aria-label="Ações rápidas">
+          <div class="admin-section-heading">
+            <h2 class="admin-section-title">Ações rápidas</h2>
+          </div>
+
+          <div class="admin-quick-actions">
+            <a
+              class="admin-action-card"
+              id="admin-colaboradores-link"
+              href="./admin-colaboradores.html"
+              hidden
+            >
+              <span class="admin-action-title">Gerenciar colaboradores</span>
+              <span class="admin-action-description">Criar acessos e administrar a equipe</span>
+            </a>
+            <button class="admin-action-card" id="admin-orders-link" type="button">
+              <span class="admin-action-title">Ver pedidos</span>
+              <span class="admin-action-description">Acompanhar histórico e status</span>
+            </button>
+
+            <button class="admin-action-card" id="admin-products-link" type="button">
+              <span class="admin-action-title">Gerenciar produtos</span>
+              <span class="admin-action-description">Preparar cadastro do cardápio</span>
+            </button>
+
+            <button class="admin-action-card" id="admin-kitchen-link" type="button">
+              <span class="admin-action-title">Fila da cozinha</span>
+              <span class="admin-action-description">Visualizar pedidos de preparo</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="admin-dashboard-section" aria-label="Pedidos recentes">
+          <div class="admin-section-heading">
+            <h2 class="admin-section-title">Pedidos recentes</h2>
+          </div>
+
+          <div class="admin-recent-orders-list" id="admin-recent-orders-list"></div>
+
+          <div class="admin-empty-state" id="admin-empty-orders">
+            <h3 class="admin-empty-title">Nenhum pedido registrado ainda.</h3>
+            <p class="admin-empty-text">
+              Quando um cliente finalizar um pedido, ele aparecerá aqui.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/admin-api.js"></script>
+    <script src="../js/admin-session.js"></script>
+    <script src="../js/admin-dashboard.js"></script>
+    <script src="../js/admin-perfil.js"></script>
+  </body>
 </html>

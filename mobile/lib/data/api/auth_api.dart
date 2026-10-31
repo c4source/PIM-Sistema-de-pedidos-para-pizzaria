@@ -5,6 +5,14 @@ import 'package:http/http.dart' as http;
 import 'api_config.dart';
 
 class AuthApi {
+  Future<bool> registrarAtividade(String token) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/api/Auth/atividade'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    return response.statusCode != 401;
+  }
+
   // LOGIN DO COLABORADOR
   Future<Map<String, dynamic>> login(String email, String senha) async {
     final url = Uri.parse('${ApiConfig.baseUrl}/api/Auth/login-colaborador');

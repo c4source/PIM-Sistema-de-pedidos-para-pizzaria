@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {analisar}=require('../scripts/verificar-segredos.cjs');
+test('Bloqueia senha de conexão sem exibir seu valor',()=>{const valor='valor-ficticio-apenas-teste';const erros=analisar('arquivo.txt','Password='+valor);assert.ok(erros.length);assert.ok(!JSON.stringify(erros).includes(valor));});
+test('Aceita placeholders e configuração pública vazia',()=>{assert.equal(analisar('appsettings.json',JSON.stringify({Jwt:{Key:''},ConnectionStrings:{DefaultConnection:''}})).length,0);assert.equal(analisar('appsettings.Local.example.json','Password=SUA_SENHA').length,0);});
+test('Bloqueia arquivo local e chave JWT preenchida',()=>{assert.ok(analisar('backend/appsettings.Local.json','{}').length);assert.ok(analisar('backend/appsettings.json',JSON.stringify({Jwt:{Key:'exemplo-ficticio-de-chave-privada'}})).length);});

@@ -1,22 +1,187 @@
-const assert=require('node:assert/strict');const fs=require('fs');
-const base=process.env.PIM_TEST_API||'http://localhost:5163/api';const ids=[];const cleanupFile=process.env.PIM_TEST_CLEANUP_SQL;if(!cleanupFile)throw Error('Informe PIM_TEST_CLEANUP_SQL para registrar a limpeza dos dados de teste.');
-let token;const unique=Date.now();
-async function req(path,method='GET',body,status=200){let r=await fetch(base+path,{method,headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined});let raw=await r.text();assert.equal(r.status,status,`${method} ${path}: ${raw}`);console.log(method+' '+path+' '+status);try{return JSON.parse(raw)}catch{return raw}}
-const data=(nome,estoque)=>({nome:'TesteKit '+unique+' '+nome,preco:7,descricao:'Produto temporário teste kit',categoria:'pizza',status:'disponivel',estoque,imagemUrl:'/img/frango800.jpg',ehKit:false,componentes:[]});
-async function criar(body){let p=await req('/Produto','POST',body,201);ids.push(p.id);return p;}
-function payload(itens){return {nomeCliente:'Teste Kit',telefoneCliente:'11912345678',tipoEntrega:'retirada',formaPagamento:'pix',itens};}
-async function stock(id,expected){let p=await req('/Produto/'+id);assert.equal(p.estoque,expected);return p;}
-async function run(){token=(await req('/Auth/login-colaborador','POST',{email:process.env.PIM_TEST_ADMIN_EMAIL||'admin@pim.com',senha:process.env.PIM_TEST_ADMIN_PASSWORD||'123456'})).token;
-const a=await criar(data('A',10)),b=await criar(data('B',5));const kitData={...data('Kit',999),categoria:'combo',preco:20,ehKit:true,componentes:[{idProduto:a.id,quantidade:2},{idProduto:b.id,quantidade:1}]};const kit=await criar(kitData);assert.equal(kit.estoque,5);assert.equal(kit.componentes.length,2);
-await req('/Produto','POST',{...kitData,componentes:[]},400);await req('/Produto','POST',{...kitData,componentes:[{idProduto:kit.id,quantidade:1}]},400);await req('/Produto/'+kit.id,'PUT',{...kitData,componentes:[{idProduto:kit.id,quantidade:1}]},400);await req('/Produto','POST',{...kitData,componentes:[{idProduto:a.id,quantidade:0}]},400);await req('/Produto','POST',{...kitData,componentes:[{idProduto:a.id,quantidade:1},{idProduto:a.id,quantidade:2}]},400);await req('/Produto/'+a.id,'DELETE',null,409);
-const venda=await req('/Pedido/checkout-mvp','POST',payload([{idProduto:kit.id,quantidade:2},{idProduto:a.id,quantidade:1}]));assert.equal(venda.valorTotal,47);await stock(a.id,5);await stock(b.id,3);await stock(kit.id,2);
-await req('/Produto/'+kit.id,'PUT',{...kitData,componentes:[{idProduto:b.id,quantidade:3}]},204);
-await req('/Pedido/'+venda.idPedido+'/status','PATCH',{status:'cancelado'});await stock(a.id,10);await stock(b.id,5);
-await req('/Pedido/'+venda.idPedido+'/status','PATCH',{status:'cancelado'},400);await stock(a.id,10);await stock(b.id,5);
-await req('/Pedido/checkout-mvp','POST',payload([{idProduto:kit.id,quantidade:2}]),400);await stock(b.id,5);
-await req('/Produto/'+kit.id,'PUT',kitData,204);
-await req('/Pedido/checkout-mvp','POST',payload([{idProduto:kit.id,quantidade:4},{idProduto:a.id,quantidade:3}]),400);await stock(a.id,10);await stock(b.id,5);
-const responses=await Promise.all([1,2].map(()=>fetch(base+'/Pedido/checkout-mvp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload([{idProduto:kit.id,quantidade:4}]))})));assert.deepEqual(responses.map(r=>r.status).sort(),[200,400]);for(const r of responses){if(r.status===200){const p=await r.json();await req('/Pedido/'+p.idPedido+'/status','PATCH',{status:'cancelado'});}}await stock(a.id,10);await stock(b.id,5);
-await req('/Produto/'+b.id,'PUT',{...data('B',5),status:'indisponivel'},204);await stock(kit.id,0);await req('/Pedido/checkout-mvp','POST',payload([{idProduto:kit.id,quantidade:1}]),400);await stock(a.id,10);
-console.log('Kit, baixa agregada, concorrência e devolução histórica validados.');}
-run().catch(e=>{console.error(e.message);process.exitCode=1}).finally(()=>{if(!ids.length)return;const list=ids.join(',');const pedidos=`SELECT DISTINCT id_pedido FROM itempedido WHERE codprod IN (${list})`;fs.writeFileSync(cleanupFile,`BEGIN; DELETE FROM pagamento WHERE id_pedido IN (${pedidos}); DELETE FROM pedido_baixa_estoque WHERE id_pedido IN (${pedidos}); CREATE TEMP TABLE kit_teste_pedidos ON COMMIT DROP AS ${pedidos}; DELETE FROM itempedido WHERE id_pedido IN (SELECT id_pedido FROM kit_teste_pedidos); DELETE FROM pedido WHERE id_pedido IN (SELECT id_pedido FROM kit_teste_pedidos); DELETE FROM kit_componente WHERE id_kit IN (${list}); DELETE FROM produto WHERE codprod IN (${list}); COMMIT;`);});
+const assert = require('node:assert/strict');
+const fs = require('fs');
+const base = process.env.PIM_TEST_API || 'http://localhost:5163/api';
+const ids = [];
+const cleanupFile = process.env.PIM_TEST_CLEANUP_SQL;
+if (!cleanupFile)
+  throw Error('Informe PIM_TEST_CLEANUP_SQL para registrar a limpeza dos dados de teste.');
+let token;
+const unique = Date.now();
+async function req(path, method = 'GET', body, status = 200) {
+  let r = await fetch(base + path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: 'Bearer ' + token } : {})
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let raw = await r.text();
+  assert.equal(r.status, status, `${method} ${path}: ${raw}`);
+  console.log(method + ' ' + path + ' ' + status);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+}
+const data = (nome, estoque) => ({
+  nome: 'TesteKit ' + unique + ' ' + nome,
+  preco: 7,
+  descricao: 'Produto temporário teste kit',
+  categoria: 'pizza',
+  status: 'disponivel',
+  estoque,
+  imagemUrl: '/img/frango800.jpg',
+  ehKit: false,
+  componentes: []
+});
+async function criar(body) {
+  let p = await req('/Produto', 'POST', body, 201);
+  ids.push(p.id);
+  return p;
+}
+function payload(itens) {
+  return {
+    nomeCliente: 'Teste Kit',
+    telefoneCliente: '11912345678',
+    tipoEntrega: 'retirada',
+    formaPagamento: 'pix',
+    itens
+  };
+}
+async function stock(id, expected) {
+  let p = await req('/Produto/' + id);
+  assert.equal(p.estoque, expected);
+  return p;
+}
+async function run() {
+  token = (
+    await req('/Auth/login-colaborador', 'POST', {
+      email: process.env.PIM_TEST_ADMIN_EMAIL || 'admin@pim.com',
+      senha: process.env.PIM_TEST_ADMIN_PASSWORD || '123456'
+    })
+  ).token;
+  const a = await criar(data('A', 10)),
+    b = await criar(data('B', 5));
+  const kitData = {
+    ...data('Kit', 999),
+    categoria: 'combo',
+    preco: 20,
+    ehKit: true,
+    componentes: [
+      { idProduto: a.id, quantidade: 2 },
+      { idProduto: b.id, quantidade: 1 }
+    ]
+  };
+  const kit = await criar(kitData);
+  assert.equal(kit.estoque, 5);
+  assert.equal(kit.componentes.length, 2);
+  await req('/Produto', 'POST', { ...kitData, componentes: [] }, 400);
+  await req(
+    '/Produto',
+    'POST',
+    { ...kitData, componentes: [{ idProduto: kit.id, quantidade: 1 }] },
+    400
+  );
+  await req(
+    '/Produto/' + kit.id,
+    'PUT',
+    { ...kitData, componentes: [{ idProduto: kit.id, quantidade: 1 }] },
+    400
+  );
+  await req(
+    '/Produto',
+    'POST',
+    { ...kitData, componentes: [{ idProduto: a.id, quantidade: 0 }] },
+    400
+  );
+  await req(
+    '/Produto',
+    'POST',
+    {
+      ...kitData,
+      componentes: [
+        { idProduto: a.id, quantidade: 1 },
+        { idProduto: a.id, quantidade: 2 }
+      ]
+    },
+    400
+  );
+  await req('/Produto/' + a.id, 'DELETE', null, 409);
+  const venda = await req(
+    '/Pedido/checkout-mvp',
+    'POST',
+    payload([
+      { idProduto: kit.id, quantidade: 2 },
+      { idProduto: a.id, quantidade: 1 }
+    ])
+  );
+  assert.equal(venda.valorTotal, 47);
+  await stock(a.id, 5);
+  await stock(b.id, 3);
+  await stock(kit.id, 2);
+  await req(
+    '/Produto/' + kit.id,
+    'PUT',
+    { ...kitData, componentes: [{ idProduto: b.id, quantidade: 3 }] },
+    204
+  );
+  await req('/Pedido/' + venda.idPedido + '/status', 'PATCH', { status: 'cancelado' });
+  await stock(a.id, 10);
+  await stock(b.id, 5);
+  await req('/Pedido/' + venda.idPedido + '/status', 'PATCH', { status: 'cancelado' }, 400);
+  await stock(a.id, 10);
+  await stock(b.id, 5);
+  await req('/Pedido/checkout-mvp', 'POST', payload([{ idProduto: kit.id, quantidade: 2 }]), 400);
+  await stock(b.id, 5);
+  await req('/Produto/' + kit.id, 'PUT', kitData, 204);
+  await req(
+    '/Pedido/checkout-mvp',
+    'POST',
+    payload([
+      { idProduto: kit.id, quantidade: 4 },
+      { idProduto: a.id, quantidade: 3 }
+    ]),
+    400
+  );
+  await stock(a.id, 10);
+  await stock(b.id, 5);
+  const responses = await Promise.all(
+    [1, 2].map(() =>
+      fetch(base + '/Pedido/checkout-mvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload([{ idProduto: kit.id, quantidade: 4 }]))
+      })
+    )
+  );
+  assert.deepEqual(responses.map((r) => r.status).sort(), [200, 400]);
+  for (const r of responses) {
+    if (r.status === 200) {
+      const p = await r.json();
+      await req('/Pedido/' + p.idPedido + '/status', 'PATCH', { status: 'cancelado' });
+    }
+  }
+  await stock(a.id, 10);
+  await stock(b.id, 5);
+  await req('/Produto/' + b.id, 'PUT', { ...data('B', 5), status: 'indisponivel' }, 204);
+  await stock(kit.id, 0);
+  await req('/Pedido/checkout-mvp', 'POST', payload([{ idProduto: kit.id, quantidade: 1 }]), 400);
+  await stock(a.id, 10);
+  console.log('Kit, baixa agregada, concorrência e devolução histórica validados.');
+}
+run()
+  .catch((e) => {
+    console.error(e.message);
+    process.exitCode = 1;
+  })
+  .finally(() => {
+    if (!ids.length) return;
+    const list = ids.join(',');
+    const pedidos = `SELECT DISTINCT id_pedido FROM itempedido WHERE codprod IN (${list})`;
+    fs.writeFileSync(
+      cleanupFile,
+      `BEGIN; DELETE FROM pagamento WHERE id_pedido IN (${pedidos}); DELETE FROM pedido_baixa_estoque WHERE id_pedido IN (${pedidos}); CREATE TEMP TABLE kit_teste_pedidos ON COMMIT DROP AS ${pedidos}; DELETE FROM itempedido WHERE id_pedido IN (SELECT id_pedido FROM kit_teste_pedidos); DELETE FROM pedido WHERE id_pedido IN (SELECT id_pedido FROM kit_teste_pedidos); DELETE FROM kit_componente WHERE id_kit IN (${list}); DELETE FROM produto WHERE codprod IN (${list}); COMMIT;`
+    );
+  });

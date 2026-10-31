@@ -17,7 +17,7 @@
   --text-chocolate: #3f2d22;
   --text-secondary: #4b5563;
   --text-muted: #495057;
-  --brand-red: #E63946;
+  --brand-red: #e63946;
 }
 
 /* =========================================================
@@ -32,7 +32,7 @@
 ========================================================= */
 body {
   min-height: 100vh;
-  background: #F8F9FA;
+  background: #f8f9fa;
   color: var(--text-title);
   font-family: Arial, Helvetica, sans-serif;
   padding: 12px;
@@ -48,13 +48,12 @@ body {
   max-width: 420px;
   min-height: 700px;
   margin: 0 auto;
-  background: #F8F9FA;
+  background: #f8f9fa;
   border: 1px solid rgba(33, 37, 41, 0.08);
   border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(33, 37, 41, 0.08);
 }
-
 
 /* =========================================================
    COMPONENTES GERAIS
@@ -77,7 +76,10 @@ body {
   background: #fff;
   color: #2f241f;
   cursor: pointer;
-  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 /* Botão pequeno de voltar */
@@ -129,9 +131,10 @@ body {
   padding: 14px 18px;
   font-size: 1.15rem;
   font-weight: 700;
-  transition: transform 0.2s ease,
-              box-shadow 0.2s ease,
-              background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 /* Botão secundário
@@ -153,7 +156,6 @@ body {
 .secondary-button:hover {
   background: #f3eadc;
 }
-
 
 .back-icon {
   width: 18px;

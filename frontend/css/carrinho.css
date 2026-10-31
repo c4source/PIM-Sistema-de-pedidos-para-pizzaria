@@ -44,13 +44,18 @@ body:has(.cart-app) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(33, 37, 41, 0.1);
   border-radius: 14px;
   color: #5d2417;
   box-shadow: 0 8px 20px rgba(33, 37, 41, 0.08);
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .cart-main {
@@ -69,11 +74,14 @@ body:has(.cart-app) {
 
 .cart-item {
   padding: 18px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(84, 88, 47, 0.1);
   border-radius: 20px;
   box-shadow: 0 12px 30px rgba(33, 37, 41, 0.06);
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
 .cart-item-top {
@@ -117,7 +125,7 @@ body:has(.cart-app) {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6C757D;
+  color: #6c757d;
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -148,7 +156,12 @@ body:has(.cart-app) {
   font-weight: 700;
   cursor: pointer;
   align-self: flex-start;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .cart-item-actions {
@@ -181,7 +194,12 @@ body:has(.cart-app) {
   line-height: 1;
   box-shadow: 0 4px 10px rgba(33, 37, 41, 0.04);
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .cart-item-actions .quantity-value {
@@ -197,7 +215,7 @@ body:has(.cart-app) {
   display: grid;
   gap: 12px;
   padding: 20px 22px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(84, 88, 47, 0.12);
   border-radius: 18px;
   box-shadow: 0 12px 30px rgba(33, 37, 41, 0.06);
@@ -262,13 +280,18 @@ body:has(.cart-app) {
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .cart-footer .primary-button {
   background: linear-gradient(135deg, #d4515f, #c73f4d);
   border: 1px solid #c94f4f;
-  color: #FFFFFF;
+  color: #ffffff;
   box-shadow: 0 10px 22px rgba(199, 63, 77, 0.22);
 }
 
@@ -291,7 +314,7 @@ body:has(.cart-app) {
   justify-content: center;
   min-height: 320px;
   padding: 44px 24px;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid rgba(84, 88, 47, 0.1);
   border-radius: 20px;
   box-shadow: 0 10px 26px rgba(33, 37, 41, 0.055);
@@ -322,12 +345,16 @@ body:has(.cart-app) {
   background: linear-gradient(135deg, #d4515f, #c73f4d);
   border: 1px solid #c94f4f;
   border-radius: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 800;
   box-shadow: 0 10px 22px rgba(199, 63, 77, 0.22);
   cursor: pointer;
-  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 @media (hover: hover) {
@@ -346,9 +373,9 @@ body:has(.cart-app) {
   }
 
   .cart-header .back-button:hover {
-    background: #FFFFFF;
+    background: #ffffff;
     border-color: rgba(230, 57, 70, 0.2);
-    color: #E63946;
+    color: #e63946;
     box-shadow: 0 10px 22px rgba(33, 37, 41, 0.12);
     transform: translateY(-1px);
   }

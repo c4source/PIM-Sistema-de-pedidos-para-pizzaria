@@ -127,6 +127,4 @@ class ProdutoApi {
 
     throw Exception('Erro ao remover produto');
   }
-
-
 }

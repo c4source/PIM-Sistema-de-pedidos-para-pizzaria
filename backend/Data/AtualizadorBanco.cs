@@ -18,7 +18,8 @@ public static class AtualizadorBanco
             {
                 // Só importa cópias do schema conhecido, nunca tenta reconstruir tabelas incompatíveis.
                 var compativel = await db.Database.SqlQueryRaw<bool>("SELECT NOT EXISTS (SELECT 1 FROM (VALUES ('cliente','id_cliente'),('colaborador','senha_usuario'),('produto','codprod'),('produto','estoque'),('pedido','nome_cliente'),('pedido','telefone_cliente'),('pedido','rua_entrega'),('itempedido','preco_unitario'),('pagamento','status_pagamento')) AS esperado(tabela,coluna) WHERE NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name=esperado.tabela AND column_name=esperado.coluna)) AS \"Value\"").SingleAsync();
-                if (!compativel) throw new InvalidOperationException("Banco antigo incompatível com o schema deste projeto. Nenhuma tabela foi recriada. Confira a documentação de atualização.");
+                if (!compativel)
+                    throw new InvalidOperationException("Banco antigo incompatível com o schema deste projeto. Nenhuma tabela foi recriada. Confira a documentação de atualização.");
                 await using var tx = await db.Database.BeginTransactionAsync();
                 foreach (var nome in new[] { "002", "003", "004" })
                 {

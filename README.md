@@ -92,3 +92,13 @@ docs/10_instalacao_banco.md
 
 ATENÇÃO: não execute database/schema.sql em bancos
 que já possuem dados.
+
+
+## Sessão por inatividade
+A área administrativa web encerra a sessão após aproximadamente 30 minutos sem interação e avisa no último minuto. A atividade é compartilhada entre abas; requisições e atualizações automáticas não renovam o prazo. O botão Continuar conectado renova a atividade antes do vencimento. A API também verifica o prazo por sessão e rejeita tokens inativos, sem permitir reativá-los. O token mantém o limite absoluto de 8 horas, e o primeiro acesso continua com token restrito de 15 minutos. O mobile informa atividade por toque e redireciona para o login ao detectar expiração; o aviso antecipado está implementado no web. A migration SessaoPorInatividade cria sessao_acesso e é aplicada por Atualizar-Banco.ps1. Após atualizar, entre novamente para emitir um token com identificação de sessão.
+
+
+## Credenciais locais e proteção do Git
+Configure o banco e a chave JWT em backend/appsettings.Local.json (ignorado), usando backend/appsettings.Local.example.json como modelo. O appsettings.json compartilhado não contém segredos. Ative a verificação antes dos commits com `node scripts/instalar-verificacao-git.cjs`. Veja docs/12_seguranca_git.md para a instalação, rotação de senhas já expostas e limitações da verificação.
+
+Também é possível usar backend/appsettings.Local.json (ignorado pelo Git), conforme docs/12_seguranca_git.md. Em Development, User Secrets tem precedência sobre esse arquivo; variáveis de ambiente têm precedência sobre ambos.

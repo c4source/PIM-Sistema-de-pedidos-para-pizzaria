@@ -61,17 +61,22 @@ function formatPaymentStatus(status) {
 function renderConfirmationSummary() {
   var tipoEntregaLabel = pedidoAtual.tipoEntrega === 'entrega' ? 'Entrega' : 'Retirada';
   var codigoCurto = pedidoAtual.codigo.replace('PED-', '').slice(-6);
-  
+
   confirmationOrderCode.textContent = '#' + codigoCurto;
   confirmationOrderStatus.textContent = formatStatus(pedidoAtual.status);
   confirmationOrderType.textContent = tipoEntregaLabel;
-  confirmationPaymentMethod.textContent = formatPaymentMethod(pedidoAtual.pagamento && pedidoAtual.pagamento.formaPagamento);
-  confirmationPaymentStatus.textContent = formatPaymentStatus(pedidoAtual.pagamento && pedidoAtual.pagamento.statusPagamento);
+  confirmationPaymentMethod.textContent = formatPaymentMethod(
+    pedidoAtual.pagamento && pedidoAtual.pagamento.formaPagamento
+  );
+  confirmationPaymentStatus.textContent = formatPaymentStatus(
+    pedidoAtual.pagamento && pedidoAtual.pagamento.statusPagamento
+  );
   confirmationOrderTime.textContent = '30-45 min';
   confirmationSummaryList.innerHTML = '';
 
   if (!pedidoAtual.itens || pedidoAtual.itens.length === 0) {
-    confirmationSummaryList.innerHTML = '<li class="confirmation-summary-item"><span>Nenhum item no pedido</span><strong>x0</strong></li>';
+    confirmationSummaryList.innerHTML =
+      '<li class="confirmation-summary-item"><span>Nenhum item no pedido</span><strong>x0</strong></li>';
     confirmationTotalElement.innerHTML = '<span>Total do pedido</span><strong>R$ 0,00</strong>';
     return;
   }
@@ -90,7 +95,8 @@ function renderConfirmationSummary() {
     confirmationSummaryList.appendChild(listItem);
   });
 
-  confirmationTotalElement.innerHTML = '<span>Total do pedido</span><strong>' + formatPrice(pedidoAtual.total) + '</strong>';
+  confirmationTotalElement.innerHTML =
+    '<span>Total do pedido</span><strong>' + formatPrice(pedidoAtual.total) + '</strong>';
 }
 
 if (pedidoAtual) {

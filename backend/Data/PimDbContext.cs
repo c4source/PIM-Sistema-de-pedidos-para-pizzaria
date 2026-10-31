@@ -4,6 +4,7 @@ namespace Pim.Data;
 
 public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(options)
 {
+    public DbSet<SessaoAcesso> Sessoes => Set<SessaoAcesso>();
     public DbSet<Produto> Produtos => Set<Produto>();
     public DbSet<Pedido> Pedidos => Set<Pedido>();
     public DbSet<ItemPedido> ItensPedido => Set<ItemPedido>();
@@ -17,6 +18,8 @@ public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder b)
     {
+        b.Entity<SessaoAcesso>().HasOne<Colaborador>().WithMany().HasForeignKey(s => s.ColaboradorId).OnDelete(DeleteBehavior.Cascade);
+        b.Entity<SessaoAcesso>().HasIndex(s => s.ColaboradorId);
         b.Entity<Produto>().ToTable(t =>
         {
             t.HasCheckConstraint("ck_produto_preco", "preco > 0");

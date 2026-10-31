@@ -5,9 +5,7 @@ class TemaApp {
     return ThemeData(
       useMaterial3: true,
 
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFFB23A48),
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFB23A48)),
 
       inputDecorationTheme: const InputDecorationTheme(
         border: OutlineInputBorder(),

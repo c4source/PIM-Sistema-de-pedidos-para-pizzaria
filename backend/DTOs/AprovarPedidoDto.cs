@@ -2,6 +2,9 @@ namespace Pim.DTOs
 {
     public class AprovarPedidoDto
     {
-        public int? TempoEstimadoMinutos { get; set; }
+        public int? TempoEstimadoMinutos
+        {
+            get; set;
+        }
     }
 }

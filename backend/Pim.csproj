@@ -27,4 +27,7 @@
     <EmbeddedResource Include="../database/migrations/003_produtos_kit.sql" LogicalName="Pim.Sql.003.sql" />
     <EmbeddedResource Include="../database/migrations/004_baseline_entity_framework.sql" LogicalName="Pim.Sql.004.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.Local.json;appsettings.Development.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 </Project>

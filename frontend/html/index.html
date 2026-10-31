@@ -1,217 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cardápio | Madalena Pizzaria</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/cardapio.css">
-</head>
-<body>
-  <div class="menu-page" id="top">
-    <header class="sticky-header" aria-label="Header fixo do cardápio" aria-hidden="true" inert>
-      <div class="sticky-header__inner">
-        <a href="#top" class="sticky-header__brand" aria-label="Voltar ao topo do cardápio">
-          <img class="sticky-header__logo" src="../../img/logo512-transparente.png" alt="Madalena Pizzaria">
-        </a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cardápio | Madalena Pizzaria</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/cardapio.css" />
+  </head>
+  <body>
+    <div class="menu-page" id="top">
+      <header class="sticky-header" aria-label="Header fixo do cardápio" aria-hidden="true" inert>
+        <div class="sticky-header__inner">
+          <a href="#top" class="sticky-header__brand" aria-label="Voltar ao topo do cardápio">
+            <img
+              class="sticky-header__logo"
+              src="../../img/logo512-transparente.png"
+              alt="Madalena Pizzaria"
+            />
+          </a>
 
-        <form class="sticky-header__search" role="search">
-          <svg class="sticky-header__search-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="6"></circle>
-            <path d="m16 16 4 4"></path>
-          </svg>
-          <input class="sticky-header__input" id="sticky-search-input" type="search" placeholder="Busque por um produto." aria-label="Busque por um produto.">
-        </form>
-
-        <div class="sticky-header__menu-wrap">
-          <button class="sticky-header__menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sticky-menu-dropdown">
-            <span>Menu</span>
-            <svg class="sticky-header__menu-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 7h16"></path>
-              <path d="M4 12h16"></path>
-              <path d="M4 17h16"></path>
+          <form class="sticky-header__search" role="search">
+            <svg class="sticky-header__search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6"></circle>
+              <path d="m16 16 4 4"></path>
             </svg>
-          </button>
+            <input
+              class="sticky-header__input"
+              id="sticky-search-input"
+              type="search"
+              placeholder="Busque por um produto."
+              aria-label="Busque por um produto."
+            />
+          </form>
 
-          <nav class="sticky-header__dropdown" id="sticky-menu-dropdown" aria-label="Menu rápido do cardápio" aria-hidden="true">
-            <a class="sticky-header__dropdown-link" href="#top">Início</a>
-            <a class="sticky-header__dropdown-link" href="#product-section">Cardápio</a>
-            <a class="sticky-header__dropdown-link" href="#promotions-modal" data-modal-open="promotions-modal">Promoções</a>
-            <a class="sticky-header__dropdown-link" href="#contact-modal" data-modal-open="contact-modal">Contato</a>
-          </nav>
+          <div class="sticky-header__menu-wrap">
+            <button
+              class="sticky-header__menu"
+              type="button"
+              aria-label="Abrir menu"
+              aria-expanded="false"
+              aria-controls="sticky-menu-dropdown"
+            >
+              <span>Menu</span>
+              <svg class="sticky-header__menu-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 17h16"></path>
+              </svg>
+            </button>
+
+            <nav
+              class="sticky-header__dropdown"
+              id="sticky-menu-dropdown"
+              aria-label="Menu rápido do cardápio"
+              aria-hidden="true"
+            >
+              <a class="sticky-header__dropdown-link" href="#top">Início</a>
+              <a class="sticky-header__dropdown-link" href="#product-section">Cardápio</a>
+              <a
+                class="sticky-header__dropdown-link"
+                href="#promotions-modal"
+                data-modal-open="promotions-modal"
+                >Promoções</a
+              >
+              <a
+                class="sticky-header__dropdown-link"
+                href="#contact-modal"
+                data-modal-open="contact-modal"
+                >Contato</a
+              >
+            </nav>
+          </div>
+
+          <a href="./carrinho.html" class="sticky-header__cart" aria-label="Abrir sacola">
+            <svg class="sticky-header__cart-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6.2 6h15l-1.7 8.5a2 2 0 0 1-2 1.6H8.7a2 2 0 0 1-2-1.7L5.4 3.8H2.8"></path>
+              <circle cx="9" cy="20" r="1.4"></circle>
+              <circle cx="18" cy="20" r="1.4"></circle>
+            </svg>
+            <span class="cart-badge sticky-header__badge" id="sticky-cart-badge" hidden>0</span>
+          </a>
         </div>
+      </header>
 
-        <a href="./carrinho.html" class="sticky-header__cart" aria-label="Abrir sacola">
-          <svg class="sticky-header__cart-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6.2 6h15l-1.7 8.5a2 2 0 0 1-2 1.6H8.7a2 2 0 0 1-2-1.7L5.4 3.8H2.8"></path>
-            <circle cx="9" cy="20" r="1.4"></circle>
-            <circle cx="18" cy="20" r="1.4"></circle>
-          </svg>
-          <span class="cart-badge sticky-header__badge" id="sticky-cart-badge" hidden>0</span>
-        </a>
-      </div>
-    </header>
+      <section class="header-area app-header">
+        <div class="app-header-content">
+          <p class="app-meta" aria-label="Status, localização e telefone da pizzaria">
+            <span class="store-status store-status-open">
+              <span class="status-dot" aria-hidden="true"></span>
+              Aberto agora
+            </span>
+            <span class="app-meta-divider" aria-hidden="true">•</span>
+            <span class="app-location">Assis - SP</span>
+            <span class="app-meta-divider" aria-hidden="true">•</span>
+            <span class="app-phone">(18) 99999-6666</span>
+          </p>
 
-    <section class="header-area app-header">
-      <div class="app-header-content">
-        <p class="app-meta" aria-label="Status, localização e telefone da pizzaria">
-          <span class="store-status store-status-open">
-            <span class="status-dot" aria-hidden="true"></span>
-            Aberto agora
-          </span>
-          <span class="app-meta-divider" aria-hidden="true">•</span>
-          <span class="app-location">Assis - SP</span>
-          <span class="app-meta-divider" aria-hidden="true">•</span>
-          <span class="app-phone">(18) 99999-6666</span>
-        </p>
+          <div class="app-header-card-row">
+            <div class="app-header-main">
+              <div class="app-brand">
+                <img class="app-logo" src="/img/logo512-transparente.png" alt="Madalena Pizzaria" />
+                <div class="app-brand-text">
+                  <h1 class="app-title">Madalena Pizzaria</h1>
+                </div>
+              </div>
 
-        <div class="app-header-card-row">
-          <div class="app-header-main">
-            <div class="app-brand">
-              <img class="app-logo" src="/img/logo512-transparente.png" alt="Madalena Pizzaria">
-              <div class="app-brand-text">
-                <h1 class="app-title">Madalena Pizzaria</h1>
+              <div class="app-header-actions">
+                <nav class="app-nav" aria-label="Navegação principal">
+                  <a class="app-nav-link" href="#product-section">Cardápio</a>
+                  <a
+                    class="app-nav-link"
+                    href="#promotions-modal"
+                    data-modal-open="promotions-modal"
+                    >Promoções</a
+                  >
+                  <a class="app-nav-link" href="#contact-modal" data-modal-open="contact-modal"
+                    >Contato</a
+                  >
+                </nav>
+
+                <a class="cart-shortcut" href="./carrinho.html" aria-label="Abrir carrinho">
+                  <svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M6.2 6h15l-1.7 8.5a2 2 0 0 1-2 1.6H8.7a2 2 0 0 1-2-1.7L5.4 3.8H2.8"
+                    ></path>
+                    <circle cx="9" cy="20" r="1.4"></circle>
+                    <circle cx="18" cy="20" r="1.4"></circle>
+                  </svg>
+                  <span class="cart-badge" id="cart-badge" hidden>0</span>
+                </a>
               </div>
             </div>
-
-            <div class="app-header-actions">
-              <nav class="app-nav" aria-label="Navegação principal">
-                <a class="app-nav-link" href="#product-section">Cardápio</a>
-                <a class="app-nav-link" href="#promotions-modal" data-modal-open="promotions-modal">Promoções</a>
-                <a class="app-nav-link" href="#contact-modal" data-modal-open="contact-modal">Contato</a>
-              </nav>
-
-              <a class="cart-shortcut" href="./carrinho.html" aria-label="Abrir carrinho">
-                <svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6.2 6h15l-1.7 8.5a2 2 0 0 1-2 1.6H8.7a2 2 0 0 1-2-1.7L5.4 3.8H2.8"></path>
-                  <circle cx="9" cy="20" r="1.4"></circle>
-                  <circle cx="18" cy="20" r="1.4"></circle>
-                </svg>
-                <span class="cart-badge" id="cart-badge" hidden>0</span>
-              </a>
-            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <div class="app menu-app">
-      <main class="menu-screen">
-        <section class="filter-section" aria-label="Categorias do cardápio">
-          <h2 class="filter-title">Categorias</h2>
-          <div class="filter-list">
-            <button class="filter-chip" type="button" data-category="pizza">
-              <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 19 19 5c-4.2-1-7.8-.3-10.4 2.2S4.1 14.8 5 19Z"></path>
-                <path d="M8.5 15.5 6.7 17.3"></path>
-                <circle cx="10" cy="10" r="1"></circle>
-                <circle cx="14" cy="8" r="1"></circle>
-                <circle cx="13" cy="13" r="1"></circle>
-              </svg>
-              Pizza
-            </button>
-            <button class="filter-chip" type="button" data-category="doce">
-              <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M7 10h10l-1 8a2 2 0 0 1-2 1.7h-4A2 2 0 0 1 8 18l-1-8Z"></path>
-                <path d="M8.5 10c.4-2.9 1.8-4.7 3.5-4.7s3.1 1.8 3.5 4.7"></path>
-                <path d="M10 14h4"></path>
-              </svg>
-              Doce
-            </button>
-            <button class="filter-chip" type="button" data-category="bebida">
-              <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 5h8l-1 15H9L8 5Z"></path>
-                <path d="M9 10h6"></path>
-                <path d="M15.5 5 18 2.5"></path>
-              </svg>
-              Bebida
-            </button>
-            <button class="filter-chip" type="button" data-category="combo">
-              <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 8 12 4.5 19 8l-7 3.5L5 8Z"></path>
-                <path d="M5 8v7.5l7 4 7-4V8"></path>
-                <path d="M12 11.5v8"></path>
-              </svg>
-              Combo
-            </button>
-          </div>
-        </section>
-
-        <section class="menu-products-panel" aria-label="Produtos do cardápio">
-          <section class="search-section" aria-label="Busca visual do cardápio">
-            <div class="search-control">
-              <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="11" cy="11" r="6"></circle>
-                <path d="m16 16 4 4"></path>
-              </svg>
-              <input class="search-box" id="search-input" type="search" placeholder="Buscar produto..." aria-label="Buscar produto">
+      <div class="app menu-app">
+        <main class="menu-screen">
+          <section class="filter-section" aria-label="Categorias do cardápio">
+            <h2 class="filter-title">Categorias</h2>
+            <div class="filter-list">
+              <button class="filter-chip" type="button" data-category="pizza">
+                <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 19 19 5c-4.2-1-7.8-.3-10.4 2.2S4.1 14.8 5 19Z"></path>
+                  <path d="M8.5 15.5 6.7 17.3"></path>
+                  <circle cx="10" cy="10" r="1"></circle>
+                  <circle cx="14" cy="8" r="1"></circle>
+                  <circle cx="13" cy="13" r="1"></circle>
+                </svg>
+                Pizza
+              </button>
+              <button class="filter-chip" type="button" data-category="doce">
+                <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 10h10l-1 8a2 2 0 0 1-2 1.7h-4A2 2 0 0 1 8 18l-1-8Z"></path>
+                  <path d="M8.5 10c.4-2.9 1.8-4.7 3.5-4.7s3.1 1.8 3.5 4.7"></path>
+                  <path d="M10 14h4"></path>
+                </svg>
+                Doce
+              </button>
+              <button class="filter-chip" type="button" data-category="bebida">
+                <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5h8l-1 15H9L8 5Z"></path>
+                  <path d="M9 10h6"></path>
+                  <path d="M15.5 5 18 2.5"></path>
+                </svg>
+                Bebida
+              </button>
+              <button class="filter-chip" type="button" data-category="combo">
+                <svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 8 12 4.5 19 8l-7 3.5L5 8Z"></path>
+                  <path d="M5 8v7.5l7 4 7-4V8"></path>
+                  <path d="M12 11.5v8"></path>
+                </svg>
+                Combo
+              </button>
             </div>
           </section>
 
-          <section class="product-section" id="product-section" aria-label="Lista de produtos"></section>
-        </section>
-      </main>
+          <section class="menu-products-panel" aria-label="Produtos do cardápio">
+            <section class="search-section" aria-label="Busca visual do cardápio">
+              <div class="search-control">
+                <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6"></circle>
+                  <path d="m16 16 4 4"></path>
+                </svg>
+                <input
+                  class="search-box"
+                  id="search-input"
+                  type="search"
+                  placeholder="Buscar produto..."
+                  aria-label="Buscar produto"
+                />
+              </div>
+            </section>
+
+            <section
+              class="product-section"
+              id="product-section"
+              aria-label="Lista de produtos"
+            ></section>
+          </section>
+        </main>
+      </div>
+
+      <footer class="menu-footer">
+        <p>© 2026 Madalena Pizzaria — Projeto acadêmico PIM</p>
+        <a class="menu-footer__admin-link" href="./admin-login.html">Área administrativa</a>
+      </footer>
     </div>
 
-    <footer class="menu-footer">
-      <p>© 2026 Madalena Pizzaria — Projeto acadêmico PIM</p>
-      <a class="menu-footer__admin-link" href="./admin-login.html">Área administrativa</a>
-    </footer>
-  </div>
+    <div class="modal-overlay" id="promotions-modal" aria-hidden="true">
+      <section
+        class="menu-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="promotions-modal-title"
+        aria-describedby="promotions-modal-description"
+      >
+        <button class="menu-modal__close" type="button" aria-label="Fechar modal" data-modal-close>
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="menu-modal__content">
+          <p class="menu-modal__eyebrow">Ofertas da casa</p>
+          <h2 id="promotions-modal-title">Promoções</h2>
+          <p id="promotions-modal-description">Confira ofertas especiais da Madalena Pizzaria.</p>
 
-  <div class="modal-overlay" id="promotions-modal" aria-hidden="true">
-    <section class="menu-modal" role="dialog" aria-modal="true" aria-labelledby="promotions-modal-title" aria-describedby="promotions-modal-description">
-      <button class="menu-modal__close" type="button" aria-label="Fechar modal" data-modal-close>
-        <span aria-hidden="true">×</span>
-      </button>
-      <div class="menu-modal__content">
-        <p class="menu-modal__eyebrow">Ofertas da casa</p>
-        <h2 id="promotions-modal-title">Promoções</h2>
-        <p id="promotions-modal-description">Confira ofertas especiais da Madalena Pizzaria.</p>
-
-        <div class="promo-modal-grid">
-          <article class="promo-modal-card">
-            <h3>Combo Família</h3>
-            <p>Pizza grande + pizza broto doce + refrigerante 2L.</p>
-          </article>
-          <article class="promo-modal-card">
-            <h3>Pizza + Bebida</h3>
-            <p>Escolha uma pizza salgada e combine com uma bebida gelada.</p>
-          </article>
-          <article class="promo-modal-card">
-            <h3>Combo Individual</h3>
-            <p>Pizza broto salgada + refrigerante 600ml.</p>
-          </article>
+          <div class="promo-modal-grid">
+            <article class="promo-modal-card">
+              <h3>Combo Família</h3>
+              <p>Pizza grande + pizza broto doce + refrigerante 2L.</p>
+            </article>
+            <article class="promo-modal-card">
+              <h3>Pizza + Bebida</h3>
+              <p>Escolha uma pizza salgada e combine com uma bebida gelada.</p>
+            </article>
+            <article class="promo-modal-card">
+              <h3>Combo Individual</h3>
+              <p>Pizza broto salgada + refrigerante 600ml.</p>
+            </article>
+          </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
 
-  <div class="modal-overlay" id="contact-modal" aria-hidden="true">
-    <section class="menu-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-describedby="contact-modal-description">
-      <button class="menu-modal__close" type="button" aria-label="Fechar modal" data-modal-close>
-        <span aria-hidden="true">×</span>
-      </button>
-      <div class="menu-modal__content">
-        <p class="menu-modal__eyebrow">Atendimento</p>
-        <h2 id="contact-modal-title">Contato</h2>
-        <p id="contact-modal-description">Fale com a Madalena Pizzaria.</p>
+    <div class="modal-overlay" id="contact-modal" aria-hidden="true">
+      <section
+        class="menu-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-modal-title"
+        aria-describedby="contact-modal-description"
+      >
+        <button class="menu-modal__close" type="button" aria-label="Fechar modal" data-modal-close>
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="menu-modal__content">
+          <p class="menu-modal__eyebrow">Atendimento</p>
+          <h2 id="contact-modal-title">Contato</h2>
+          <p id="contact-modal-description">Fale com a Madalena Pizzaria.</p>
 
-        <ul class="contact-modal-list">
-          <li><strong>Endereço:</strong> Rua das Oliveiras, 123 — Centro, Assis - SP</li>
-          <li><strong>Telefone:</strong> (18) 99999-6666</li>
-          <li><strong>Instagram:</strong> @madalenapizzaria</li>
-          <li><strong>Horário:</strong> Todos os dias, das 18h às 23h</li>
-        </ul>
+          <ul class="contact-modal-list">
+            <li><strong>Endereço:</strong> Rua das Oliveiras, 123 — Centro, Assis - SP</li>
+            <li><strong>Telefone:</strong> (18) 99999-6666</li>
+            <li><strong>Instagram:</strong> @madalenapizzaria</li>
+            <li><strong>Horário:</strong> Todos os dias, das 18h às 23h</li>
+          </ul>
 
-        <div class="map-placeholder" aria-hidden="true">
-          <span>Madalena Pizzaria</span>
+          <div class="map-placeholder" aria-hidden="true">
+            <span>Madalena Pizzaria</span>
+          </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
 
-  <script src="../js/api.js"></script>
-  <script src="../js/app.js"></script>
-</body>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+  </body>
 </html>

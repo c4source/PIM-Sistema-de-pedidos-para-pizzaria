@@ -1,93 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carrinho | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/carrinho.css">
-</head>
-<body>
-  <div class="app cart-app">
-    <header class="cart-header">
-      <button class="back-button" id="cart-back-button" type="button" aria-label="Voltar">
-        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15 18 9 12l6-6"></path>
-        </svg>
-      </button>
-      <h1 class="cart-title">Carrinho</h1>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrinho | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/carrinho.css" />
+  </head>
+  <body>
+    <div class="app cart-app">
+      <header class="cart-header">
+        <button class="back-button" id="cart-back-button" type="button" aria-label="Voltar">
+          <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 18 9 12l6-6"></path>
+          </svg>
+        </button>
+        <h1 class="cart-title">Carrinho</h1>
+      </header>
 
-    <main class="cart-main">
-      <section class="cart-list" id="cart-list" aria-label="Itens do carrinho">
-        <article class="cart-item" data-item data-price="30.00">
-          <div class="cart-item-top">
-            <div class="cart-item-info">
-              <div class="cart-item-image cart-item-image-placeholder" aria-hidden="true">IMG</div>
-              <div class="cart-item-text">
-                <h2 class="cart-item-name">Pizza Calabresa</h2>
-                <p class="cart-item-price">R$ 30,00</p>
+      <main class="cart-main">
+        <section class="cart-list" id="cart-list" aria-label="Itens do carrinho">
+          <article class="cart-item" data-item data-price="30.00">
+            <div class="cart-item-top">
+              <div class="cart-item-info">
+                <div class="cart-item-image cart-item-image-placeholder" aria-hidden="true">
+                  IMG
+                </div>
+                <div class="cart-item-text">
+                  <h2 class="cart-item-name">Pizza Calabresa</h2>
+                  <p class="cart-item-price">R$ 30,00</p>
+                </div>
+              </div>
+              <button class="remove-button" type="button" data-action="remove">Remover</button>
+            </div>
+
+            <div class="cart-item-actions">
+              <div class="quantity-control">
+                <button
+                  class="quantity-button"
+                  type="button"
+                  data-action="decrease"
+                  aria-label="Diminuir quantidade"
+                >
+                  -
+                </button>
+                <span class="quantity-value" data-quantity>1</span>
+                <button
+                  class="quantity-button"
+                  type="button"
+                  data-action="increase"
+                  aria-label="Aumentar quantidade"
+                >
+                  +
+                </button>
               </div>
             </div>
-            <button class="remove-button" type="button" data-action="remove">Remover</button>
-          </div>
+          </article>
 
-          <div class="cart-item-actions">
-            <div class="quantity-control">
-              <button class="quantity-button" type="button" data-action="decrease" aria-label="Diminuir quantidade">-</button>
-              <span class="quantity-value" data-quantity>1</span>
-              <button class="quantity-button" type="button" data-action="increase" aria-label="Aumentar quantidade">+</button>
+          <article class="cart-item" data-item data-price="35.00">
+            <div class="cart-item-top">
+              <div class="cart-item-info">
+                <div class="cart-item-image cart-item-image-placeholder" aria-hidden="true">
+                  IMG
+                </div>
+                <div class="cart-item-text">
+                  <h2 class="cart-item-name">Pizza Frango</h2>
+                  <p class="cart-item-price">R$ 35,00</p>
+                </div>
+              </div>
+              <button class="remove-button" type="button" data-action="remove">Remover</button>
             </div>
-          </div>
-        </article>
 
-        <article class="cart-item" data-item data-price="35.00">
-          <div class="cart-item-top">
-            <div class="cart-item-info">
-              <div class="cart-item-image cart-item-image-placeholder" aria-hidden="true">IMG</div>
-              <div class="cart-item-text">
-                <h2 class="cart-item-name">Pizza Frango</h2>
-                <p class="cart-item-price">R$ 35,00</p>
+            <div class="cart-item-actions">
+              <div class="quantity-control">
+                <button
+                  class="quantity-button"
+                  type="button"
+                  data-action="decrease"
+                  aria-label="Diminuir quantidade"
+                >
+                  -
+                </button>
+                <span class="quantity-value" data-quantity>2</span>
+                <button
+                  class="quantity-button"
+                  type="button"
+                  data-action="increase"
+                  aria-label="Aumentar quantidade"
+                >
+                  +
+                </button>
               </div>
             </div>
-            <button class="remove-button" type="button" data-action="remove">Remover</button>
+          </article>
+        </section>
+
+        <section class="cart-total-section" id="cart-total-section" aria-label="Total do pedido">
+          <div class="cart-total-row">
+            <p class="cart-total-label">Total do pedido</p>
+            <p class="cart-total-text"><span id="cart-total">R$ 100,00</span></p>
           </div>
-
-          <div class="cart-item-actions">
-            <div class="quantity-control">
-              <button class="quantity-button" type="button" data-action="decrease" aria-label="Diminuir quantidade">-</button>
-              <span class="quantity-value" data-quantity>2</span>
-              <button class="quantity-button" type="button" data-action="increase" aria-label="Aumentar quantidade">+</button>
-            </div>
+          <div class="cart-summary" id="cart-summary" aria-label="Resumo do pedido">
+            <p class="cart-summary-item" id="cart-summary-items">🛍️ 0 itens no pedido</p>
+            <p class="cart-summary-item">🕒 Entrega estimada: 35-45 min</p>
+            <p class="cart-summary-item">🚚 Taxa calculada no checkout</p>
           </div>
-        </article>
-      </section>
+        </section>
 
-      <section class="cart-total-section" id="cart-total-section" aria-label="Total do pedido">
-        <div class="cart-total-row">
-          <p class="cart-total-label">Total do pedido</p>
-          <p class="cart-total-text"><span id="cart-total">R$ 100,00</span></p>
-        </div>
-        <div class="cart-summary" id="cart-summary" aria-label="Resumo do pedido">
-          <p class="cart-summary-item" id="cart-summary-items">🛍️ 0 itens no pedido</p>
-          <p class="cart-summary-item">🕒 Entrega estimada: 35-45 min</p>
-          <p class="cart-summary-item">🚚 Taxa calculada no checkout</p>
-        </div>
-      </section>
+        <section class="cart-footer" id="cart-footer" aria-label="Ação principal">
+          <button class="secondary-button" id="continue-shopping-button" type="button">
+            Continuar comprando
+          </button>
+          <button class="primary-button" id="cart-checkout-button" type="button">
+            Finalizar Pedido
+          </button>
+        </section>
 
-      <section class="cart-footer" id="cart-footer" aria-label="Ação principal">
-        <button class="secondary-button" id="continue-shopping-button" type="button">Continuar comprando</button>
-        <button class="primary-button" id="cart-checkout-button" type="button">Finalizar Pedido</button>
-      </section>
+        <section class="empty-cart" id="empty-cart" aria-label="Carrinho vazio" hidden>
+          <h2 class="empty-cart-title">Seu carrinho está vazio</h2>
+          <p class="empty-cart-text">Que tal escolher algo delicioso?</p>
+          <button class="primary-button" id="empty-cart-button" type="button">
+            Ir para o Cardápio
+          </button>
+        </section>
+      </main>
+    </div>
 
-      <section class="empty-cart" id="empty-cart" aria-label="Carrinho vazio" hidden>
-        <h2 class="empty-cart-title">Seu carrinho está vazio</h2>
-        <p class="empty-cart-text">Que tal escolher algo delicioso?</p>
-        <button class="primary-button" id="empty-cart-button" type="button">Ir para o Cardápio</button>
-      </section>
-    </main>
-  </div>
-
-  <script src="../js/carrinho.js"></script>
-</body>
+    <script src="../js/carrinho.js"></script>
+  </body>
 </html>

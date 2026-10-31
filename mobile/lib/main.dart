@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'ui/telas/estoque_screen.dart';
 import 'ui/telas/produtos_screen.dart';
 import 'core/rotas.dart';
@@ -6,6 +7,8 @@ import 'core/tema.dart';
 import 'data/repositories/auth_repository.dart';
 import 'ui/telas/home_screen.dart';
 import 'ui/telas/login_screen.dart';
+
+final sessaoNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +27,20 @@ class EstoqueApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: sessaoNavigatorKey,
+      builder: (context, child) => Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) async {
+          final valida = await AuthRepository().registrarAtividade();
+          if (!valida) {
+            sessaoNavigatorKey.currentState?.pushNamedAndRemoveUntil(
+              Rotas.login,
+              (route) => false,
+            );
+          }
+        },
+        child: child ?? const SizedBox.shrink(),
+      ),
       debugShowCheckedModeBanner: false,
       title: 'Pizzaria - Administração',
       theme: TemaApp.tema,

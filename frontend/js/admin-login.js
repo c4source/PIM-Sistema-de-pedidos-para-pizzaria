@@ -52,10 +52,10 @@ async function validateAdminLogin() {
       return false;
     }
 
-    if(data.trocaSenhaObrigatoria) {
+    if (data.trocaSenhaObrigatoria) {
       clearAdminSession();
-      sessionStorage.setItem('trocaSenhaToken',data.token);
-      window.location.href='./admin-trocar-senha.html';
+      sessionStorage.setItem('trocaSenhaToken', data.token);
+      window.location.href = './admin-trocar-senha.html';
       return true;
     }
     salvarSessaoAdmin(data);
@@ -87,3 +87,9 @@ adminPasswordInput.addEventListener('input', clearAdminLoginError);
 adminBackButton.addEventListener('click', function () {
   window.location.href = './index.html';
 });
+
+if (
+  typeof URLSearchParams !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('motivo') === 'inatividade'
+)
+  showAdminLoginError('Sua sessão foi encerrada por inatividade. Entre novamente.');

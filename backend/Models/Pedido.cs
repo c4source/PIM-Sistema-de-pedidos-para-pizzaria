@@ -9,11 +9,17 @@ namespace Pim.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id_pedido")]
-        public int Id { get; set; }
+        public int Id
+        {
+            get; set;
+        }
 
         [Column("codigo")]
         [StringLength(50)]
-        public string? Codigo { get; set; }
+        public string? Codigo
+        {
+            get; set;
+        }
 
         [Column("nome_cliente")]
         [Required, StringLength(100)]
@@ -29,22 +35,37 @@ namespace Pim.Models
 
         [Column("rua_entrega")]
         [StringLength(150)]
-        public string? RuaEntrega { get; set; }
+        public string? RuaEntrega
+        {
+            get; set;
+        }
 
         [Column("numero_entrega")]
         [StringLength(20)]
-        public string? NumeroEntrega { get; set; }
+        public string? NumeroEntrega
+        {
+            get; set;
+        }
 
         [Column("bairro_entrega")]
         [StringLength(100)]
-        public string? BairroEntrega { get; set; }
+        public string? BairroEntrega
+        {
+            get; set;
+        }
 
         [Column("complemento_entrega")]
         [StringLength(150)]
-        public string? ComplementoEntrega { get; set; }
+        public string? ComplementoEntrega
+        {
+            get; set;
+        }
 
         [Column("observacoes")]
-        public string? Observacoes { get; set; }
+        public string? Observacoes
+        {
+            get; set;
+        }
 
         [Column("data_hora_pedido")]
         public DateTime DataHora { get; set; } = DateTime.Now;
@@ -54,9 +75,15 @@ namespace Pim.Models
         public string Status { get; set; } = PedidoStatus.Recebido;
 
         [Column("valor_total")]
-        public decimal ValorTotal { get; set; }
+        public decimal ValorTotal
+        {
+            get; set;
+        }
 
         public List<ItemPedido> Itens { get; set; } = new();
-        public Pagamento? Pagamento { get; set; }
+        public Pagamento? Pagamento
+        {
+            get; set;
+        }
     }
 }

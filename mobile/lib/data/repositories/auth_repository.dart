@@ -5,6 +5,25 @@ import 'dart:convert';
 import '../api/auth_api.dart';
 
 class AuthRepository {
+  static DateTime? _ultimaAtividade;
+  Future<bool> registrarAtividade() async {
+    final token = await obterToken();
+    if (token == null) return true;
+    final agora = DateTime.now();
+    if (_ultimaAtividade != null &&
+        agora.difference(_ultimaAtividade!).inSeconds < 30) {
+      return true;
+    }
+    _ultimaAtividade = agora;
+    try {
+      final valida = await _authApi.registrarAtividade(token);
+      if (!valida) await logout();
+      return valida;
+    } catch (_) {
+      return true;
+    }
+  }
+
   final AuthApi _authApi = AuthApi();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();

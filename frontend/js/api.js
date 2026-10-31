@@ -8,7 +8,11 @@ function adaptarProdutoApi(produto) {
     descricao: produto.descricao || '',
     categoria: produto.categoria || '',
     imagem: produto.imagemUrl || produto.imagem || '',
-    disponivel: Number(produto.estoque) > 0 && (!produto.status || produto.status.toLowerCase() === 'disponivel' || produto.status.toLowerCase() === 'disponível')
+    disponivel:
+      Number(produto.estoque) > 0 &&
+      (!produto.status ||
+        produto.status.toLowerCase() === 'disponivel' ||
+        produto.status.toLowerCase() === 'disponível')
   };
 }
 
@@ -43,8 +47,22 @@ async function finalizarPedido(pedido) {
   });
 
   if (!response.ok) {
-    var errorMessage = await response.text();
-    throw new Error(errorMessage || 'Nao foi possivel finalizar o pedido.');
+    var errorMessage = 'Não foi possível finalizar o pedido. Tente novamente em instantes.';
+    if (response.status >= 400 && response.status < 500) {
+      var text = await response.text();
+      try {
+        var problem = JSON.parse(text);
+        errorMessage =
+          typeof problem === 'string'
+            ? problem
+            : problem.errors
+              ? Object.values(problem.errors).flat().join(' ')
+              : problem.detail || problem.title || errorMessage;
+      } catch (_) {
+        errorMessage = text || errorMessage;
+      }
+    }
+    throw new Error(errorMessage);
   }
 
   return response.json();

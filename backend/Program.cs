@@ -17,6 +17,18 @@ namespace Pim
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // Segredos por máquina; variáveis de ambiente mantêm precedência.
+            builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
+                ;
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddUserSecrets<Program>(optional: true);
+            builder.Configuration.AddEnvironmentVariables().AddCommandLine(args);
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            var jwtKey = builder.Configuration["Jwt:Key"];
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new InvalidOperationException("Configure ConnectionStrings:DefaultConnection por User Secrets, appsettings.Local.json ou variável de ambiente.");
+            if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32 || jwtKey.StartsWith("GERE_"))
+                throw new InvalidOperationException("Configure uma chave JWT aleatória com pelo menos 32 bytes no appsettings.Local.json ou por variável de ambiente.");
 
             // 1. CONFIGURAÇÃO DOS CONTROLLERS
             builder.Services.AddControllers()
@@ -86,13 +98,29 @@ namespace Pim
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Events = new JwtBearerEvents {
-                        OnTokenValidated = async context => {
-                            var principal=context.Principal!;
-                            if(!int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier),out var id) || !int.TryParse(principal.FindFirstValue("versao"),out var versao)){context.Fail("Sessão inválida.");return;}
-                            var repo=context.HttpContext.RequestServices.GetRequiredService<ColaboradorRepository>();
-                            var u=await repo.BuscarPorIdAsync(id);
-                            if(u==null || u.VersaoSessao!=versao || principal.FindFirstValue(ClaimTypes.Role)!=(u.TrocarSenha?"TrocaSenha":u.Perfil))context.Fail("Sessão revogada.");
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async context =>
+                        {
+                            var principal = context.Principal!;
+                            if (!int.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var id) || !int.TryParse(principal.FindFirstValue("versao"), out var versao))
+                            {
+                                context.Fail("Sessão inválida.");
+                                return;
+                            }
+                            var repo = context.HttpContext.RequestServices.GetRequiredService<ColaboradorRepository>();
+                            var u = await repo.BuscarPorIdAsync(id);
+                            if (u == null || u.VersaoSessao != versao || principal.FindFirstValue(ClaimTypes.Role) != (u.TrocarSenha ? "TrocaSenha" : u.Perfil))
+                            {
+                                context.Fail("Sessão revogada.");
+                                return;
+                            }
+                            if (!u.TrocarSenha)
+                            {
+                                var db = context.HttpContext.RequestServices.GetRequiredService<PimDbContext>();
+                                if (!Guid.TryParse(principal.FindFirstValue("sid"), out var sid) || !await db.Sessoes.AnyAsync(s => s.Id == sid && s.ColaboradorId == id && s.UltimaAtividade > DateTime.UtcNow.AddMinutes(-30)))
+                                    context.Fail("Sessão encerrada por inatividade.");
+                            }
                         }
                     };
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -104,7 +132,7 @@ namespace Pim
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "ChaveSegurancaPeloMenos32Caracteres"))
+                            Encoding.UTF8.GetBytes(jwtKey))
                     };
                 });
 

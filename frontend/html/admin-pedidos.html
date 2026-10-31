@@ -1,48 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedidos | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/admin.css">
-</head>
-<body>
-  <div class="app admin-orders-app">
-    <header class="admin-orders-header">
-      <div class="admin-orders-heading">
-        <h1 class="admin-orders-title">Pedidos</h1>
-        <p class="admin-orders-subtitle">Acompanhe e atualize os pedidos dos clientes</p>
-      </div>
-
-      <div class="admin-orders-header-actions">
-        <button class="secondary-button admin-orders-secondary-button" id="admin-orders-back-dashboard" type="button">Voltar ao painel</button>
-        <button class="primary-button admin-orders-logout-button" id="admin-orders-logout" type="button">Sair</button>
-      </div>
-    </header>
-
-    <main class="admin-orders-main">
-      <section class="admin-orders-filter-section" aria-label="Filtros de pedidos">
-        <button class="admin-orders-filter-chip is-active" type="button" data-status="todos">Todos</button>
-        <button class="admin-orders-filter-chip" type="button" data-status="recebido">Recebidos</button>
-        <button class="admin-orders-filter-chip" type="button" data-status="em_preparo">Em preparo</button>
-        <button class="admin-orders-filter-chip" type="button" data-status="pronto">Prontos</button>
-        <button class="admin-orders-filter-chip" type="button" data-status="finalizado">Finalizados</button>
-        <button class="admin-orders-filter-chip" type="button" data-status="cancelado">Cancelados</button>
-      </section>
-
-      <section class="admin-orders-list-section" aria-label="Lista de pedidos">
-        <div class="admin-orders-list" id="admin-orders-list"></div>
-
-        <div class="admin-orders-empty-state" id="admin-orders-empty">
-          <h2 class="admin-orders-empty-title">Nenhum pedido encontrado.</h2>
-          <p class="admin-orders-empty-text">Quando um cliente finalizar um pedido, ele aparecerá aqui.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedidos | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <div class="app admin-orders-app">
+      <header class="admin-orders-header">
+        <div class="admin-orders-heading">
+          <h1 class="admin-orders-title">Pedidos</h1>
+          <p class="admin-orders-subtitle">Acompanhe e atualize os pedidos dos clientes</p>
         </div>
-      </section>
-    </main>
-  </div>
 
-  <script src="../js/admin-api.js"></script>
-  <script src="../js/admin-pedidos.js"></script>
-</body>
+        <div class="admin-orders-header-actions">
+          <button
+            class="secondary-button admin-orders-secondary-button"
+            id="admin-orders-back-dashboard"
+            type="button"
+          >
+            Voltar ao painel
+          </button>
+          <button
+            class="primary-button admin-orders-logout-button"
+            id="admin-orders-logout"
+            type="button"
+          >
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <main class="admin-orders-main">
+        <section class="admin-orders-filter-section" aria-label="Filtros de pedidos">
+          <button class="admin-orders-filter-chip is-active" type="button" data-status="todos">
+            Todos
+          </button>
+          <button class="admin-orders-filter-chip" type="button" data-status="recebido">
+            Recebidos
+          </button>
+          <button class="admin-orders-filter-chip" type="button" data-status="em_preparo">
+            Em preparo
+          </button>
+          <button class="admin-orders-filter-chip" type="button" data-status="pronto">
+            Prontos
+          </button>
+          <button class="admin-orders-filter-chip" type="button" data-status="finalizado">
+            Finalizados
+          </button>
+          <button class="admin-orders-filter-chip" type="button" data-status="cancelado">
+            Cancelados
+          </button>
+        </section>
+
+        <section class="admin-orders-list-section" aria-label="Lista de pedidos">
+          <div class="admin-orders-list" id="admin-orders-list"></div>
+
+          <div class="admin-orders-empty-state" id="admin-orders-empty">
+            <h2 class="admin-orders-empty-title">Nenhum pedido encontrado.</h2>
+            <p class="admin-orders-empty-text">
+              Quando um cliente finalizar um pedido, ele aparecerá aqui.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/admin-api.js"></script>
+    <script src="../js/admin-session.js"></script>
+    <script src="../js/admin-pedidos.js"></script>
+  </body>
 </html>
