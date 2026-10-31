@@ -80,7 +80,7 @@ Se o banco já possui produtos, usuários, pedidos ou movimentações:
 3. Selecione **Format: Custom** e um arquivo `.dump` fora da pasta do repositório.
 4. Aguarde a mensagem **Process completed** e confirme que o arquivo foi criado.
 
-**Não execute `database/schema.sql` sobre um banco com dados.** Esse script pode recriar tabelas e causar perda de informações.
+O `database/schema.sql` atual não apaga tabelas: ele contém as migrations incrementais do EF. Para bancos antigos sem histórico EF, use `Atualizar-Banco.ps1`, que reconhece a baseline antes de atualizar. Faça backup antes de atualizar um banco de uso.
 
 ## 4. Atualizar ou criar as tabelas
 
@@ -123,6 +123,7 @@ Portanto, também é possível atualizar o banco pela raiz do projeto executando
 
 ```powershell
 .\Atualizar-Banco.ps1
+```
 
 ## 5. Conferir a atualização no pgAdmin
 
@@ -147,7 +148,7 @@ SELECT
     (SELECT COUNT(*) FROM movimentacao_estoque) AS movimentacoes;
 ```
 
-Na integração realizada em **20/10/2026**, o banco local `pim_3` terminou com **5 migrations e 6 movimentações preservadas**. Em outros bancos, a quantidade de movimentações pode ser diferente.
+Na versão de 31/10/2026, são **8 migrations**, incluindo sessões, UUID de sincronização, motivos/contagens, estoque mínimo e suspensão de acessos. A quantidade de movimentações depende dos dados de cada instalação.
 
 ### Migration de movimentação de estoque
 
@@ -158,7 +159,7 @@ A migration `AdicionaMovimentacaoEstoque` registra essa tabela no modelo do EF C
 - `IF NOT EXISTS` **não valida uma estrutura incompatível**. Se o banco não tiver o schema esperado, interrompa o processo e investigue.
 - A reversão automática (`Down`) dessa migration foi bloqueada para evitar apagar um histórico preexistente.
 
-A movimentação de estoque continua usando **Npgsql diretamente no repositório**; o EF Core foi integrado para mapear sua entidade e gerenciar sua criação por migration.
+A movimentação de estoque utiliza **Entity Framework Core**. O saldo e o histórico são gravados na mesma transação; o índice único de `operacao_id` permite reenviar operações sem duplicar lançamentos.
 
 ## 6. Iniciar e testar a API
 
@@ -178,7 +179,7 @@ Abra o Swagger em `http://localhost:5162/swagger` (ajuste a porta se necessário
 3. `GET /api/Colaboradores`: exige um JWT com perfil `Administrador`.
 4. `POST /api/MovimentacaoEstoque`: aceita `Administrador` e `Colaborador`, conforme as regras atuais do projeto.
 
-Um banco novo não recebe automaticamente usuários e produtos de demonstração. O arquivo `database/seed.sql` é **opcional e deve ser aplicado somente em uma instalação acadêmica nova**, após conferir seu conteúdo; **não o execute em bancos existentes**.
+Um banco novo não recebe dados automaticamente. O seed demonstrativo é opcional: consulte a seção abaixo para instalar pelos scripts e conhecer o acesso inicial.
 
 ## 7. Entity Framework: ferramentas e novas migrations
 
@@ -211,3 +212,43 @@ Para futuras mudanças de modelo, a equipe deve revisar toda migration gerada an
 ## Alternativa: arquivo local ignorado
 
 Também é possível copiar backend/appsettings.Local.example.json para backend/appsettings.Local.json e preencher a conexão e uma chave JWT aleatória. Esse arquivo não deve ser commitado nem publicado. Em Development, User Secrets tem precedência sobre esse arquivo. Variáveis de ambiente têm precedência sobre ambos. Para detalhes da proteção antes dos commits, consulte 12_seguranca_git.md.
+
+## 9. Criar o banco diretamente pelos scripts SQL
+
+Este caminho não exige executar a API nem as ferramentas EF para criar as tabelas. PostgreSQL precisa estar instalado e em execução.
+
+1. Crie um banco vazio no pgAdmin, por exemplo `pim`, e conecte o Query Tool a ele.
+2. Abra **database/schema.sql** e execute o arquivo completo. Ele cria a estrutura atual e registra as oito migrations em `__EFMigrationsHistory`.
+3. Opcionalmente, abra **database/seed.sql** e execute o arquivo completo no mesmo banco. O seed instala os dados acadêmicos; a estrutura sem seed também é válida.
+4. Configure a conexão desse banco e a chave JWT no backend conforme a seção 2. Inicie a API normalmente.
+
+Alternativamente, na raiz do repositório, com psql no PATH:
+
+```powershell
+psql -X -h localhost -U postgres -d pim -v ON_ERROR_STOP=1 -f database/schema.sql
+psql -X -h localhost -U postgres -d pim -v ON_ERROR_STOP=1 -f database/seed.sql
+```
+
+A senha do PostgreSQL é solicitada pelo psql quando necessário. Não coloque a senha no comando nem no Git. O schema pressupõe a instalação no schema PostgreSQL `public`.
+
+### Reexecução e atualização
+
+- **Schema:** pode ser executado novamente. Aplica apenas migrations ainda não registradas, sem apagar registros. Em banco legado sem baseline EF, interrompe a execução antes de criar ou apagar tabelas e orienta usar Atualizar-Banco.ps1.
+- **Seed:** a primeira execução exige produtos e pedidos vazios. Uma transação inclui produtos, kits, pedidos, pagamentos e baixas. A tabela `pim_seed_historico` registra a versão; repetir o mesmo seed não altera senhas, saldos, preços, nomes nem pedidos, mesmo depois de editar os dados na aplicação.
+- **Banco já em uso sem marca do seed:** o seed recusa inserir dados demonstrativos. Use os cadastros da aplicação; não apague registros para tentar popular novamente.
+- **EF após instalação SQL:** Atualizar-Banco.ps1 reconhece o histórico preenchido pelo schema. Não é necessário executar manualmente as antigas migrations SQL 002/003/004.
+- O arquivo `backend/Data/schema-ecommerce-restaurante.sql` é histórico, com sintaxe MySQL, e não faz parte desta instalação.
+
+### Dados de demonstração e primeiro acesso
+
+O seed cria **25 produtos**, incluindo duas pizzas broto e **3 kits com 7 vínculos de componentes**. Kits não têm estoque próprio: a capacidade resulta dos componentes. Também cria dois pedidos, três itens, pagamentos e respectivas baixas, com o estoque já descontado para permitir cancelamento coerente. IDs são obtidos do banco; não dependem de sequências começando em 1.
+
+Se não houver administrador, é criado **admin@pim.com**, com senha demonstrativa **123456** e **troca obrigatória no primeiro acesso**. Esse token inicial permite somente trocar a senha. Se já existir um administrador, nenhum acesso demonstrativo adicional é criado e suas credenciais são preservadas. Os testes de API que precisam de sessão normal devem receber as credenciais definitivas por PIM_TEST_ADMIN_EMAIL e PIM_TEST_ADMIN_PASSWORD.
+
+O seed usa a extensão PostgreSQL `pgcrypto` para gerar o hash BCrypt. O usuário que executa o seed precisa de permissão para instalar essa extensão, ou ela deve ter sido instalada pelo administrador do PostgreSQL.
+
+### Manutenção e verificação
+
+O corpo de schema.sql é gerado por `dotnet ef migrations script 0 --idempotent --project backend/Pim.csproj`. Ao incluir novas migrations, regenere o corpo e mantenha a proteção inicial de banco legado e a visão de compatibilidade final. Não registre uma migration no histórico sem executar suas alterações.
+
+O teste de integração `tests/banco-scripts.test.ps1` cria e remove bancos temporários para conferir instalação SQL, reexecução, preservação de alterações, kits, IDs não sequenciais, recusa de seed em banco usado e compatibilidade com o atualizador EF. Requer psql, backend compilado e usuário PostgreSQL com permissão de criar bancos.

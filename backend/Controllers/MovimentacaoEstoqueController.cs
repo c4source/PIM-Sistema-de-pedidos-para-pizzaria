@@ -19,6 +19,19 @@ namespace Pim.Controllers
             _service = service;
         }
 
+        [HttpGet("responsaveis")]
+        public async Task<IActionResult> Responsaveis() => Ok(await _service.ResponsaveisAsync());
+
+        [HttpGet]
+        public async Task<IActionResult> Listar([FromQuery] int pagina = 1, [FromQuery] int tamanho = 30, [FromQuery] int? produto = null, [FromQuery] int? autor = null, [FromQuery] string? tipo = null, [FromQuery] DateOnly? de = null, [FromQuery] DateOnly? ate = null)
+        {
+            if (pagina < 1 || pagina > 1000000 || tamanho < 1 || tamanho > 100)
+                return BadRequest("Paginação inválida.");
+            if (produto <= 0 || autor <= 0 || tipo != null && tipo != "entrada" && tipo != "saida" || de > ate)
+                return BadRequest("Filtros inválidos.");
+            return Ok(await _service.ListarAsync(pagina, tamanho, produto, autor, tipo, de, ate));
+        }
+
         [HttpPost]
         public async Task<ActionResult> Registrar(
             MovimentacaoEstoqueCreateDto dto)
@@ -48,6 +61,7 @@ namespace Pim.Controllers
                     movimentacao
                 );
             }
+            catch (Pim.Repositories.ConflitoContagemException e) { return Conflict(e.Message); }
             catch (KeyNotFoundException e)
             {
                 return NotFound(e.Message);

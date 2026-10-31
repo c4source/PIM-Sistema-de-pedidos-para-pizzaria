@@ -85,78 +85,102 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  //Arvore de Widgets: estrutura hierarquica de widgets que compoem a interface do usuario. Cada widget pode conter outros widgets, formando uma arvore.
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Entrar')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Digite seu email',
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (valor) {
-                  if (valor == null || valor.isEmpty) {
-                    return 'Digite seu e-mail';
-                  }
-
-                  if (!valor.contains('@')) {
-                    return 'Digite um e-mail válido';
-                  }
-
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _senhaController,
-                obscureText: _ocultarSenha,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _ocultarSenha ? Icons.visibility : Icons.visibility_off,
+  Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Image.asset(
+                      'assets/logo.png',
+                      width: 130,
+                      height: 130,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _ocultarSenha = !_ocultarSenha;
-                      });
-                    },
                   ),
-                ),
-                validator: (valor) {
-                  if (valor == null || valor.isEmpty) {
-                    return 'Digite sua senha';
-                  }
-
-                  return null;
-                },
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Bem-vindo à pizzaria',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Acesse o painel da equipe para cuidar dos produtos e do estoque.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Color(0xff64748b)),
+                  ),
+                  const SizedBox(height: 32),
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    autofillHints: const [AutofillHints.username],
+                    decoration: const InputDecoration(
+                      labelText: 'E-mail',
+                      prefixIcon: Icon(Icons.mail_outline),
+                    ),
+                    validator: (v) => v != null && v.contains('@')
+                        ? null
+                        : 'Informe um e-mail válido.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _senhaController,
+                    obscureText: _ocultarSenha,
+                    autofillHints: const [AutofillHints.password],
+                    onFieldSubmitted: (_) {
+                      if (!_carregando) _entrar();
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Senha',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        tooltip: _ocultarSenha
+                            ? 'Mostrar senha'
+                            : 'Ocultar senha',
+                        icon: Icon(
+                          _ocultarSenha
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: () => setState(() {
+                          _ocultarSenha = !_ocultarSenha;
+                        }),
+                      ),
+                    ),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? 'Informe sua senha.' : null,
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton(
+                    onPressed: _carregando ? null : _entrar,
+                    child: _carregando
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Entrar'),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Acesso exclusivo da equipe',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Color(0xff64748b), fontSize: 12),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _carregando ? null : _entrar,
-                  child: _carregando
-                      ? const CircularProgressIndicator()
-                      : const Text('Entrar'),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

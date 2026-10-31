@@ -21,7 +21,7 @@ public class AuthController(IConfiguration config, ColaboradorRepository reposit
             return BadRequest("Informe e-mail e senha.");
         var u = await repository.BuscarPorEmailAsync(dto.Email);
         bool valido = false;
-        if (u != null)
+        if (u != null && u.Ativo)
         {
             try
             {
@@ -51,7 +51,7 @@ public class AuthController(IConfiguration config, ColaboradorRepository reposit
             return BadRequest("A senha deve ter de 8 a 72 caracteres e no máximo 72 bytes.");
         var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var u = await repository.BuscarPorIdAsync(id);
-        if (u == null)
+        if (u == null || !u.Ativo)
             return Unauthorized();
         if (BCrypt.Net.BCrypt.Verify(dto.NovaSenha, u.Senha))
             return BadRequest("Escolha uma senha diferente da provisória.");

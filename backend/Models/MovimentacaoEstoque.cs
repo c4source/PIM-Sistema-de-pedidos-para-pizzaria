@@ -16,6 +16,30 @@ namespace Pim.Models
             get; set;
         }
 
+        [Column("motivo"), Required, StringLength(30)]
+        public string Motivo { get; set; } = "outro";
+        [Column("observacao"), StringLength(500)]
+        public string? Observacao
+        {
+            get; set;
+        }
+        [Column("estoque_esperado"), Range(0, int.MaxValue)]
+        public int? EstoqueEsperado
+        {
+            get; set;
+        }
+        [Column("quantidade_contada"), Range(0, int.MaxValue)]
+        public int? QuantidadeContada
+        {
+            get; set;
+        }
+
+        [Column("operacao_id")]
+        public Guid? OperacaoId
+        {
+            get; set;
+        }
+
         [Column("codprod")]
         public int ProdutoId
         {

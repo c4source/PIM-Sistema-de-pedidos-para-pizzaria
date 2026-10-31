@@ -33,6 +33,9 @@ public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(op
         b.Entity<Colaborador>().Property(c => c.Perfil).HasDefaultValue("Colaborador");
         b.Entity<Colaborador>().Property(c => c.TrocarSenha).HasDefaultValue(false);
         b.Entity<Colaborador>().Property(c => c.VersaoSessao).HasDefaultValue(1);
+        b.Entity<Colaborador>().Property(c => c.Ativo).HasDefaultValue(true);
+        b.Entity<Produto>().Property(p => p.EstoqueMinimo).HasDefaultValue(5);
+        b.Entity<Produto>().ToTable(t => t.HasCheckConstraint("ck_produto_minimo", "estoque_minimo >= 0"));
         b.Entity<Produto>().Property(p => p.EhKit).HasDefaultValue(false);
         b.Entity<Produto>().Property(p => p.Estoque).IsRequired().HasDefaultValue(0);
         b.Entity<Produto>().Property(p => p.Preco).HasPrecision(10, 2);
@@ -63,6 +66,9 @@ public class PimDbContext(DbContextOptions<PimDbContext> options) : DbContext(op
             "movimentacao_estoque_tipo_check",
             "tipo IN ('entrada', 'saida')");
     });
+
+    e.Property(m => m.Motivo).HasDefaultValue("outro");
+    e.HasIndex(m => m.OperacaoId).IsUnique();
 
     e.Property(m => m.Tipo)
         .HasMaxLength(10)

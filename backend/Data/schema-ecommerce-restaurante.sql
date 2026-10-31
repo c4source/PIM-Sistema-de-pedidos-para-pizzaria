@@ -1,3 +1,6 @@
+-- ARQUIVO HISTÓRICO (MySQL): não executar na versão PostgreSQL atual.
+-- Para instalar, use database/schema.sql e database/seed.sql; consulte docs/10_instalacao_banco.md.
+
 CREATE TABLE carrinho (
     id_carrinho INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,

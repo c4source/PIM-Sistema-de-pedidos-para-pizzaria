@@ -12,6 +12,29 @@ public class ColaboradorRepository(PimDbContext db)
         var normalizado = email.Trim().ToLowerInvariant();
         return db.Colaboradores.AsNoTracking().FirstOrDefaultAsync(c => c.Email.Trim().ToLower() == normalizado);
     }
+    public async Task<string?> DefinirAtivoAsync(int id, bool ativo, int autor)
+    {
+        await using var tx = await db.Database.BeginTransactionAsync();
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE colaborador IN SHARE ROW EXCLUSIVE MODE");
+        if (!await AutorValido(autor))
+            return "Acesso de administrador necessário.";
+        if (id == autor && !ativo)
+            return "Você não pode suspender o próprio acesso.";
+        var usuario = await db.Colaboradores.SingleOrDefaultAsync(c => c.Id == id);
+        if (usuario == null)
+            return "Colaborador não encontrado.";
+        if (!ativo && usuario.Perfil == "Administrador" && !await db.Colaboradores.AnyAsync(c => c.Id != id && c.Ativo && c.Perfil == "Administrador" && !c.TrocarSenha))
+            return "Não é possível suspender o último administrador com acesso ativo.";
+        if (usuario.Ativo != ativo)
+        {
+            usuario.Ativo = ativo;
+            usuario.VersaoSessao++;
+        }
+        await db.SaveChangesAsync();
+        await tx.CommitAsync();
+        return null;
+    }
+
     public async Task CriarAsync(Colaborador u)
     {
         u.TrocarSenha = true;
@@ -19,7 +42,7 @@ public class ColaboradorRepository(PimDbContext db)
         await db.SaveChangesAsync();
         db.ChangeTracker.Clear();
     }
-    private Task<bool> AutorValido(int id) => db.Colaboradores.AnyAsync(c => c.Id == id && c.Perfil == "Administrador" && !c.TrocarSenha);
+    private Task<bool> AutorValido(int id) => db.Colaboradores.AnyAsync(c => c.Id == id && c.Perfil == "Administrador" && !c.TrocarSenha && c.Ativo);
     public async Task<string?> AlterarAsync(int id, Colaborador? novo, int autorId)
     {
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -31,7 +54,7 @@ public class ColaboradorRepository(PimDbContext db)
             return "Colaborador não encontrado.";
         if (novo == null && id == autorId)
             return "Você não pode excluir a própria conta.";
-        if (u.Perfil == "Administrador" && (novo == null || novo.Perfil != "Administrador") && !await db.Colaboradores.AnyAsync(c => c.Id != id && c.Perfil == "Administrador" && !c.TrocarSenha))
+        if (u.Perfil == "Administrador" && (novo == null || novo.Perfil != "Administrador") && !await db.Colaboradores.AnyAsync(c => c.Id != id && c.Perfil == "Administrador" && !c.TrocarSenha && c.Ativo))
             return "Não é possível remover o último administrador com acesso ativo.";
         if (novo == null)
             db.Colaboradores.Remove(u);

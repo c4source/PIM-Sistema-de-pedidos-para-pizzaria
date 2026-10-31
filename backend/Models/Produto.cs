@@ -51,6 +51,9 @@ namespace Pim.Models
             get; set;
         }
 
+        [Column("estoque_minimo"), Range(0, int.MaxValue)]
+        public int EstoqueMinimo { get; set; } = 5;
+
         [Column("eh_kit")]
         public bool EhKit
         {

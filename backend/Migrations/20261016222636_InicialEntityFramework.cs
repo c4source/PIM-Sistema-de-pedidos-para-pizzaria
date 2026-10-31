@@ -250,7 +250,7 @@ namespace Pim.Migrations
                 name: "IX_pedido_baixa_estoque_id_produto",
                 table: "pedido_baixa_estoque",
                 column: "id_produto");
-            migrationBuilder.Sql("CREATE UNIQUE INDEX uq_colaborador_email_normalizado ON colaborador (lower(trim(email_usuario)))");
+            migrationBuilder.Sql("CREATE UNIQUE INDEX uq_colaborador_email_normalizado ON colaborador (lower(trim(email_usuario)));");
         }
 
         /// <inheritdoc />

@@ -27,6 +27,10 @@ namespace Pim.DTOs
         {
             get; set;
         }
+        public int EstoqueMinimo
+        {
+            get; set;
+        }
         public bool EhKit
         {
             get; set;

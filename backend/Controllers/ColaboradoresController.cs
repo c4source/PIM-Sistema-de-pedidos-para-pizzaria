@@ -39,7 +39,7 @@ public class ColaboradoresController(ColaboradorService service) : ControllerBas
             var erro = await service.AtualizarAsync(id, dto, Autor);
             return erro == null ? NoContent() : BadRequest(erro);
         }
-        catch (PostgresException ex) when (ex.SqlState == "23505") { return Conflict("E-mail já cadastrado."); }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" }) { return Conflict("E-mail já cadastrado."); }
     }
     [HttpPost("{id:int}/resetar-senha")]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -51,10 +51,24 @@ public class ColaboradoresController(ColaboradorService service) : ControllerBas
         return resultado.Erro == null ? Ok(resultado.Dados) : BadRequest(resultado.Erro);
     }
 
+    [HttpPatch("{id:int}/ativo")]
+    public async Task<IActionResult> DefinirAtivo(int id, Pim.DTOs.SituacaoAcessoDto dto)
+    {
+        var erro = await service.DefinirAtivoAsync(id, dto.Ativo, Autor);
+        return erro == null ? NoContent() : BadRequest(erro);
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Remover(int id)
     {
-        var erro = await service.RemoverAsync(id, Autor);
-        return erro == null ? NoContent() : BadRequest(erro);
+        try
+        {
+            var erro = await service.RemoverAsync(id, Autor);
+            return erro == null ? NoContent() : BadRequest(erro);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" or "23001" })
+        {
+            return BadRequest("Este colaborador possui histórico vinculado e não pode ser excluído.");
+        }
     }
 }

@@ -1,24 +1,47 @@
 import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
 import '../../models/produto.dart';
 import 'api_config.dart';
 
+class CatalogoIndisponivel implements Exception {
+  final String mensagem;
+  const CatalogoIndisponivel(this.mensagem);
+  @override
+  String toString() => mensagem;
+}
+
 //get
 class ProdutoApi {
+  final http.Client? cliente;
+  ProdutoApi({this.cliente});
   Future<List<Produto>> listar() async {
     final url = Uri.parse('${ApiConfig.baseUrl}/api/Produto');
-
-    final response = await http.get(url);
-
+    late http.Response response;
+    try {
+      response = await (cliente?.get(url) ?? http.get(url)).timeout(
+        const Duration(seconds: 8),
+      );
+    } on SocketException {
+      throw const CatalogoIndisponivel('Sem conexão com o servidor.');
+    } on TimeoutException {
+      throw const CatalogoIndisponivel('O servidor demorou a responder.');
+    } on http.ClientException {
+      throw const CatalogoIndisponivel('Não foi possível acessar o servidor.');
+    }
     if (response.statusCode == 200) {
-      final List<dynamic> dados = jsonDecode(response.body);
-
+      final dados = jsonDecode(response.body) as List<dynamic>;
       return dados.map((item) => Produto.fromJson(item)).toList();
     }
-
-    throw Exception('Erro ao carregar produtos');
+    if (response.statusCode >= 500) {
+      throw const CatalogoIndisponivel(
+        'Servidor temporariamente indisponível.',
+      );
+    }
+    throw Exception('Não foi possível consultar o catálogo.');
   }
 
   //post

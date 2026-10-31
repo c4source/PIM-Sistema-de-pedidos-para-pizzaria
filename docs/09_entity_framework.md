@@ -38,7 +38,7 @@ dotnet ef migrations add NomeDaAlteracao --project backend/Pim.csproj
 dotnet ef database update --project backend/Pim.csproj
 ~~~
 
-Para banco novo e vazio, configurar a conexão e aplicar database update. As migrations criam as tabelas; não criam automaticamente usuários ou produtos. O seed SQL existente pode ser aplicado para dados acadêmicos de demonstração.
+Para banco novo e vazio, configurar a conexão e aplicar database update. As migrations criam as tabelas; não criam automaticamente usuários ou produtos. O seed SQL pode ser aplicado em instalação acadêmica nova: cria os kits e registra sua versão sem duplicar dados em reexecuções. O administrador demonstrativo exige troca de senha no primeiro acesso. A alternativa database/schema.sql é gerada pelas migrations e já preenche o histórico EF; consulte a seção 9 de docs/10_instalacao_banco.md.
 
 ## Verificação
 - Compilação do backend e ausência de alterações pendentes no modelo.

@@ -94,6 +94,7 @@ namespace Pim.Services
             return new ProdutoResponseDto
             {
                 Id = produto.Id,
+                EstoqueMinimo = produto.EstoqueMinimo,
                 Nome = produto.Nome,
                 Preco = produto.Preco,
                 Descricao = produto.Descricao,

@@ -77,6 +77,12 @@ namespace Pim.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("ativo");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -212,6 +218,27 @@ namespace Pim.Migrations
                         .HasColumnName("data_hora")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<int?>("EstoqueEsperado")
+                        .HasColumnType("integer")
+                        .HasColumnName("estoque_esperado");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasDefaultValue("outro")
+                        .HasColumnName("motivo");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("observacao");
+
+                    b.Property<Guid?>("OperacaoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("operacao_id");
+
                     b.Property<int>("ProdutoId")
                         .HasColumnType("integer")
                         .HasColumnName("codprod");
@@ -219,6 +246,10 @@ namespace Pim.Migrations
                     b.Property<int>("Quantidade")
                         .HasColumnType("integer")
                         .HasColumnName("quantidade");
+
+                    b.Property<int?>("QuantidadeContada")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantidade_contada");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
@@ -229,6 +260,9 @@ namespace Pim.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ColaboradorId");
+
+                    b.HasIndex("OperacaoId")
+                        .IsUnique();
 
                     b.HasIndex("ProdutoId");
 
@@ -420,6 +454,12 @@ namespace Pim.Migrations
                         .HasDefaultValue(0)
                         .HasColumnName("estoque");
 
+                    b.Property<int>("EstoqueMinimo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(5)
+                        .HasColumnName("estoque_minimo");
+
                     b.Property<string>("ImagemUrl")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
@@ -449,6 +489,8 @@ namespace Pim.Migrations
                             t.HasCheckConstraint("ck_produto_categoria", "categoria IN ('pizza','doce','bebida','combo')");
 
                             t.HasCheckConstraint("ck_produto_estoque", "estoque >= 0");
+
+                            t.HasCheckConstraint("ck_produto_minimo", "estoque_minimo >= 0");
 
                             t.HasCheckConstraint("ck_produto_preco", "preco > 0");
 

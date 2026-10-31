@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/status_catalogo.dart';
+
 import 'produto_form_screen.dart';
 import '../../data/repositories/produto_repository.dart';
 import '../../models/produto.dart';
@@ -61,6 +63,7 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
   }
 
   Future<void> _abrirEdicao(Produto produto) async {
+    if (_produtoRepository.usandoCache) return;
     final atualizou = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -128,10 +131,24 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Produtos')),
 
-      body: _construirConteudo(),
+      body: Column(
+        children: [
+          StatusCatalogo(
+            falhaConsulta: _erro != null,
+            local: _produtoRepository.usandoCache,
+            carregando: _carregando,
+            falhaCache: _produtoRepository.falhaCache,
+            atualizadoEm: _produtoRepository.ultimaSincronizacao,
+            sincronizar: _carregarProdutos,
+          ),
+          Expanded(child: _construirConteudo()),
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _abrirCadastro,
+        onPressed: _carregando || _produtoRepository.usandoCache
+            ? null
+            : _abrirCadastro,
         child: const Icon(Icons.add),
       ),
     );
@@ -159,18 +176,22 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
 
         return Card(
           child: ListTile(
-            onTap: () {
-              if (produto.ehKit) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Kits devem ser editados pelo sistema Web.'),
-                  ),
-                );
-                return;
-              }
+            onTap: _produtoRepository.usandoCache
+                ? null
+                : () {
+                    if (produto.ehKit) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Kits devem ser editados pelo sistema Web.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
 
-              _abrirEdicao(produto);
-            },
+                    _abrirEdicao(produto);
+                  },
             title: Text(produto.nome),
             subtitle: Text(
               'R\$ ${produto.preco.toStringAsFixed(2)}'
@@ -183,9 +204,11 @@ class _ProdutosScreenState extends State<ProdutosScreen> {
                   )
                 : IconButton(
                     icon: const Icon(Icons.delete_outline),
-                    onPressed: () {
-                      _removerProduto(produto);
-                    },
+                    onPressed: _produtoRepository.usandoCache
+                        ? null
+                        : () {
+                            _removerProduto(produto);
+                          },
                   ),
           ),
         );

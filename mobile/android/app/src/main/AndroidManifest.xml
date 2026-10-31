@@ -2,9 +2,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="estoque_app"
+        android:label="Pizzaria Equipe"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/pizzaria_logo"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

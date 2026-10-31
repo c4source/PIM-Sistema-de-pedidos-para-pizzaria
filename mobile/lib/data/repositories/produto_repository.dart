@@ -1,14 +1,54 @@
 import '../../models/produto.dart';
 import '../api/produto_api.dart';
 import 'auth_repository.dart';
+import '../local/catalogo_local.dart';
 
 class ProdutoRepository {
-  final ProdutoApi _produtoApi = ProdutoApi();
-  final AuthRepository _authRepository = AuthRepository();
+  final ProdutoApi _produtoApi;
+  final AuthRepository _authRepository;
+  final CatalogoLocal _local;
+  bool usandoCache = false;
+  bool falhaCache = false;
+  DateTime? ultimaSincronizacao;
+  ProdutoRepository({
+    ProdutoApi? api,
+    CatalogoLocal? local,
+    AuthRepository? auth,
+  }) : _produtoApi = api ?? ProdutoApi(),
+       _local = local ?? CatalogoLocal(),
+       _authRepository = auth ?? AuthRepository();
 
   //Listar
-  Future<List<Produto>> listar() {
-    return _produtoApi.listar();
+  Future<List<Produto>> listar({bool permitirCache = true}) async {
+    usandoCache = false;
+    falhaCache = false;
+    late List<Produto> produtos;
+    try {
+      produtos = await _produtoApi.listar();
+    } on CatalogoIndisponivel {
+      if (!permitirCache) rethrow;
+      final salvo = await _local.ler();
+      if (salvo == null) rethrow;
+      usandoCache = true;
+      ultimaSincronizacao = salvo.sincronizadoEm;
+      return salvo.produtos;
+    }
+    try {
+      ultimaSincronizacao = await _local.substituir(produtos);
+    } catch (_) {
+      falhaCache = true;
+      ultimaSincronizacao = null;
+    }
+    return produtos;
+  }
+
+  Future<void> _invalidarCache() async {
+    ultimaSincronizacao = null;
+    try {
+      await _local.invalidar();
+    } catch (_) {
+      falhaCache = true;
+    }
   }
 
   //Cadastrar
@@ -27,7 +67,7 @@ class ProdutoRepository {
       throw Exception('Usuário não autenticado');
     }
 
-    return _produtoApi.cadastrar(
+    final criado = await _produtoApi.cadastrar(
       nome: nome,
       preco: preco,
       descricao: descricao,
@@ -37,6 +77,8 @@ class ProdutoRepository {
       imagemUrl: imagemUrl,
       token: token,
     );
+    await _invalidarCache();
+    return criado;
   }
 
   //Atualizar
@@ -67,6 +109,7 @@ class ProdutoRepository {
       imagemUrl: imagemUrl,
       token: token,
     );
+    await _invalidarCache();
   }
 
   //remover
@@ -78,5 +121,6 @@ class ProdutoRepository {
     }
 
     await _produtoApi.remover(id: id, token: token);
+    await _invalidarCache();
   }
 }

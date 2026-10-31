@@ -2,6 +2,10 @@ namespace Pim.DTOs
 {
     public class ColaboradorResponseDto
     {
+        public bool Ativo
+        {
+            get; set;
+        }
         public int Id
         {
             get; set;

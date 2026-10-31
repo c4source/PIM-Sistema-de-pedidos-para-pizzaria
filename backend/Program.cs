@@ -110,7 +110,7 @@ namespace Pim
                             }
                             var repo = context.HttpContext.RequestServices.GetRequiredService<ColaboradorRepository>();
                             var u = await repo.BuscarPorIdAsync(id);
-                            if (u == null || u.VersaoSessao != versao || principal.FindFirstValue(ClaimTypes.Role) != (u.TrocarSenha ? "TrocaSenha" : u.Perfil))
+                            if (u == null || !u.Ativo || u.VersaoSessao != versao || principal.FindFirstValue(ClaimTypes.Role) != (u.TrocarSenha ? "TrocaSenha" : u.Perfil))
                             {
                                 context.Fail("Sessão revogada.");
                                 return;

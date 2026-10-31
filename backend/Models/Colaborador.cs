@@ -15,6 +15,9 @@ namespace Pim.Models
         }
         [Column("perfil"), Required, StringLength(20)]
         public string Perfil { get; set; } = "Colaborador";
+        [Column("ativo")]
+        public bool Ativo { get; set; } = true;
+
         [Column("trocar_senha")]
         public bool TrocarSenha
         {

@@ -45,13 +45,14 @@ A organização de pastas segue os padrões de mercado para separação de respo
  ┣  database/          # Scripts SQL de criação e população do PostgreSQL
  ┣  frontend/          # Interfaces do usuário (HTML, CSS, JS) e assets
  ┗  README.md          # Documentação central do projeto
+```
 
 ## Acessos da equipe
 O painel possui a opção **Gerenciar colaboradores**, exclusiva do perfil Administrador. É possível listar, criar, editar nome/e-mail/perfil e excluir acessos. A conta existente admin@pim.com recebe o perfil Administrador na migração, mantendo sua senha.
 
 Novos acessos recebem uma senha provisória aleatória, exibida apenas na resposta do cadastro para o administrador entregar ao usuário. No primeiro login, um token restrito de 15 minutos permite apenas definir a senha pessoal (mínimo 8 caracteres, máximo 72 bytes UTF-8). O painel só é liberado após a troca; a senha provisória deixa de funcionar. Alterações no acesso e exclusões invalidam os tokens anteriores. Colaboradores continuam operando pedidos/produtos, sem gerenciar usuários. O último administrador com acesso liberado não pode ser removido ou rebaixado, e a própria conta não pode ser excluída.
 
-Em bancos existentes, aplicar somente database/migrations/002_acessos_colaboradores.sql. Não executar schema.sql, pois recria tabelas. A migração já foi aplicada ao banco local. Reiniciar a API e entrar novamente após atualizar.
+Em bancos existentes, execute Atualizar-Banco.ps1 para aplicar as migrations completas, preservando os acessos. Reinicie a API e entre novamente após atualizar.
 
 Testes: node --test tests/colaboradores-frontend.test.cjs; node tests/colaboradores-api.test.cjs. O teste de API usa localhost:5163 por padrão (PIM_TEST_API permite mudar) e credenciais do seed, substituíveis por PIM_TEST_ADMIN_EMAIL/PIM_TEST_ADMIN_PASSWORD. Ele cria e remove acessos próprios para testar o fluxo, sem modificar pedidos.
 
@@ -65,7 +66,7 @@ Combos existentes não são convertidos automaticamente: edite cada um e vincule
 
 A venda soma componentes compartilhados por kits e itens avulsos e valida o estoque dentro da transação. Registros de baixa preservam a composição da venda, permitindo devolver os produtos originais ao cancelar mesmo após editar o kit. O cancelamento pela tela administrativa também devolve estoque; repetir cancelamento não repõe novamente.
 
-A migração database/migrations/003_produtos_kit.sql já foi aplicada ao banco local, preservando os produtos e pedidos. Para outro banco existente, execute apenas a migração. Testes: node --test tests/kits-frontend.test.cjs. O teste tests/kits-api.test.cjs exige PIM_TEST_CLEANUP_SQL apontando para um arquivo temporário; após a execução, aplicar esse SQL para remover os produtos/pedidos criados no teste.
+A migração database/migrations/003_produtos_kit.sql já foi aplicada ao banco local, preservando os produtos e pedidos. Para outro banco existente, execute Atualizar-Banco.ps1 para atualizar a estrutura completa. Testes: node --test tests/kits-frontend.test.cjs. O teste tests/kits-api.test.cjs exige PIM_TEST_CLEANUP_SQL apontando para um arquivo temporário; após a execução, aplicar esse SQL para remover os produtos/pedidos criados no teste.
 
 
 ## Entity Framework Core e Data Annotations
@@ -90,8 +91,7 @@ dados de bancos existentes compatíveis.
 Para instruções completas, consulte:
 docs/10_instalacao_banco.md
 
-ATENÇÃO: não execute database/schema.sql em bancos
-que já possuem dados.
+Para criar diretamente por SQL, execute database/schema.sql no banco vazio e, opcionalmente, database/seed.sql. O schema é incremental e registra as migrations do EF; para bancos legados sem histórico EF, use Atualizar-Banco.ps1. O seed contém 25 produtos, 3 kits e dois pedidos demonstrativos; repetir a mesma versão não duplica dados nem redefine senhas. O administrador demonstrativo admin@pim.com / 123456 precisa trocar a senha no primeiro acesso. Consulte a seção 9 de docs/10_instalacao_banco.md.
 
 
 ## Sessão por inatividade
@@ -102,3 +102,10 @@ A área administrativa web encerra a sessão após aproximadamente 30 minutos se
 Configure o banco e a chave JWT em backend/appsettings.Local.json (ignorado), usando backend/appsettings.Local.example.json como modelo. O appsettings.json compartilhado não contém segredos. Ative a verificação antes dos commits com `node scripts/instalar-verificacao-git.cjs`. Veja docs/12_seguranca_git.md para a instalação, rotação de senhas já expostas e limitações da verificação.
 
 Também é possível usar backend/appsettings.Local.json (ignorado pelo Git), conforme docs/12_seguranca_git.md. Em Development, User Secrets tem precedência sobre esse arquivo; variáveis de ambiente têm precedência sobre ambos.
+
+
+## Mobile: SQLite e sincronização de estoque
+O aplicativo mantém o catálogo local e permite registrar entradas/saídas de estoque sem conexão. Os lançamentos ficam na fila da conta que os criou e são enviados à API ao retomar a conexão com o app aberto; o servidor valida o saldo e evita duplicação por UUID. A tela Movimentações mostra pendências, rejeições e histórico. Colaboradores permite CRUD e reset de senha, online e apenas para administradores. Aplique a migration com Atualizar-Banco.ps1 e reinicie o app após flutter pub get. Veja docs/pim4/persistencia_local_mobile.md para o fluxo, limitações e testes.
+
+## Evolução operacional do mobile
+Estoque possui ajuste ao tocar no produto, busca sem acentos, filtros e alerta mínimo por produto. Movimentações registram motivo/observação e contagem com conferência do saldo no servidor. O histórico filtra por período, produto, responsável e tipo. Administradores podem suspender acessos mantendo o histórico. O painel traz resumo operacional e o logout avisa sobre pendências. A migration EvolucaoOperacionalMobile e o SQLite v3 preservam os dados existentes. Consulte docs/pim4/melhorias_mobile.md.
