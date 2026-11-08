@@ -1,0 +1,34 @@
+erDiagram
+    direction LR
+    produtos {
+        int id PK
+        int eh_kit
+        string nome
+        real preco
+        string descricao
+        string categoria
+        string status
+        int estoque
+        string imagem_url
+        int estoque_minimo
+    }
+    sincronizacao {
+        int id PK
+        string data
+    }
+    fila_estoque {
+        string id PK
+        int usuario
+        int produto
+        string nome
+        string tipo
+        int quantidade
+        string criada
+        string estado
+        string erro
+        int tentada
+        string motivo
+        string observacao
+        int estoque_esperado
+        int quantidade_contada
+    }

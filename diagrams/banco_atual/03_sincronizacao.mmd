@@ -1,0 +1,18 @@
+flowchart TB
+    WEB["Web / Mobile online"] --> API["API ASP.NET Core<br/>Autorização e regras de negócio"]
+    APP["Mobile sem conexão"] --> FILA["SQLite: fila_estoque<br/>UUID + usuário + quantidade + motivo"]
+    CACHE["SQLite: produtos e sincronizacao<br/>Último catálogo e data recebidos"] -. "consulta local" .-> APP
+    FILA --> ENVIO["App aberto: tentar enviar<br/>a cada 20s, ao retomar ou manualmente"]
+    ENVIO --> API
+    API --> AUTH{"Sessão e acesso válidos?"}
+    AUTH -- Não --> LOGIN["Pausar envios<br/>Novo login da mesma conta"]
+    AUTH -- Sim --> IDEM{"UUID já registrado?"}
+    IDEM -- Sim --> DADOS{"Mesmo autor e conteúdo?"}
+    DADOS -- Não --> REJEITA["Rejeitar reutilização do UUID<br/>Não aplicar alteração"]
+    DADOS -- Sim --> OK["Devolver confirmação original<br/>Sem repetir alteração de estoque"]
+    IDEM -- Não --> VALID{"Saldo e referência de contagem válidos?"}
+    VALID -- Não --> ATENCAO["Requer atenção<br/>Nada aplicado; corrigir a causa"]
+    VALID -- Sim --> PG["PostgreSQL: transação EF<br/>Atualizar produto + inserir movimentação"]
+    PG --> OK
+    OK --> LOCAL["SQLite: marcar Confirmada<br/>Atualizar catálogo ao consultar"]
+    API -. "catálogo público pela API" .-> CACHE

@@ -1,111 +1,119 @@
-#  Sistema Web de Pedidos para Restaurante
-> **Projeto Integrador Multidisciplinar (PIM III) – Universidade Paulista (UNIP)**
+# Madalena Pizzaria
 
-##  Objetivo
-Desenvolver um sistema web completo e intuitivo para a gestão de pedidos de um restaurante. O foco da aplicação é oferecer um fluxo de navegação simples e direto, permitindo que o cliente final visualize o cardápio e realize pedidos com facilidade, enquanto a equipe interna gerencia a operação de forma ágil e eficiente.
+Projeto Integrador Multidisciplinar IV (PIM IV) · Universidade Paulista (UNIP)
 
----
+Sistema de pedidos e gestão de estoque para uma pizzaria. O cliente faz o pedido pelo site. A equipe acompanha a operação no painel web e consulta ou movimenta o estoque pelo aplicativo Android **Pizzaria Equipe**.
 
-##  Escopo do Projeto (MVP)
+## Funcionalidades
 
-A aplicação foi dividida em dois módulos principais para atender às necessidades do negócio:
+| Módulo | O que permite fazer |
+| --- | --- |
+| Cardápio web | Consultar produtos e combos, montar o carrinho e finalizar pedidos para entrega ou retirada sem criar conta. |
+| Painel administrativo web | Acompanhar pedidos, atualizar etapas de preparo, cancelar pedidos e gerenciar o catálogo, os combos e os acessos da equipe. |
+| Aplicativo Android | Consultar produtos e saldos, registrar entradas, saídas e contagens, acompanhar o histórico e gerenciar acessos conforme o perfil. |
+| Estoque offline | Consultar o catálogo salvo no aparelho e registrar movimentações em uma fila local para envio quando a API voltar a ficar acessível. |
 
-###  Área do Cliente
-- [x] **Catálogo Digital:** Visualização dinâmica do cardápio de produtos.
-- [x] **Carrinho de Compras:** Gestão temporária de itens selecionados.
-- [x] **Checkout Simplificado: finalização de pedido com captura de dados essenciais (Nome, Telefone, Modalidade: Entrega/Retirada e Endereço para entrega quando aplicável).
-- [x] **Confirmação:** Feedback visual de pedido realizado com sucesso.
+## Arquitetura
 
-###  Área Administrativa
-- [x] **Autenticação:** Sistema de login seguro para o administrador.
-- [x] **Gestão de Estoque (CRUD):** Criação, leitura, atualização e exclusão de produtos do cardápio.
-- [x] **Painel de Controle:** Visualização de todos os pedidos recebidos.
-- [x] **Workflow de Status:** Alteração e acompanhamento do status operacional de cada pedido.
-- [x] **Business Intelligence:** Geração de relatórios gerenciais simplificados (ex: total de vendas do dia).
+| Pasta | Tecnologia e responsabilidade |
+| --- | --- |
+| [frontend/](frontend/) | HTML, CSS e JavaScript para o cardápio, o checkout e o painel administrativo. |
+| [backend/](backend/) | API REST em C# com ASP.NET Core (.NET 10), validação de DTOs com Data Annotations e acesso ao PostgreSQL via Entity Framework Core e Npgsql. |
+| [mobile/](mobile/) | App em Flutter e Dart, com SQLite para o catálogo e a fila local e armazenamento seguro para o token da sessão. |
+| [database/](database/) | Scripts de estrutura e dados demonstrativos do PostgreSQL. |
+| [docs/](docs/) e [diagrams/](diagrams/) | Guias de instalação, documentação técnica e diagramas do sistema. |
 
----
+O site e o app se comunicam com a mesma API. O PostgreSQL mantém o estoque oficial compartilhado. O SQLite guarda dados de consulta e lançamentos do aparelho. A sincronização passa pela API, que aplica as mesmas regras de estoque usadas nas operações online.
 
-##  Arquitetura e Tecnologias
+## Como executar localmente
 
-O ecossistema do projeto foi construído utilizando as seguintes tecnologias:
+Você precisa do **.NET SDK 10** e de uma instância PostgreSQL em execução. Para o site, use o VS Code com Live Server ou outro servidor de arquivos estáticos. Para o app Android, instale o Flutter com Dart compatível com o [pubspec.yaml](mobile/pubspec.yaml), o Android SDK e tenha um emulador ou um celular com depuração USB.
 
-* **Frontend:** HTML5, CSS3 e JavaScript (Vanilla)
-* **Backend:** C# com ASP.NET Core Web API
-* **Banco de Dados:** PostgreSQL
+### 1. Configurar o banco
 
----
+Crie um banco PostgreSQL para o projeto. Configure a conexão em `ConnectionStrings:DefaultConnection` e a chave de assinatura em `Jwt:Key` usando **User Secrets**. O guia também descreve a opção de usar o arquivo local ignorado pelo Git. [Instalação e configuração do banco](docs/10_instalacao_banco.md)
 
-##  Estrutura do Projeto
+No PowerShell, na raiz do repositório, aplique as migrations:
 
-A organização de pastas segue os padrões de mercado para separação de responsabilidades (Clean Architecture):
-
-```text
- raiz-do-projeto
- ┣  backend/           # API REST em C# (ASP.NET Core), Controllers e Models
- ┣  database/          # Scripts SQL de criação e população do PostgreSQL
- ┣  frontend/          # Interfaces do usuário (HTML, CSS, JS) e assets
- ┗  README.md          # Documentação central do projeto
+```powershell
+.\Atualizar-Banco.ps1
 ```
 
-## Acessos da equipe
-O painel possui a opção **Gerenciar colaboradores**, exclusiva do perfil Administrador. É possível listar, criar, editar nome/e-mail/perfil e excluir acessos. A conta existente admin@pim.com recebe o perfil Administrador na migração, mantendo sua senha.
+Para uma instalação por SQL em um banco vazio, execute [schema.sql](database/schema.sql). Se quiser popular um ambiente de demonstração com catálogo, combos e pedidos, execute [seed.sql](database/seed.sql) no mesmo banco após criar a estrutura. O seed cria um administrador demonstrativo quando ainda não existe um e exige troca da senha no primeiro acesso. Consulte o [guia de instalação](docs/10_instalacao_banco.md) para usar os dados de demonstração ou atualizar um banco existente.
 
-Novos acessos recebem uma senha provisória aleatória, exibida apenas na resposta do cadastro para o administrador entregar ao usuário. No primeiro login, um token restrito de 15 minutos permite apenas definir a senha pessoal (mínimo 8 caracteres, máximo 72 bytes UTF-8). O painel só é liberado após a troca; a senha provisória deixa de funcionar. Alterações no acesso e exclusões invalidam os tokens anteriores. Colaboradores continuam operando pedidos/produtos, sem gerenciar usuários. O último administrador com acesso liberado não pode ser removido ou rebaixado, e a própria conta não pode ser excluída.
+### 2. Iniciar a API
 
-Em bancos existentes, execute Atualizar-Banco.ps1 para aplicar as migrations completas, preservando os acessos. Reinicie a API e entre novamente após atualizar.
+Em outro terminal, na raiz do projeto:
 
-Testes: node --test tests/colaboradores-frontend.test.cjs; node tests/colaboradores-api.test.cjs. O teste de API usa localhost:5163 por padrão (PIM_TEST_API permite mudar) e credenciais do seed, substituíveis por PIM_TEST_ADMIN_EMAIL/PIM_TEST_ADMIN_PASSWORD. Ele cria e remove acessos próprios para testar o fluxo, sem modificar pedidos.
+```powershell
+dotnet run --project backend/Pim.csproj --launch-profile http
+```
 
-O botão **Resetar senha** no gerenciador de colaboradores gera outra senha provisória, invalida a senha e sessões anteriores e exige nova troca no próximo acesso. Apenas administradores podem usar POST /api/Colaboradores/{id}/resetar-senha. A senha aparece uma única vez no pop-up, com Copiar senha e OK. O reset da própria conta é bloqueado: solicite a outro administrador.
+Mantenha o terminal aberto. A API local usa a porta **5162**. Confira se ela está respondendo pelo [Swagger](http://localhost:5162/swagger/index.html).
 
+### 3. Abrir o site e o painel
 
-## Produtos kit / combos
-No cadastro de produtos, marque **Produto kit**, adicione os produtos individuais e a quantidade de cada componente. Cada tamanho/sabor de pizza pode ser cadastrado como um produto separado, com estoque próprio. O preço do kit é independente da soma dos componentes. O estoque exibido representa quantos kits completos podem ser montados; o kit não possui saldo próprio.
+Abra **a raiz do repositório** no VS Code. Inicie o Live Server a partir de `frontend/html/index.html` para que o servidor também encontre as imagens em `/img`.
 
-Combos existentes não são convertidos automaticamente: edite cada um e vincule os componentes corretos. Não é permitido incluir outro kit, o próprio kit, componentes duplicados ou quantidades não positivas. Produtos usados em kits ou pedidos não podem ser excluídos; podem ser desativados.
+| Página | Endereço com a porta padrão do Live Server |
+| --- | --- |
+| Cardápio e pedidos | [Abrir cardápio](http://127.0.0.1:5500/frontend/html/index.html) |
+| Área da equipe | [Abrir painel administrativo](http://127.0.0.1:5500/frontend/html/admin-login.html) |
 
-A venda soma componentes compartilhados por kits e itens avulsos e valida o estoque dentro da transação. Registros de baixa preservam a composição da venda, permitindo devolver os produtos originais ao cancelar mesmo após editar o kit. O cancelamento pela tela administrativa também devolve estoque; repetir cancelamento não repõe novamente.
+Se o Live Server escolher outra porta, use a porta indicada no navegador.
 
-A migração database/migrations/003_produtos_kit.sql já foi aplicada ao banco local, preservando os produtos e pedidos. Para outro banco existente, execute Atualizar-Banco.ps1 para atualizar a estrutura completa. Testes: node --test tests/kits-frontend.test.cjs. O teste tests/kits-api.test.cjs exige PIM_TEST_CLEANUP_SQL apontando para um arquivo temporário; após a execução, aplicar esse SQL para remover os produtos/pedidos criados no teste.
+### 4. Rodar o aplicativo Android
 
+Abra a pasta `mobile` no Android Studio ou acesse-a pelo terminal. Com a API rodando, instale as dependências e liste os dispositivos disponíveis:
 
-## Entity Framework Core e Data Annotations
-O backend usa PimDbContext com o provedor Npgsql para PostgreSQL, repositórios em LINQ e migrations do EF Core. DTOs validam os dados com Data Annotations e retornam HTTP 400 por campo. O banco local foi preservado e registrado na baseline do EF. Consulte docs/09_entity_framework.md para arquitetura, atualização de bancos existentes e comandos de migrations.
+```powershell
+cd mobile
+flutter pub get
+flutter devices
+```
 
+**No emulador Android**, use o ID listado por `flutter devices`. O endereço padrão do app, `http://10.0.2.2:5162`, aponta para a API no computador.
 
-## Instalar ou atualizar o banco em outra máquina
+```powershell
+flutter run -d ID_DO_EMULADOR
+```
 
-O backend utiliza PostgreSQL, Entity Framework Core e User Secrets.
+**No celular físico por USB**, ative a depuração USB e aceite a autorização no aparelho. Com o `adb` disponível no terminal (ele fica em `platform-tools` no Android SDK), encaminhe a porta da API e execute:
 
-Cada integrante deve configurar sua própria conexão PostgreSQL
-e chave JWT utilizando User Secrets, sem armazenar senhas
-no appsettings.json.
+```powershell
+adb -s ID_DO_CELULAR reverse tcp:5162 tcp:5162
+flutter run -d ID_DO_CELULAR --dart-define=PIM_API_URL=http://127.0.0.1:5162
+```
 
-Após configurar o ambiente, execute na raiz do projeto:
+Substitua os IDs pelos valores listados em `flutter devices`. Ao desconectar o USB, o app permanece instalado e perde o acesso à API por esse caminho. Reconecte o cabo e execute o comando `adb reverse` novamente para retomar a comunicação.
 
-./Atualizar-Banco.ps1
+## Regras de operação
 
-O script aplica as migrations necessárias, preservando os
-dados de bancos existentes compatíveis.
+- **Combos.** Cada combo tem preço próprio e sua capacidade depende dos componentes disponíveis. A venda registra os itens físicos que foram baixados. O cancelamento usa esse registro para devolver os componentes originais, mesmo se a composição do combo tiver mudado.
+- **Sincronização.** O app grava cada movimentação localmente com um UUID antes de tentar enviá-la. A API reconhece reenvios da mesma operação, valida o saldo atual e confirma a alteração e o histórico em uma transação. Uma rejeição de negócio aparece como **Requer atenção**.
+- **Contagem.** O app envia o saldo de referência e a quantidade encontrada. Se o saldo oficial tiver mudado, a API rejeita a contagem para que o operador confira o estoque novamente.
+- **Acessos.** O administrador gerencia colaboradores e pode gerar senhas provisórias. O primeiro acesso após cadastro ou reset exige troca de senha. A API valida o perfil, a validade da sessão e a inatividade.
 
-Para instruções completas, consulte:
-docs/10_instalacao_banco.md
+### Demonstração do modo offline
 
-Para criar diretamente por SQL, execute database/schema.sql no banco vazio e, opcionalmente, database/seed.sql. O schema é incremental e registra as migrations do EF; para bancos legados sem histórico EF, use Atualizar-Banco.ps1. O seed contém 25 produtos, 3 kits e dois pedidos demonstrativos; repetir a mesma versão não duplica dados nem redefine senhas. O administrador demonstrativo admin@pim.com / 123456 precisa trocar a senha no primeiro acesso. Consulte a seção 9 de docs/10_instalacao_banco.md.
+1. Faça login com a API disponível e abra **Estoque** para carregar o catálogo.
+2. Desconecte o aparelho da API e registre uma entrada ou saída de um produto de teste. Confira o estado **Pendente** em **Movimentações**.
+3. Restabeleça a conexão e mantenha o app aberto. A sincronização tenta enviar a fila ao voltar ao primeiro plano e em ciclos de 20 segundos. Confira o lançamento confirmado e o saldo atualizado.
+4. Para demonstrar um conflito, carregue um produto com saldo de 8, desconecte o mobile e reduza o saldo para 7 pelo painel web. Registre uma saída de 8 no app e reconecte. O lançamento deve ficar **Requer atenção** e o saldo oficial deve permanecer em 7.
 
+O primeiro login, a edição de cadastros e o gerenciamento de colaboradores precisam de conexão. A fila pertence à conta que a criou e é processada com o app em uso.
 
-## Sessão por inatividade
-A área administrativa web encerra a sessão após aproximadamente 30 minutos sem interação e avisa no último minuto. A atividade é compartilhada entre abas; requisições e atualizações automáticas não renovam o prazo. O botão Continuar conectado renova a atividade antes do vencimento. A API também verifica o prazo por sessão e rejeita tokens inativos, sem permitir reativá-los. O token mantém o limite absoluto de 8 horas, e o primeiro acesso continua com token restrito de 15 minutos. O mobile informa atividade por toque e redireciona para o login ao detectar expiração; o aviso antecipado está implementado no web. A migration SessaoPorInatividade cria sessao_acesso e é aplicada por Atualizar-Banco.ps1. Após atualizar, entre novamente para emitir um token com identificação de sessão.
+## Testes e documentação
 
+- **Mobile.** Na pasta `mobile`, execute `flutter analyze` e `flutter test`. Os testes cobrem catálogo local, fila e telas.
+- **Web.** Execute `node --test tests/produtos-ui.test.cjs tests/checkout-feedback.test.cjs tests/kits-frontend.test.cjs` na raiz.
+- **Integração.** Os testes de API e scripts SQL em [tests/](tests/) usam banco de desenvolvimento. Consulte os guias antes de rodá-los, pois criam dados de teste.
 
-## Credenciais locais e proteção do Git
-Configure o banco e a chave JWT em backend/appsettings.Local.json (ignorado), usando backend/appsettings.Local.example.json como modelo. O appsettings.json compartilhado não contém segredos. Ative a verificação antes dos commits com `node scripts/instalar-verificacao-git.cjs`. Veja docs/12_seguranca_git.md para a instalação, rotação de senhas já expostas e limitações da verificação.
-
-Também é possível usar backend/appsettings.Local.json (ignorado pelo Git), conforme docs/12_seguranca_git.md. Em Development, User Secrets tem precedência sobre esse arquivo; variáveis de ambiente têm precedência sobre ambos.
-
-
-## Mobile: SQLite e sincronização de estoque
-O aplicativo mantém o catálogo local e permite registrar entradas/saídas de estoque sem conexão. Os lançamentos ficam na fila da conta que os criou e são enviados à API ao retomar a conexão com o app aberto; o servidor valida o saldo e evita duplicação por UUID. A tela Movimentações mostra pendências, rejeições e histórico. Colaboradores permite CRUD e reset de senha, online e apenas para administradores. Aplique a migration com Atualizar-Banco.ps1 e reinicie o app após flutter pub get. Veja docs/pim4/persistencia_local_mobile.md para o fluxo, limitações e testes.
-
-## Evolução operacional do mobile
-Estoque possui ajuste ao tocar no produto, busca sem acentos, filtros e alerta mínimo por produto. Movimentações registram motivo/observação e contagem com conferência do saldo no servidor. O histórico filtra por período, produto, responsável e tipo. Administradores podem suspender acessos mantendo o histórico. O painel traz resumo operacional e o logout avisa sobre pendências. A migration EvolucaoOperacionalMobile e o SQLite v3 preservam os dados existentes. Consulte docs/pim4/melhorias_mobile.md.
+| Guia | Conteúdo |
+| --- | --- |
+| [Instalação do banco](docs/10_instalacao_banco.md) | User Secrets, migrations, instalação via SQL e seed. |
+| [Modelagem do banco](docs/08_modelagem_database.md) e [diagramas](diagrams/banco_atual/) | Estrutura do PostgreSQL e do SQLite, dicionário de dados e fluxos de sincronização e kits. |
+| [Entity Framework Core](docs/09_entity_framework.md) | Persistência, validação e evolução do backend. |
+| [Persistência no mobile](docs/pim4/persistencia_local_mobile.md) | Catálogo salvo, fila, reenvio e limites do modo offline. |
+| [Operação no mobile](docs/pim4/melhorias_mobile.md) | Ajustes, contagem, alertas e gestão de acessos. |
+| [Credenciais e Git](docs/12_seguranca_git.md) | Configuração local e verificação de segredos antes de commits. |
