@@ -18,7 +18,9 @@ function initializeKitchenQueue() {
   var pedidos = [];
 
   function normalizeStatus(status) {
-    return String(status || '').toLowerCase().replace(/\s+/g, '_');
+    return String(status || '')
+      .toLowerCase()
+      .replace(/\s+/g, '_');
   }
 
   function formatPrice(value) {
@@ -40,7 +42,12 @@ function initializeKitchenQueue() {
   }
 
   function formatOrderCode(codigo) {
-    return '#' + String(codigo || '000000').replace('PED-', '').slice(-6);
+    return (
+      '#' +
+      String(codigo || '000000')
+        .replace('PED-', '')
+        .slice(-6)
+    );
   }
 
   function formatDateTime(dataHora) {
@@ -69,11 +76,13 @@ function initializeKitchenQueue() {
   }
 
   function getOrdersByStatus(status) {
-    return pedidos.filter(function (pedido) {
-      return normalizeStatus(pedido.status) === status;
-    }).sort(function (firstOrder, secondOrder) {
-      return getOrderTime(firstOrder) - getOrderTime(secondOrder);
-    });
+    return pedidos
+      .filter(function (pedido) {
+        return normalizeStatus(pedido.status) === status;
+      })
+      .sort(function (firstOrder, secondOrder) {
+        return getOrderTime(firstOrder) - getOrderTime(secondOrder);
+      });
   }
 
   function getQueueOrders() {
@@ -135,8 +144,10 @@ function initializeKitchenQueue() {
   function canAdvanceStatus(currentStatus, nextStatus) {
     var status = normalizeStatus(currentStatus);
 
-    return (status === 'recebido' && nextStatus === 'em_preparo') ||
-      (status === 'em_preparo' && nextStatus === 'pronto');
+    return (
+      (status === 'recebido' && nextStatus === 'em_preparo') ||
+      (status === 'em_preparo' && nextStatus === 'pronto')
+    );
   }
 
   async function updateOrderStatus(orderCode, nextStatus) {
@@ -208,7 +219,8 @@ function initializeKitchenQueue() {
     top.className = 'admin-kitchen-order-top';
     codeGroup.className = 'admin-kitchen-code-group';
     shortCode.className = 'admin-kitchen-order-code';
-    statusBadge.className = 'admin-kitchen-status-badge admin-kitchen-status-' + normalizeStatus(order.status);
+    statusBadge.className =
+      'admin-kitchen-status-badge admin-kitchen-status-' + normalizeStatus(order.status);
     details.className = 'admin-kitchen-details';
     itemsTitle.className = 'admin-kitchen-items-title';
 
@@ -220,7 +232,12 @@ function initializeKitchenQueue() {
     top.appendChild(codeGroup);
     top.appendChild(statusBadge);
 
-    details.appendChild(createInfoRow('Cliente', order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado'));
+    details.appendChild(
+      createInfoRow(
+        'Cliente',
+        order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado'
+      )
+    );
     details.appendChild(createInfoRow('Tipo', formatDeliveryType(order.tipoEntrega)));
     details.appendChild(createInfoRow('Horário', formatDateTime(order.dataHora)));
     details.appendChild(createInfoRow('Total', formatPrice(order.total)));
@@ -277,7 +294,11 @@ function initializeKitchenQueue() {
 
   function renderKitchen() {
     renderColumn(receivedListElement, getOrdersByStatus('recebido'), 'Nenhum pedido recebido.');
-    renderColumn(preparingListElement, getOrdersByStatus('em_preparo'), 'Nenhum pedido em preparo.');
+    renderColumn(
+      preparingListElement,
+      getOrdersByStatus('em_preparo'),
+      'Nenhum pedido em preparo.'
+    );
     renderColumn(readyListElement, getOrdersByStatus('pronto'), 'Nenhum pedido pronto.');
     updateSummary();
   }

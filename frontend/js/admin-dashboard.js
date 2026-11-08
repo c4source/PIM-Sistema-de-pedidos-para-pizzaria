@@ -21,7 +21,9 @@ function formatPrice(value) {
 }
 
 function normalizeStatus(status) {
-  return String(status || '').toLowerCase().replace(/\s+/g, '_');
+  return String(status || '')
+    .toLowerCase()
+    .replace(/\s+/g, '_');
 }
 
 function formatStatus(status) {
@@ -149,8 +151,10 @@ function createRecentOrderElement(order) {
 
   orderCode.textContent = formatOrderCode(order.codigo);
   orderDate.textContent = formatDateTime(order.dataHora);
-  customerName.textContent = order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado';
-  orderDetails.textContent = formatDeliveryType(order.tipoEntrega) + ' • ' + formatPrice(getOrderTotal(order));
+  customerName.textContent =
+    order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado';
+  orderDetails.textContent =
+    formatDeliveryType(order.tipoEntrega) + ' • ' + formatPrice(getOrderTotal(order));
   orderStatus.textContent = 'Status: ' + formatStatus(order.status);
 
   orderTop.appendChild(orderCode);
@@ -175,16 +179,20 @@ function renderRecentOrders() {
   recentOrdersList.hidden = false;
   emptyOrdersElement.hidden = true;
 
-  sortOrdersByDate(pedidos).slice(0, 5).forEach(function (pedido) {
-    recentOrdersList.appendChild(createRecentOrderElement(pedido));
-  });
+  sortOrdersByDate(pedidos)
+    .slice(0, 5)
+    .forEach(function (pedido) {
+      recentOrdersList.appendChild(createRecentOrderElement(pedido));
+    });
 }
 
 function showLoadError() {
   recentOrdersList.hidden = true;
   emptyOrdersElement.hidden = false;
-  emptyOrdersElement.querySelector('.admin-empty-title').textContent = 'Não foi possível carregar os pedidos.';
-  emptyOrdersElement.querySelector('.admin-empty-text').textContent = 'Verifique se o backend está rodando e tente novamente.';
+  emptyOrdersElement.querySelector('.admin-empty-title').textContent =
+    'Não foi possível carregar os pedidos.';
+  emptyOrdersElement.querySelector('.admin-empty-text').textContent =
+    'Verifique se o backend está rodando e tente novamente.';
 }
 
 async function loadDashboardOrders() {

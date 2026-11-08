@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pim.Models
@@ -9,27 +9,62 @@ namespace Pim.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("codprod")]
-        public int Id { get; set; }
+        public int Id
+        {
+            get; set;
+        }
 
         [Column("nome_produto")]
-        public string Nome { get; set; }
+        [Required, StringLength(100)]
+        public string Nome { get; set; } = string.Empty;
 
         [Column("preco", TypeName = "decimal(10,2)")]
-        public decimal Preco { get; set; }
+        public decimal Preco
+        {
+            get; set;
+        }
 
         [Column("descricao")]
-        public string? Descricao { get; set; } 
+        public string? Descricao
+        {
+            get; set;
+        }
 
         [Column("categoria")]
-        public string? Categoria { get; set; }
+        [Required, StringLength(30), RegularExpression("pizza|doce|bebida|combo")]
+        public string? Categoria
+        {
+            get; set;
+        }
 
         [Column("status_disponibilidade")]
-        public string? Status { get; set; }
+        [Required, StringLength(20), RegularExpression("disponivel|indisponivel")]
+        public string? Status
+        {
+            get; set;
+        }
 
         [Column("estoque")]
-        public int? Estoque { get; set; }
+        [Range(0, int.MaxValue)]
+        public int? Estoque
+        {
+            get; set;
+        }
 
-        [Column("imagem_url")]
-        public string? ImagemUrl { get; set; }
+        [Column("estoque_minimo"), Range(0, int.MaxValue)]
+        public int EstoqueMinimo { get; set; } = 5;
+
+        [Column("eh_kit")]
+        public bool EhKit
+        {
+            get; set;
+        }
+        [NotMapped]
+        public List<Pim.Models.KitComponente> Componentes { get; set; } = new();
+        [Column("imagem_url"), StringLength(200)]
+        public string? ImagemUrl
+        {
+            get; set;
+        }
     }
 }

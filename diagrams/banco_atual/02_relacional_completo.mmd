@@ -1,0 +1,101 @@
+erDiagram
+    direction LR
+    colaborador {
+        int id_colaborador PK
+        string nome_usuario
+        string email_usuario UK
+        string senha_usuario
+        string perfil
+        bool trocar_senha
+        int versao_sessao
+        bool ativo
+    }
+    sessao_acesso {
+        uuid id PK
+        int id_colaborador FK
+        datetime ultima_atividade
+    }
+    produto {
+        int codprod PK
+        string nome_produto
+        string categoria
+        decimal preco
+        string descricao
+        string status_disponibilidade
+        int estoque
+        string imagem_url
+        bool eh_kit
+        int estoque_minimo
+    }
+    kit_componente {
+        int id_kit PK, FK
+        int id_produto PK, FK
+        int quantidade
+    }
+    pedido {
+        int id_pedido PK
+        string codigo UK
+        string nome_cliente
+        string telefone_cliente
+        string tipo_entrega
+        string rua_entrega
+        string numero_entrega
+        string bairro_entrega
+        string complemento_entrega
+        string observacoes
+        datetime data_hora_pedido
+        string status_pedido
+        decimal valor_total
+    }
+    itempedido {
+        int id_item_pedido PK
+        int id_pedido FK
+        int codprod FK
+        int quantidade
+        decimal preco_unitario
+        decimal subtotal
+    }
+    pagamento {
+        int id_pagamento PK
+        int id_pedido FK, UK
+        string forma_pagamento
+        string status_pagamento
+        decimal valor_pago
+        datetime data_hora_pagamento
+    }
+    pedido_baixa_estoque {
+        int id_pedido PK, FK
+        int id_produto PK, FK
+        int quantidade
+    }
+    movimentacao_estoque {
+        int id_movimentacao PK
+        int codprod FK
+        int id_colaborador FK
+        string tipo
+        int quantidade
+        datetime data_hora
+        uuid operacao_id UK
+        int estoque_esperado
+        string motivo
+        string observacao
+        int quantidade_contada
+    }
+    cliente {
+        int id_cliente PK
+        string nome_cliente
+        string cpf_cliente UK
+        string celular_cliente
+        string email_cliente UK
+        string senha_cliente
+    }
+    colaborador ||--o{ sessao_acesso : "id_colaborador"
+    produto ||--o{ kit_componente : "compoe como kit"
+    produto ||--o{ kit_componente : "fornece componente"
+    pedido ||--o{ itempedido : "id_pedido"
+    produto ||--o{ itempedido : "codprod"
+    pedido ||--o| pagamento : "id_pedido"
+    pedido ||--o{ pedido_baixa_estoque : "id_pedido"
+    produto ||--o{ pedido_baixa_estoque : "id_produto"
+    colaborador ||--o{ movimentacao_estoque : "id_colaborador"
+    produto ||--o{ movimentacao_estoque : "codprod"

@@ -15,7 +15,9 @@ function formatPrice(value) {
 }
 
 function normalizeStatus(status) {
-  return String(status || '').toLowerCase().replace(/\s+/g, '_');
+  return String(status || '')
+    .toLowerCase()
+    .replace(/\s+/g, '_');
 }
 
 function formatStatus(status) {
@@ -51,7 +53,12 @@ function formatDeliveryType(tipoEntrega) {
 }
 
 function formatOrderCode(codigo) {
-  return '#' + String(codigo || '000000').replace('PED-', '').slice(-6);
+  return (
+    '#' +
+    String(codigo || '000000')
+      .replace('PED-', '')
+      .slice(-6)
+  );
 }
 
 function formatPhone(phone) {
@@ -112,9 +119,11 @@ function getFilteredOrders() {
 function canUpdateStatus(currentStatus, nextStatus) {
   var status = normalizeStatus(currentStatus);
 
-  return (status === 'recebido' && (nextStatus === 'em_preparo' || nextStatus === 'cancelado')) ||
-         (status === 'em_preparo' && nextStatus === 'pronto') ||
-         (status === 'pronto' && nextStatus === 'finalizado');
+  return (
+    (status === 'recebido' && (nextStatus === 'em_preparo' || nextStatus === 'cancelado')) ||
+    (status === 'em_preparo' && nextStatus === 'pronto') ||
+    (status === 'pronto' && nextStatus === 'finalizado')
+  );
 }
 
 async function updateOrderStatus(orderCode, nextStatus) {
@@ -213,7 +222,9 @@ function createStatusButton(label, nextStatus, orderCode, isPrimary) {
   var button = document.createElement('button');
 
   button.type = 'button';
-  button.className = isPrimary ? 'admin-order-action-button admin-order-action-primary' : 'admin-order-action-button admin-order-action-secondary';
+  button.className = isPrimary
+    ? 'admin-order-action-button admin-order-action-primary'
+    : 'admin-order-action-button admin-order-action-secondary';
   button.textContent = label;
 
   button.addEventListener('click', function () {
@@ -252,13 +263,33 @@ function createOrderCard(order) {
   top.appendChild(codeGroup);
   top.appendChild(statusBadge);
 
-  details.appendChild(createInfoRow('Cliente', order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado'));
-  details.appendChild(createInfoRow('Telefone', order.cliente ? formatPhone(order.cliente.telefone) : 'Telefone não informado'));
+  details.appendChild(
+    createInfoRow(
+      'Cliente',
+      order.cliente && order.cliente.nome ? order.cliente.nome : 'Cliente não informado'
+    )
+  );
+  details.appendChild(
+    createInfoRow(
+      'Telefone',
+      order.cliente ? formatPhone(order.cliente.telefone) : 'Telefone não informado'
+    )
+  );
   details.appendChild(createInfoRow('Tipo', formatDeliveryType(order.tipoEntrega)));
   details.appendChild(createInfoRow('Total', formatPrice(order.total)));
   details.appendChild(createInfoRow('Data/hora', formatDateTime(order.dataHora)));
-  details.appendChild(createInfoRow('Pagamento', formatPaymentMethod(order.pagamento && order.pagamento.formaPagamento)));
-  details.appendChild(createInfoRow('Status do pagamento', formatPaymentStatus(order.pagamento && order.pagamento.statusPagamento)));
+  details.appendChild(
+    createInfoRow(
+      'Pagamento',
+      formatPaymentMethod(order.pagamento && order.pagamento.formaPagamento)
+    )
+  );
+  details.appendChild(
+    createInfoRow(
+      'Status do pagamento',
+      formatPaymentStatus(order.pagamento && order.pagamento.statusPagamento)
+    )
+  );
 
   if (order.tipoEntrega === 'entrega') {
     details.appendChild(createInfoRow('Endereço', createAddressText(order.endereco)));
@@ -284,10 +315,13 @@ function updateEmptyState(filteredOrders) {
   ordersEmptyElement.hidden = false;
 
   if (pedidos.length === 0) {
-    ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent = 'Nenhum pedido encontrado.';
-    ordersEmptyElement.querySelector('.admin-orders-empty-text').textContent = 'Quando um cliente finalizar um pedido, ele aparecerá aqui.';
+    ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent =
+      'Nenhum pedido encontrado.';
+    ordersEmptyElement.querySelector('.admin-orders-empty-text').textContent =
+      'Quando um cliente finalizar um pedido, ele aparecerá aqui.';
   } else {
-    ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent = 'Nenhum pedido encontrado para este filtro.';
+    ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent =
+      'Nenhum pedido encontrado para este filtro.';
     ordersEmptyElement.querySelector('.admin-orders-empty-text').textContent = '';
   }
 }
@@ -316,8 +350,10 @@ function setActiveFilter(selectedButton) {
 function showLoadError() {
   ordersListElement.hidden = true;
   ordersEmptyElement.hidden = false;
-  ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent = 'Não foi possível carregar os pedidos.';
-  ordersEmptyElement.querySelector('.admin-orders-empty-text').textContent = 'Verifique se o backend está rodando e tente novamente.';
+  ordersEmptyElement.querySelector('.admin-orders-empty-title').textContent =
+    'Não foi possível carregar os pedidos.';
+  ordersEmptyElement.querySelector('.admin-orders-empty-text').textContent =
+    'Verifique se o backend está rodando e tente novamente.';
 }
 
 async function loadOrdersFromApi() {

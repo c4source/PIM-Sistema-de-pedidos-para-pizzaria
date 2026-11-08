@@ -18,7 +18,7 @@ function clearAdminLoginError() {
 
 async function validateAdminLogin() {
   var email = adminUsernameInput.value.trim();
-  var password = adminPasswordInput.value.trim();
+  var password = adminPasswordInput.value;
 
   if (!email || !password) {
     showAdminLoginError('Informe e-mail e senha.');
@@ -52,6 +52,13 @@ async function validateAdminLogin() {
       return false;
     }
 
+    if (data.trocaSenhaObrigatoria) {
+      clearAdminSession();
+      sessionStorage.setItem('trocaSenhaToken', data.token);
+      window.location.href = './admin-trocar-senha.html';
+      return true;
+    }
+    salvarSessaoAdmin(data);
     localStorage.setItem('adminToken', data.token);
     localStorage.setItem('adminNome', data.usuario || '');
     localStorage.setItem('adminPerfil', data.perfil || '');
@@ -80,3 +87,9 @@ adminPasswordInput.addEventListener('input', clearAdminLoginError);
 adminBackButton.addEventListener('click', function () {
   window.location.href = './index.html';
 });
+
+if (
+  typeof URLSearchParams !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('motivo') === 'inatividade'
+)
+  showAdminLoginError('Sua sessão foi encerrada por inatividade. Entre novamente.');

@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pim.DTOs;
 using Pim.Services;
+using Npgsql;
 
 namespace Pim.Controllers
 {
@@ -46,37 +48,52 @@ namespace Pim.Controllers
             return Ok(produto);
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpPost]
         public async Task<ActionResult<ProdutoResponseDto>> PostProduto(ProdutoCreateDto dto)
         {
-            var produtoCriado = await _produtoService.CriarAsync(dto);
+            try
+            {
+                var produtoCriado = await _produtoService.CriarAsync(dto);
 
-            return CreatedAtAction(nameof(GetProduto), new { id = produtoCriado.Id }, produtoCriado);
+                return CreatedAtAction(nameof(GetProduto), new
+                {
+                    id = produtoCriado.Id
+                }, produtoCriado);
+            }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduto(int id, ProdutoUpdateDto dto)
         {
-            var atualizado = await _produtoService.AtualizarAsync(id, dto);
+            try
+            {
+                var atualizado = await _produtoService.AtualizarAsync(id, dto);
 
-            if (!atualizado)
-                return NotFound("Produto nao encontrado.");
+                if (!atualizado)
+                    return NotFound("Produto nao encontrado.");
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
-        [Authorize(Roles = "Colaborador")]
+        [Authorize(Roles = "Administrador,Colaborador")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduto(int id)
         {
-            var removido = await _produtoService.RemoverAsync(id);
+            try
+            {
+                var removido = await _produtoService.RemoverAsync(id);
 
-            if (!removido)
-                return NotFound("Produto nao encontrado.");
+                if (!removido)
+                    return NotFound("Produto nao encontrado.");
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (PostgresException ex) when (ex.SqlState is "23503" or "23001") { return Conflict("Produto vinculado a um kit ou pedido. Desative-o em vez de excluir."); }
         }
     }
 }

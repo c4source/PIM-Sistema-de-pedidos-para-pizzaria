@@ -1,0 +1,1253 @@
+{
+  "nota": "Somente metadados do schema public; não contém registros, credenciais ou identificadores de infraestrutura.",
+  "data": "2026-10-31",
+  "commit": "54773ab",
+  "views": [
+    {
+      "name": "produto_com_estoque",
+      "definition": " SELECT codprod,\n    nome_produto,\n    preco,\n    descricao,\n    categoria,\n    status_disponibilidade,\n    imagem_url,\n    eh_kit,\n        CASE\n            WHEN eh_kit THEN COALESCE(( SELECT min(\n                    CASE\n                        WHEN (c.eh_kit OR ((c.status_disponibilidade)::text <> 'disponivel'::text)) THEN 0\n                        ELSE (c.estoque / k.quantidade)\n                    END) AS min\n               FROM (kit_componente k\n                 JOIN produto c ON ((c.codprod = k.id_produto)))\n              WHERE (k.id_kit = p.codprod)), 0)\n            ELSE estoque\n        END AS estoque\n   FROM produto p;"
+    }
+  ],
+  "tables": [
+    {
+      "name": "__EFMigrationsHistory",
+      "columns": [
+        {
+          "name": "MigrationId",
+          "type": "character varying(150)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "ProductVersion",
+          "type": "character varying(32)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "__EFMigrationsHistory_pkey",
+          "definition": "CREATE UNIQUE INDEX \"__EFMigrationsHistory_pkey\" ON public.\"__EFMigrationsHistory\" USING btree (\"MigrationId\")"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "__EFMigrationsHistory_MigrationId_not_null",
+          "type": "n",
+          "definition": "NOT NULL \"MigrationId\""
+        },
+        {
+          "name": "__EFMigrationsHistory_ProductVersion_not_null",
+          "type": "n",
+          "definition": "NOT NULL \"ProductVersion\""
+        },
+        {
+          "name": "__EFMigrationsHistory_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (\"MigrationId\")"
+        }
+      ]
+    },
+    {
+      "name": "cliente",
+      "columns": [
+        {
+          "name": "id_cliente",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "nome_cliente",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "cpf_cliente",
+          "type": "character varying(11)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "celular_cliente",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "email_cliente",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "senha_cliente",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "cliente_cpf_cliente_key",
+          "definition": "CREATE UNIQUE INDEX cliente_cpf_cliente_key ON public.cliente USING btree (cpf_cliente)"
+        },
+        {
+          "name": "cliente_email_cliente_key",
+          "definition": "CREATE UNIQUE INDEX cliente_email_cliente_key ON public.cliente USING btree (email_cliente)"
+        },
+        {
+          "name": "cliente_pkey",
+          "definition": "CREATE UNIQUE INDEX cliente_pkey ON public.cliente USING btree (id_cliente)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "cliente_cpf_cliente_key",
+          "type": "u",
+          "definition": "UNIQUE (cpf_cliente)"
+        },
+        {
+          "name": "cliente_email_cliente_key",
+          "type": "u",
+          "definition": "UNIQUE (email_cliente)"
+        },
+        {
+          "name": "cliente_id_cliente_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_cliente"
+        },
+        {
+          "name": "cliente_nome_cliente_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM nome_cliente) <> ''::text))"
+        },
+        {
+          "name": "cliente_nome_cliente_not_null",
+          "type": "n",
+          "definition": "NOT NULL nome_cliente"
+        },
+        {
+          "name": "cliente_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_cliente)"
+        }
+      ]
+    },
+    {
+      "name": "colaborador",
+      "columns": [
+        {
+          "name": "id_colaborador",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "nome_usuario",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "email_usuario",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "senha_usuario",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "perfil",
+          "type": "character varying(20)",
+          "default": "'Colaborador'::character varying",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "trocar_senha",
+          "type": "boolean",
+          "default": "false",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "versao_sessao",
+          "type": "integer",
+          "default": "1",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "ativo",
+          "type": "boolean",
+          "default": "true",
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "colaborador_email_usuario_key",
+          "definition": "CREATE UNIQUE INDEX colaborador_email_usuario_key ON public.colaborador USING btree (email_usuario)"
+        },
+        {
+          "name": "colaborador_pkey",
+          "definition": "CREATE UNIQUE INDEX colaborador_pkey ON public.colaborador USING btree (id_colaborador)"
+        },
+        {
+          "name": "uq_colaborador_email_normalizado",
+          "definition": "CREATE UNIQUE INDEX uq_colaborador_email_normalizado ON public.colaborador USING btree (lower(TRIM(BOTH FROM email_usuario)))"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "colaborador_ativo_not_null",
+          "type": "n",
+          "definition": "NOT NULL ativo"
+        },
+        {
+          "name": "colaborador_email_usuario_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM email_usuario) <> ''::text))"
+        },
+        {
+          "name": "colaborador_email_usuario_key",
+          "type": "u",
+          "definition": "UNIQUE (email_usuario)"
+        },
+        {
+          "name": "colaborador_email_usuario_not_null",
+          "type": "n",
+          "definition": "NOT NULL email_usuario"
+        },
+        {
+          "name": "colaborador_id_colaborador_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_colaborador"
+        },
+        {
+          "name": "colaborador_nome_usuario_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM nome_usuario) <> ''::text))"
+        },
+        {
+          "name": "colaborador_nome_usuario_not_null",
+          "type": "n",
+          "definition": "NOT NULL nome_usuario"
+        },
+        {
+          "name": "colaborador_perfil_check",
+          "type": "c",
+          "definition": "CHECK (((perfil)::text = ANY ((ARRAY['Administrador'::character varying, 'Colaborador'::character varying])::text[])))"
+        },
+        {
+          "name": "colaborador_perfil_not_null",
+          "type": "n",
+          "definition": "NOT NULL perfil"
+        },
+        {
+          "name": "colaborador_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_colaborador)"
+        },
+        {
+          "name": "colaborador_senha_usuario_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM senha_usuario) <> ''::text))"
+        },
+        {
+          "name": "colaborador_senha_usuario_not_null",
+          "type": "n",
+          "definition": "NOT NULL senha_usuario"
+        },
+        {
+          "name": "colaborador_trocar_senha_not_null",
+          "type": "n",
+          "definition": "NOT NULL trocar_senha"
+        },
+        {
+          "name": "colaborador_versao_sessao_not_null",
+          "type": "n",
+          "definition": "NOT NULL versao_sessao"
+        }
+      ]
+    },
+    {
+      "name": "itempedido",
+      "columns": [
+        {
+          "name": "id_item_pedido",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "id_pedido",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "codprod",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "quantidade",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "preco_unitario",
+          "type": "numeric(10,2)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "subtotal",
+          "type": "numeric(10,2)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "itempedido_pkey",
+          "definition": "CREATE UNIQUE INDEX itempedido_pkey ON public.itempedido USING btree (id_item_pedido)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "fk_itempedido_pedido",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_itempedido_produto",
+          "type": "f",
+          "definition": "FOREIGN KEY (codprod) REFERENCES produto(codprod) ON DELETE RESTRICT"
+        },
+        {
+          "name": "itempedido_codprod_not_null",
+          "type": "n",
+          "definition": "NOT NULL codprod"
+        },
+        {
+          "name": "itempedido_id_item_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_item_pedido"
+        },
+        {
+          "name": "itempedido_id_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_pedido"
+        },
+        {
+          "name": "itempedido_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_item_pedido)"
+        },
+        {
+          "name": "itempedido_preco_unitario_check",
+          "type": "c",
+          "definition": "CHECK ((preco_unitario >= (0)::numeric))"
+        },
+        {
+          "name": "itempedido_preco_unitario_not_null",
+          "type": "n",
+          "definition": "NOT NULL preco_unitario"
+        },
+        {
+          "name": "itempedido_quantidade_check",
+          "type": "c",
+          "definition": "CHECK ((quantidade > 0))"
+        },
+        {
+          "name": "itempedido_quantidade_not_null",
+          "type": "n",
+          "definition": "NOT NULL quantidade"
+        },
+        {
+          "name": "itempedido_subtotal_check",
+          "type": "c",
+          "definition": "CHECK ((subtotal >= (0)::numeric))"
+        },
+        {
+          "name": "itempedido_subtotal_not_null",
+          "type": "n",
+          "definition": "NOT NULL subtotal"
+        }
+      ]
+    },
+    {
+      "name": "kit_componente",
+      "columns": [
+        {
+          "name": "id_kit",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "id_produto",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "quantidade",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "kit_componente_pkey",
+          "definition": "CREATE UNIQUE INDEX kit_componente_pkey ON public.kit_componente USING btree (id_kit, id_produto)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "kit_componente_check",
+          "type": "c",
+          "definition": "CHECK ((id_kit <> id_produto))"
+        },
+        {
+          "name": "kit_componente_id_kit_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_kit) REFERENCES produto(codprod) ON DELETE CASCADE"
+        },
+        {
+          "name": "kit_componente_id_kit_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_kit"
+        },
+        {
+          "name": "kit_componente_id_produto_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_produto) REFERENCES produto(codprod) ON DELETE RESTRICT"
+        },
+        {
+          "name": "kit_componente_id_produto_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_produto"
+        },
+        {
+          "name": "kit_componente_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_kit, id_produto)"
+        },
+        {
+          "name": "kit_componente_quantidade_check",
+          "type": "c",
+          "definition": "CHECK ((quantidade > 0))"
+        },
+        {
+          "name": "kit_componente_quantidade_not_null",
+          "type": "n",
+          "definition": "NOT NULL quantidade"
+        }
+      ]
+    },
+    {
+      "name": "movimentacao_estoque",
+      "columns": [
+        {
+          "name": "id_movimentacao",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "codprod",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "id_colaborador",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "tipo",
+          "type": "character varying(10)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "quantidade",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "data_hora",
+          "type": "timestamp without time zone",
+          "default": "CURRENT_TIMESTAMP",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "operacao_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "estoque_esperado",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "motivo",
+          "type": "character varying(30)",
+          "default": "'outro'::character varying",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "observacao",
+          "type": "character varying(500)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "quantidade_contada",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "IX_movimentacao_estoque_operacao_id",
+          "definition": "CREATE UNIQUE INDEX \"IX_movimentacao_estoque_operacao_id\" ON public.movimentacao_estoque USING btree (operacao_id)"
+        },
+        {
+          "name": "PK_movimentacao_estoque",
+          "definition": "CREATE UNIQUE INDEX \"PK_movimentacao_estoque\" ON public.movimentacao_estoque USING btree (id_movimentacao)"
+        },
+        {
+          "name": "ix_movimentacao_estoque_codprod",
+          "definition": "CREATE INDEX ix_movimentacao_estoque_codprod ON public.movimentacao_estoque USING btree (codprod)"
+        },
+        {
+          "name": "ix_movimentacao_estoque_id_colaborador",
+          "definition": "CREATE INDEX ix_movimentacao_estoque_id_colaborador ON public.movimentacao_estoque USING btree (id_colaborador)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "PK_movimentacao_estoque",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_movimentacao)"
+        },
+        {
+          "name": "fk_movimentacao_colaborador",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_colaborador) REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT"
+        },
+        {
+          "name": "fk_movimentacao_produto",
+          "type": "f",
+          "definition": "FOREIGN KEY (codprod) REFERENCES produto(codprod) ON DELETE RESTRICT"
+        },
+        {
+          "name": "movimentacao_estoque_codprod_not_null",
+          "type": "n",
+          "definition": "NOT NULL codprod"
+        },
+        {
+          "name": "movimentacao_estoque_data_hora_not_null",
+          "type": "n",
+          "definition": "NOT NULL data_hora"
+        },
+        {
+          "name": "movimentacao_estoque_id_colaborador_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_colaborador"
+        },
+        {
+          "name": "movimentacao_estoque_id_movimentacao_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_movimentacao"
+        },
+        {
+          "name": "movimentacao_estoque_motivo_not_null",
+          "type": "n",
+          "definition": "NOT NULL motivo"
+        },
+        {
+          "name": "movimentacao_estoque_quantidade_check",
+          "type": "c",
+          "definition": "CHECK ((quantidade > 0))"
+        },
+        {
+          "name": "movimentacao_estoque_quantidade_not_null",
+          "type": "n",
+          "definition": "NOT NULL quantidade"
+        },
+        {
+          "name": "movimentacao_estoque_tipo_check",
+          "type": "c",
+          "definition": "CHECK (((tipo)::text = ANY ((ARRAY['entrada'::character varying, 'saida'::character varying])::text[])))"
+        },
+        {
+          "name": "movimentacao_estoque_tipo_not_null",
+          "type": "n",
+          "definition": "NOT NULL tipo"
+        }
+      ]
+    },
+    {
+      "name": "pagamento",
+      "columns": [
+        {
+          "name": "id_pagamento",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "id_pedido",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "forma_pagamento",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "status_pagamento",
+          "type": "character varying(20)",
+          "default": "'pendente'::character varying",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "valor_pago",
+          "type": "numeric(10,2)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "data_hora_pagamento",
+          "type": "timestamp without time zone",
+          "default": "CURRENT_TIMESTAMP",
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "pagamento_pkey",
+          "definition": "CREATE UNIQUE INDEX pagamento_pkey ON public.pagamento USING btree (id_pagamento)"
+        },
+        {
+          "name": "uq_pagamento_pedido",
+          "definition": "CREATE UNIQUE INDEX uq_pagamento_pedido ON public.pagamento USING btree (id_pedido)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_pagamento_forma",
+          "type": "c",
+          "definition": "CHECK (((forma_pagamento)::text = ANY ((ARRAY['dinheiro'::character varying, 'cartao'::character varying, 'pix'::character varying])::text[])))"
+        },
+        {
+          "name": "chk_pagamento_status",
+          "type": "c",
+          "definition": "CHECK (((status_pagamento)::text = ANY ((ARRAY['pendente'::character varying, 'pago'::character varying, 'cancelado'::character varying])::text[])))"
+        },
+        {
+          "name": "chk_pagamento_valor",
+          "type": "c",
+          "definition": "CHECK ((valor_pago >= (0)::numeric))"
+        },
+        {
+          "name": "fk_pagamento_pedido",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE RESTRICT"
+        },
+        {
+          "name": "pagamento_data_hora_pagamento_not_null",
+          "type": "n",
+          "definition": "NOT NULL data_hora_pagamento"
+        },
+        {
+          "name": "pagamento_forma_pagamento_not_null",
+          "type": "n",
+          "definition": "NOT NULL forma_pagamento"
+        },
+        {
+          "name": "pagamento_id_pagamento_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_pagamento"
+        },
+        {
+          "name": "pagamento_id_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_pedido"
+        },
+        {
+          "name": "pagamento_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_pagamento)"
+        },
+        {
+          "name": "pagamento_status_pagamento_not_null",
+          "type": "n",
+          "definition": "NOT NULL status_pagamento"
+        },
+        {
+          "name": "pagamento_valor_pago_not_null",
+          "type": "n",
+          "definition": "NOT NULL valor_pago"
+        },
+        {
+          "name": "uq_pagamento_pedido",
+          "type": "u",
+          "definition": "UNIQUE (id_pedido)"
+        }
+      ]
+    },
+    {
+      "name": "pedido",
+      "columns": [
+        {
+          "name": "id_pedido",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "codigo",
+          "type": "character varying(50)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "nome_cliente",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "telefone_cliente",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "tipo_entrega",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "rua_entrega",
+          "type": "character varying(150)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "numero_entrega",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "bairro_entrega",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "complemento_entrega",
+          "type": "character varying(150)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "observacoes",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "data_hora_pedido",
+          "type": "timestamp without time zone",
+          "default": "CURRENT_TIMESTAMP",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "status_pedido",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "valor_total",
+          "type": "numeric(10,2)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "pedido_codigo_key",
+          "definition": "CREATE UNIQUE INDEX pedido_codigo_key ON public.pedido USING btree (codigo)"
+        },
+        {
+          "name": "pedido_pkey",
+          "definition": "CREATE UNIQUE INDEX pedido_pkey ON public.pedido USING btree (id_pedido)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_pedido_codigo_nao_vazio",
+          "type": "c",
+          "definition": "CHECK (((codigo IS NULL) OR (TRIM(BOTH FROM codigo) <> ''::text)))"
+        },
+        {
+          "name": "chk_pedido_endereco_obrigatorio_entrega",
+          "type": "c",
+          "definition": "CHECK ((((tipo_entrega)::text = 'retirada'::text) OR (((tipo_entrega)::text = 'entrega'::text) AND (rua_entrega IS NOT NULL) AND (TRIM(BOTH FROM rua_entrega) <> ''::text) AND (numero_entrega IS NOT NULL) AND (TRIM(BOTH FROM numero_entrega) <> ''::text) AND (bairro_entrega IS NOT NULL) AND (TRIM(BOTH FROM bairro_entrega) <> ''::text))))"
+        },
+        {
+          "name": "pedido_codigo_key",
+          "type": "u",
+          "definition": "UNIQUE (codigo)"
+        },
+        {
+          "name": "pedido_data_hora_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL data_hora_pedido"
+        },
+        {
+          "name": "pedido_id_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_pedido"
+        },
+        {
+          "name": "pedido_nome_cliente_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM nome_cliente) <> ''::text))"
+        },
+        {
+          "name": "pedido_nome_cliente_not_null",
+          "type": "n",
+          "definition": "NOT NULL nome_cliente"
+        },
+        {
+          "name": "pedido_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_pedido)"
+        },
+        {
+          "name": "pedido_status_pedido_check",
+          "type": "c",
+          "definition": "CHECK (((status_pedido)::text = ANY ((ARRAY['recebido'::character varying, 'em_preparo'::character varying, 'pronto'::character varying, 'finalizado'::character varying, 'cancelado'::character varying])::text[])))"
+        },
+        {
+          "name": "pedido_status_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL status_pedido"
+        },
+        {
+          "name": "pedido_telefone_cliente_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM telefone_cliente) <> ''::text))"
+        },
+        {
+          "name": "pedido_telefone_cliente_not_null",
+          "type": "n",
+          "definition": "NOT NULL telefone_cliente"
+        },
+        {
+          "name": "pedido_tipo_entrega_check",
+          "type": "c",
+          "definition": "CHECK (((tipo_entrega)::text = ANY ((ARRAY['entrega'::character varying, 'retirada'::character varying])::text[])))"
+        },
+        {
+          "name": "pedido_tipo_entrega_not_null",
+          "type": "n",
+          "definition": "NOT NULL tipo_entrega"
+        },
+        {
+          "name": "pedido_valor_total_check",
+          "type": "c",
+          "definition": "CHECK ((valor_total >= (0)::numeric))"
+        },
+        {
+          "name": "pedido_valor_total_not_null",
+          "type": "n",
+          "definition": "NOT NULL valor_total"
+        }
+      ]
+    },
+    {
+      "name": "pedido_baixa_estoque",
+      "columns": [
+        {
+          "name": "id_pedido",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "id_produto",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "quantidade",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "pedido_baixa_estoque_pkey",
+          "definition": "CREATE UNIQUE INDEX pedido_baixa_estoque_pkey ON public.pedido_baixa_estoque USING btree (id_pedido, id_produto)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "pedido_baixa_estoque_id_pedido_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE RESTRICT"
+        },
+        {
+          "name": "pedido_baixa_estoque_id_pedido_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_pedido"
+        },
+        {
+          "name": "pedido_baixa_estoque_id_produto_fkey",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_produto) REFERENCES produto(codprod) ON DELETE RESTRICT"
+        },
+        {
+          "name": "pedido_baixa_estoque_id_produto_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_produto"
+        },
+        {
+          "name": "pedido_baixa_estoque_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (id_pedido, id_produto)"
+        },
+        {
+          "name": "pedido_baixa_estoque_quantidade_check",
+          "type": "c",
+          "definition": "CHECK ((quantidade > 0))"
+        },
+        {
+          "name": "pedido_baixa_estoque_quantidade_not_null",
+          "type": "n",
+          "definition": "NOT NULL quantidade"
+        }
+      ]
+    },
+    {
+      "name": "produto",
+      "columns": [
+        {
+          "name": "codprod",
+          "type": "integer",
+          "default": null,
+          "identity": "d",
+          "nullable": false
+        },
+        {
+          "name": "nome_produto",
+          "type": "character varying(100)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "categoria",
+          "type": "character varying(30)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "preco",
+          "type": "numeric(10,2)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "descricao",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "status_disponibilidade",
+          "type": "character varying(20)",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "estoque",
+          "type": "integer",
+          "default": "0",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "imagem_url",
+          "type": "character varying(200)",
+          "default": null,
+          "identity": "",
+          "nullable": true
+        },
+        {
+          "name": "eh_kit",
+          "type": "boolean",
+          "default": "false",
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "estoque_minimo",
+          "type": "integer",
+          "default": "5",
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "produto_pkey",
+          "definition": "CREATE UNIQUE INDEX produto_pkey ON public.produto USING btree (codprod)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "ck_produto_minimo",
+          "type": "c",
+          "definition": "CHECK ((estoque_minimo >= 0))"
+        },
+        {
+          "name": "produto_categoria_check",
+          "type": "c",
+          "definition": "CHECK (((categoria)::text = ANY ((ARRAY['pizza'::character varying, 'doce'::character varying, 'bebida'::character varying, 'combo'::character varying])::text[])))"
+        },
+        {
+          "name": "produto_categoria_not_null",
+          "type": "n",
+          "definition": "NOT NULL categoria"
+        },
+        {
+          "name": "produto_codprod_not_null",
+          "type": "n",
+          "definition": "NOT NULL codprod"
+        },
+        {
+          "name": "produto_eh_kit_not_null",
+          "type": "n",
+          "definition": "NOT NULL eh_kit"
+        },
+        {
+          "name": "produto_estoque_check",
+          "type": "c",
+          "definition": "CHECK ((estoque >= 0))"
+        },
+        {
+          "name": "produto_estoque_minimo_not_null",
+          "type": "n",
+          "definition": "NOT NULL estoque_minimo"
+        },
+        {
+          "name": "produto_estoque_not_null",
+          "type": "n",
+          "definition": "NOT NULL estoque"
+        },
+        {
+          "name": "produto_nome_produto_check",
+          "type": "c",
+          "definition": "CHECK ((TRIM(BOTH FROM nome_produto) <> ''::text))"
+        },
+        {
+          "name": "produto_nome_produto_not_null",
+          "type": "n",
+          "definition": "NOT NULL nome_produto"
+        },
+        {
+          "name": "produto_pkey",
+          "type": "p",
+          "definition": "PRIMARY KEY (codprod)"
+        },
+        {
+          "name": "produto_preco_check",
+          "type": "c",
+          "definition": "CHECK ((preco > (0)::numeric))"
+        },
+        {
+          "name": "produto_preco_not_null",
+          "type": "n",
+          "definition": "NOT NULL preco"
+        },
+        {
+          "name": "produto_status_disponibilidade_check",
+          "type": "c",
+          "definition": "CHECK (((status_disponibilidade)::text = ANY ((ARRAY['disponivel'::character varying, 'indisponivel'::character varying])::text[])))"
+        },
+        {
+          "name": "produto_status_disponibilidade_not_null",
+          "type": "n",
+          "definition": "NOT NULL status_disponibilidade"
+        }
+      ]
+    },
+    {
+      "name": "sessao_acesso",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "id_colaborador",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        },
+        {
+          "name": "ultima_atividade",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "IX_sessao_acesso_id_colaborador",
+          "definition": "CREATE INDEX \"IX_sessao_acesso_id_colaborador\" ON public.sessao_acesso USING btree (id_colaborador)"
+        },
+        {
+          "name": "PK_sessao_acesso",
+          "definition": "CREATE UNIQUE INDEX \"PK_sessao_acesso\" ON public.sessao_acesso USING btree (id)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "FK_sessao_acesso_colaborador_id_colaborador",
+          "type": "f",
+          "definition": "FOREIGN KEY (id_colaborador) REFERENCES colaborador(id_colaborador) ON DELETE CASCADE"
+        },
+        {
+          "name": "PK_sessao_acesso",
+          "type": "p",
+          "definition": "PRIMARY KEY (id)"
+        },
+        {
+          "name": "sessao_acesso_id_colaborador_not_null",
+          "type": "n",
+          "definition": "NOT NULL id_colaborador"
+        },
+        {
+          "name": "sessao_acesso_id_not_null",
+          "type": "n",
+          "definition": "NOT NULL id"
+        },
+        {
+          "name": "sessao_acesso_ultima_atividade_not_null",
+          "type": "n",
+          "definition": "NOT NULL ultima_atividade"
+        }
+      ]
+    }
+  ],
+  "migrations": [
+    "20261016222636_InicialEntityFramework",
+    "20261016222939_PadroesBancoExistente",
+    "20261016223639_DatasPadraoInstalacao",
+    "20261016223819_DataPadraoPagamento",
+    "20261017144256_SessaoPorInatividade",
+    "20261020181256_AdicionaMovimentacaoEstoque",
+    "20261031162517_SincronizacaoMovimentacoesMobile",
+    "20261031194237_EvolucaoOperacionalMobile"
+  ]
+}

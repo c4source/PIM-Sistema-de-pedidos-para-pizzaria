@@ -4,12 +4,30 @@ namespace Pim.DTOs
 {
     public class PedidoResultadoDto
     {
-        public bool Sucesso { get; set; }
-        public string? Mensagem { get; set; }
-        public int? IdPedido { get; set; }
-        public string? Codigo { get; set; }
-        public string? Status { get; set; }
-        public decimal? ValorTotal { get; set; }
+        public bool Sucesso
+        {
+            get; set;
+        }
+        public string? Mensagem
+        {
+            get; set;
+        }
+        public int? IdPedido
+        {
+            get; set;
+        }
+        public string? Codigo
+        {
+            get; set;
+        }
+        public string? Status
+        {
+            get; set;
+        }
+        public decimal? ValorTotal
+        {
+            get; set;
+        }
 
         public static PedidoResultadoDto Falha(string mensagem)
         {

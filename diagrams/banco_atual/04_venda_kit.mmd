@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph VENDA["VENDA: transação EF e bloqueio de produto"]
+        direction TB
+        A["1 Combo Família<br/>Preço de venda: R$ 89,90"] --> B["itempedido<br/>1 linha do kit e seu preço histórico"]
+        A --> C["Ler composição e consolidar<br/>componentes com itens avulsos"]
+        C --> D["Conferir saldo e baixar produtos<br/>1 frango + 1 broto doce + 1 refrigerante 2L"]
+        D --> E["pedido_baixa_estoque<br/>Salvar os produtos e quantidades consumidos"]
+        B --> F["Confirmar pedido, itens,<br/>pagamento e baixas juntos"]
+        E --> F
+    end
+    subgraph CANCELAR["CANCELAMENTO: nova transação EF"]
+        direction TB
+        G["Conferir status e impedir<br/>cancelamento repetido"] --> H["Ler pedido_baixa_estoque<br/>Não usar a composição atual do kit"]
+        H --> I["Devolver os componentes originais<br/>ao estoque de produto"]
+        I --> J["Pedido e pagamento: cancelados<br/>Confirmar devolução uma única vez"]
+    end
+    F --> G

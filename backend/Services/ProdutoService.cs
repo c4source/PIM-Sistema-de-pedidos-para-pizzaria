@@ -1,6 +1,6 @@
 using Pim.DTOs;
 using Pim.Models;
-using Pim. Repositories; 
+using Pim.Repositories;
 
 namespace Pim.Services
 {
@@ -45,6 +45,8 @@ namespace Pim.Services
                 Categoria = dto.Categoria,
                 Status = dto.Status,
                 Estoque = dto.Estoque,
+                EhKit = dto.EhKit,
+                Componentes = dto.Componentes ?? new(),
                 ImagemUrl = dto.ImagemUrl
             };
 
@@ -66,6 +68,8 @@ namespace Pim.Services
             produto.Categoria = dto.Categoria;
             produto.Status = dto.Status;
             produto.Estoque = dto.Estoque;
+            produto.EhKit = dto.EhKit;
+            produto.Componentes = dto.Componentes ?? new();
             produto.ImagemUrl = dto.ImagemUrl;
 
             await _produtoRepository.AtualizarAsync(produto);
@@ -90,12 +94,15 @@ namespace Pim.Services
             return new ProdutoResponseDto
             {
                 Id = produto.Id,
+                EstoqueMinimo = produto.EstoqueMinimo,
                 Nome = produto.Nome,
                 Preco = produto.Preco,
                 Descricao = produto.Descricao,
                 Categoria = produto.Categoria,
                 Status = produto.Status,
                 Estoque = produto.Estoque,
+                EhKit = produto.EhKit,
+                Componentes = produto.Componentes,
                 ImagemUrl = produto.ImagemUrl
             };
         }

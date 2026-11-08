@@ -76,7 +76,8 @@ function updateTotal() {
   });
 
   totalElement.textContent = formatPrice(total);
-  cartSummaryItemsElement.textContent = totalItems === 1 ? '🛍️ 1 item no pedido' : '🛍️ ' + totalItems + ' itens no pedido';
+  cartSummaryItemsElement.textContent =
+    totalItems === 1 ? '🛍️ 1 item no pedido' : '🛍️ ' + totalItems + ' itens no pedido';
 }
 
 function getCartItemImageMarkup(item) {

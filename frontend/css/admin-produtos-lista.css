@@ -1,0 +1,408 @@
+.produtos-pesquisa {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) 1fr 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #e3e7ed;
+  border-radius: 16px;
+}
+.produtos-pesquisa label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #526171;
+}
+.produtos-pesquisa input,
+.produtos-pesquisa select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  background: #fff;
+  color: #263244;
+  font: inherit;
+}
+.produtos-botao-neutro,
+.produtos-botao-perigo {
+  width: auto;
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  background: white;
+  color: #394b60;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.produtos-botao-neutro:hover {
+  background: #f1f5fa;
+  border-color: #b9c8da;
+}
+.produtos-botao-perigo {
+  color: #fff;
+  background: #b52a3c;
+  border-color: #b52a3c;
+}
+#admin-products-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border: 1px solid #e3e7ed;
+  border-radius: 16px;
+  background: white;
+  overflow: visible;
+}
+.produto-linha {
+  display: grid;
+  grid-template-columns: 64px minmax(150px, 1fr) minmax(140px, auto) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e9edf2;
+}
+.produto-linha:last-child {
+  border-bottom: 0;
+}
+.produto-linha:hover {
+  background: #f9fbfd;
+}
+.produto-miniatura {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #f2f4f7;
+}
+.produto-identidade {
+  min-width: 0;
+}
+.produto-identidade h3 {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #263244;
+  overflow-wrap: anywhere;
+}
+.produto-categoria {
+  font-size: 0.8rem;
+  color: #697789;
+  margin-top: 5px;
+}
+.produto-fatos {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+.produto-preco {
+  font-size: 1rem;
+  color: #263244;
+}
+.produto-saldo {
+  font-size: 0.8rem;
+  color: #315f4a;
+  background: #edf7f1;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.produto-saldo.is-baixo {
+  color: #80500b;
+  background: #fff3d8;
+}
+.produto-saldo.is-zerado {
+  color: #8e2839;
+  background: #fceef1;
+}
+.produto-disponibilidade {
+  font-size: 0.75rem;
+  color: #697789;
+}
+.produto-acoes {
+  display: flex;
+  gap: 8px;
+}
+.produto-excluir {
+  color: #9c293d;
+}
+.produto-componentes {
+  font-size: 0.8rem;
+  margin-top: 8px;
+  color: #3b607f;
+}
+.produto-componentes summary {
+  cursor: pointer;
+  min-height: 28px;
+  line-height: 28px;
+}
+.produto-componentes ul {
+  padding-left: 18px;
+  line-height: 1.7;
+  color: #526171;
+}
+#produtos-resultados {
+  font-size: 0.85rem;
+  color: #697789;
+  margin: 8px 0 14px;
+}
+#produto-excluir-modal {
+  margin: auto;
+  width: min(460px, calc(100vw - 32px));
+  border: 1px solid #dfe4eb;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 80px #15192240;
+  color: #263244;
+}
+#produto-excluir-modal::backdrop {
+  background: #15192288;
+}
+#produto-excluir-modal p {
+  margin: 14px 0;
+  line-height: 1.6;
+  font-size: 0.9rem;
+  color: #526171;
+}
+#produto-excluir-modal form > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.produto-form-orientacao {
+  font-size: 0.85rem;
+  color: #697789;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+#produto-imagem-previa {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#produto-imagem-previa img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+#produto-imagem-previa figcaption {
+  font-size: 0.8rem;
+  color: #697789;
+}
+[aria-invalid='true'] {
+  border-color: #b52a3c !important;
+  outline-color: #b52a3c;
+}
+.produto-form-grupo {
+  min-width: 0;
+  border: 1px solid #e3e7ed;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.produto-form-grupo legend {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #526171;
+  padding: 0 8px;
+}
+.produto-form-grupo .admin-products-form-grid {
+  gap: 14px;
+}
+.produtos-pesquisa :focus-visible,
+.produto-acoes :focus-visible,
+.produtos-botao-neutro:focus-visible {
+  outline: 3px solid #457db1;
+  outline-offset: 2px;
+}
+@media (max-width: 1000px) {
+  .produtos-pesquisa {
+    grid-template-columns: 1fr 1fr;
+  }
+  .produto-linha {
+    grid-template-columns: 56px minmax(120px, 1fr) auto;
+    gap: 14px;
+  }
+  .produto-acoes {
+    grid-column: 2/-1;
+    justify-self: end;
+  }
+  .produto-miniatura {
+    width: 56px;
+    height: 56px;
+  }
+}
+@media (max-width: 540px) {
+  .produtos-pesquisa {
+    padding: 14px;
+    gap: 12px;
+  }
+  .produtos-pesquisa label:first-child {
+    grid-column: 1/-1;
+  }
+  .produtos-pesquisa > button {
+    grid-column: 1/-1;
+  }
+  .produto-linha {
+    padding: 16px 12px;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .produto-miniatura {
+    width: 48px;
+    height: 48px;
+  }
+  .produto-fatos {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .produto-acoes {
+    justify-self: start;
+  }
+  .produto-form-grupo {
+    padding: 12px;
+  }
+}
+
+#produto-sucesso-modal {
+  margin: auto;
+  width: min(420px, calc(100vw - 32px));
+  padding: 32px 28px;
+  border: 1px solid #dce9e0;
+  border-radius: 24px;
+  background: #fff;
+  text-align: center;
+  color: #263244;
+  box-shadow: 0 24px 80px #152b2040;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+#produto-sucesso-modal::backdrop {
+  background: #17251f70;
+}
+.produto-sucesso-simbolo {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #e4f5eb;
+  color: #25834e;
+  margin: 0 auto 22px;
+  border: 1px solid #bde3cc;
+}
+.produto-sucesso-simbolo svg {
+  width: 48px;
+  height: 48px;
+}
+#produto-sucesso-texto {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  font-weight: 700;
+}
+#produto-sucesso-modal p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #697789;
+  margin: 10px 0 24px;
+}
+#produto-sucesso-modal button {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #227345;
+  border-radius: 12px;
+  background: #227345;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 20px;
+}
+#produto-sucesso-modal button:hover {
+  background: #1a5d37;
+}
+#produto-sucesso-modal button:focus-visible {
+  outline: 3px solid #79ba95;
+  outline-offset: 3px;
+}
+.produto-fatos {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  min-width: 0;
+}
+.produto-saldo-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.produto-saldo-status .produto-saldo,
+.produto-saldo-status .produto-disponibilidade {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.4;
+  min-height: 28px;
+  font-size: 0.8rem;
+}
+.produto-saldo-status .produto-disponibilidade {
+  margin: 0;
+}
+@media (max-width: 540px) {
+  .produto-fatos {
+    grid-column: 2;
+    display: grid;
+    gap: 8px;
+  }
+  .produto-saldo-status {
+    gap: 6px;
+  }
+}
+
+/* Um único painel reúne todas as opções de busca e filtro. */
+.produtos-filtros-unificados {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e3e7ed;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+.produtos-filtros-unificados .produtos-pesquisa {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.produtos-filtros-unificados .admin-products-filters {
+  margin: 20px 0 0;
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid #edf0f4;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 760px) {
+  .produtos-filtros-unificados .admin-products-filters {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+@media (max-width: 540px) {
+  .produtos-filtros-unificados {
+    padding: 14px;
+  }
+}

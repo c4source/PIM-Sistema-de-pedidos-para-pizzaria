@@ -1,0 +1,65 @@
+erDiagram
+    direction LR
+    colaborador {
+        int id_colaborador PK
+        string perfil
+        bool ativo
+    }
+    sessao_acesso {
+        uuid id PK
+        int id_colaborador FK
+        datetime ultima_atividade
+    }
+    produto {
+        int codprod PK
+        int estoque
+        bool eh_kit
+        int estoque_minimo
+    }
+    kit_componente {
+        int id_kit PK, FK
+        int id_produto PK, FK
+        int quantidade
+    }
+    pedido {
+        int id_pedido PK
+        string codigo UK
+        string status_pedido
+        decimal valor_total
+    }
+    itempedido {
+        int id_item_pedido PK
+        int id_pedido FK
+        int codprod FK
+        int quantidade
+    }
+    pagamento {
+        int id_pagamento PK
+        int id_pedido FK, UK
+        string status_pagamento
+    }
+    pedido_baixa_estoque {
+        int id_pedido PK, FK
+        int id_produto PK, FK
+        int quantidade
+    }
+    movimentacao_estoque {
+        int id_movimentacao PK
+        int codprod FK
+        int id_colaborador FK
+        uuid operacao_id UK
+    }
+    cliente {
+        int id_cliente PK
+        string nome_cliente
+    }
+    colaborador ||--o{ sessao_acesso : "id_colaborador"
+    produto ||--o{ kit_componente : "compoe como kit"
+    produto ||--o{ kit_componente : "fornece componente"
+    pedido ||--o{ itempedido : "id_pedido"
+    produto ||--o{ itempedido : "codprod"
+    pedido ||--o| pagamento : "id_pedido"
+    pedido ||--o{ pedido_baixa_estoque : "id_pedido"
+    produto ||--o{ pedido_baixa_estoque : "id_produto"
+    colaborador ||--o{ movimentacao_estoque : "id_colaborador"
+    produto ||--o{ movimentacao_estoque : "codprod"

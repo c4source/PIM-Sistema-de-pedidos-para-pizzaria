@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pim.Models
@@ -9,15 +9,33 @@ namespace Pim.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id_colaborador")]
-        public int Id { get; set; }
+        public int Id
+        {
+            get; set;
+        }
+        [Column("perfil"), Required, StringLength(20)]
+        public string Perfil { get; set; } = "Colaborador";
+        [Column("ativo")]
+        public bool Ativo { get; set; } = true;
+
+        [Column("trocar_senha")]
+        public bool TrocarSenha
+        {
+            get; set;
+        }
+        [Column("versao_sessao")]
+        public int VersaoSessao { get; set; } = 1;
 
         [Column("nome_usuario")]
-        public string Nome { get; set; }
+        [Required, StringLength(100)]
+        public string Nome { get; set; } = string.Empty;
 
         [Column("email_usuario")]
-        public string Email { get; set; }
+        [Required, EmailAddress, StringLength(100)]
+        public string Email { get; set; } = string.Empty;
 
         [Column("senha_usuario")]
-        public string Senha { get; set; }
+        [Required, StringLength(100)]
+        public string Senha { get; set; } = string.Empty;
     }
 }

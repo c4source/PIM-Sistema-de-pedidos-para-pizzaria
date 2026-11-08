@@ -1,58 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detalhe do Produto | Pizzaria MVP</title>
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/detalhe.css">
-</head>
-<body>
-  <div class="app detail-app">
-    <header class="detail-header">
-      <button class="back-button" id="detail-back-button" type="button" aria-label="Voltar">
-        <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M15 18 9 12l6-6"></path>
-        </svg>
-      </button>
-      <h1 class="detail-page-title">Detalhe do produto</h1>
-      <span class="detail-title" hidden>Detalhe do produto</span>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalhe do Produto | Pizzaria MVP</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/detalhe.css" />
+  </head>
+  <body>
+    <div class="app detail-app">
+      <header class="detail-header">
+        <button class="back-button" id="detail-back-button" type="button" aria-label="Voltar">
+          <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 18 9 12l6-6"></path>
+          </svg>
+        </button>
+        <h1 class="detail-page-title">Detalhe do produto</h1>
+        <span class="detail-title" hidden>Detalhe do produto</span>
+      </header>
 
-    <main class="detail-screen">
-      <article class="detail-card">
-        <section class="detail-image-section" aria-label="Imagem do produto">
-          <img class="detail-image detail-image--loading" alt="Imagem do produto">
-        </section>
-        
+      <main class="detail-screen">
+        <article class="detail-card">
+          <section class="detail-image-section" aria-label="Imagem do produto">
+            <img class="detail-image detail-image--loading" alt="Imagem do produto" />
+          </section>
 
-        <section class="detail-info" aria-label="Informações do produto">
-          <h2 class="detail-product-name">Carregando produto</h2>
-          <p class="detail-product-price">R$ 0,00</p>
-        </section>
+          <section class="detail-info" aria-label="Informações do produto">
+            <h2 class="detail-product-name">Carregando produto</h2>
+            <p class="detail-product-price">R$ 0,00</p>
+          </section>
 
-        <section class="detail-description" aria-label="Descrição do produto">
-          <strong class="detail-description-title">Descrição do produto</strong>
-          <p class="detail-description-text">Aguarde enquanto carregamos as informações do produto.</p>
-        </section>
+          <section class="detail-description" aria-label="Descrição do produto">
+            <strong class="detail-description-title">Descrição do produto</strong>
+            <p class="detail-description-text">
+              Aguarde enquanto carregamos as informações do produto.
+            </p>
+          </section>
 
-        <section class="detail-quantity" aria-label="Controle de quantidade">
-          <span class="quantity-label">Quantidade</span>
-          <div class="quantity-control">
-            <button class="quantity-button" type="button" data-action="decrease" aria-label="Diminuir quantidade">-</button>
-            <span class="quantity-value" id="quantity-value">1</span>
-            <button class="quantity-button" type="button" data-action="increase" aria-label="Aumentar quantidade">+</button>
-          </div>
-        </section>
+          <section class="detail-quantity" aria-label="Controle de quantidade">
+            <span class="quantity-label">Quantidade</span>
+            <div class="quantity-control">
+              <button
+                class="quantity-button"
+                type="button"
+                data-action="decrease"
+                aria-label="Diminuir quantidade"
+              >
+                -
+              </button>
+              <span class="quantity-value" id="quantity-value">1</span>
+              <button
+                class="quantity-button"
+                type="button"
+                data-action="increase"
+                aria-label="Aumentar quantidade"
+              >
+                +
+              </button>
+            </div>
+          </section>
 
-        <section class="detail-action" aria-label="Ação principal">
-          <button class="primary-button" id="detail-add-button" type="button">Adicionar ao pedido</button>
-        </section>
-      </article>
-    </main>
-  </div>
+          <section class="detail-action" aria-label="Ação principal">
+            <button class="primary-button" id="detail-add-button" type="button">
+              Adicionar ao pedido
+            </button>
+          </section>
+        </article>
+      </main>
+    </div>
 
-  <script src="../js/api.js"></script>
-  <script src="../js/detalhe.js"></script>
-</body>
+    <script src="../js/api.js"></script>
+    <script src="../js/detalhe.js"></script>
+  </body>
 </html>

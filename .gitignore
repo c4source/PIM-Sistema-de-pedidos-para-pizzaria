@@ -24,3 +24,35 @@ backend/appsettings.Development.json
 *.sql.backup
 *.dump
 *.bak
+
+# Credenciais e configurações privadas por máquina
+.env
+.env.*
+!.env.example
+!.env.sample
+**/appsettings.Local.json
+**/appsettings.*.local.json
+**/appsettings.Development.json
+**/secrets.json
+**/credentials.json
+*.pfx
+*.p12
+*.pem
+*.key
+*.jks
+*.keystore
+**/key.properties
+**/local.properties
+
+# Backups e exportações locais de dados
+*.backup
+*.sql.gz
+*.dump.gz
+*.sqlite
+*.sqlite3
+
+# Dependências e saídas geradas
+node_modules/
+**/.dart_tool/
+**/build/
+**/coverage/

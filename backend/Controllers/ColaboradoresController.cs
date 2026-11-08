@@ -1,75 +1,74 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 using Pim.DTOs;
 using Pim.Services;
+using System.Security.Claims;
+namespace Pim.Controllers;
 
-namespace Pim.Controllers
+[Route("api/[controller]"), ApiController, Authorize(Roles = "Administrador")]
+public class ColaboradoresController(ColaboradorService service) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize(Roles = "Colaborador")]
-    public class ColaboradoresController : ControllerBase
+    private int Autor => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    [HttpGet] public async Task<IActionResult> Listar() => Ok(await service.ListarAsync());
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Buscar(int id)
     {
-        private readonly ColaboradorService _colaboradorService;
-
-        public ColaboradoresController(ColaboradorService colaboradorService)
+        var u = await service.BuscarPorIdAsync(id);
+        return u == null ? NotFound("Colaborador não encontrado.") : Ok(u);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Criar(ColaboradorCreateDto dto)
+    {
+        if (dto.Nome.Trim().Length < 2)
+            return BadRequest("Informe o nome.");
+        try
         {
-            _colaboradorService = colaboradorService;
+            return StatusCode(201, await service.CriarAsync(dto));
         }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ColaboradorResponseDto>>> GetColaboradores()
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" }) { return Conflict("E-mail já cadastrado."); }
+    }
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Atualizar(int id, ColaboradorUpdateDto dto)
+    {
+        if (dto.Nome.Trim().Length < 2)
+            return BadRequest("Informe o nome.");
+        try
         {
-            var colaboradores = await _colaboradorService.ListarAsync();
-            return Ok(colaboradores);
+            var erro = await service.AtualizarAsync(id, dto, Autor);
+            return erro == null ? NoContent() : BadRequest(erro);
         }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23505" }) { return Conflict("E-mail já cadastrado."); }
+    }
+    [HttpPost("{id:int}/resetar-senha")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ResetarSenha(int id)
+    {
+        var resultado = await service.ResetarSenhaAsync(id, Autor);
+        if (resultado.Erro == "Colaborador não encontrado.")
+            return NotFound(resultado.Erro);
+        return resultado.Erro == null ? Ok(resultado.Dados) : BadRequest(resultado.Erro);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ColaboradorResponseDto>> GetColaborador(int id)
+    [HttpPatch("{id:int}/ativo")]
+    public async Task<IActionResult> DefinirAtivo(int id, Pim.DTOs.SituacaoAcessoDto dto)
+    {
+        var erro = await service.DefinirAtivoAsync(id, dto.Ativo, Autor);
+        return erro == null ? NoContent() : BadRequest(erro);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Remover(int id)
+    {
+        try
         {
-            var colaborador = await _colaboradorService.BuscarPorIdAsync(id);
-
-            if (colaborador == null)
-                return NotFound("Colaborador nao encontrado.");
-
-            return Ok(colaborador);
+            var erro = await service.RemoverAsync(id, Autor);
+            return erro == null ? NoContent() : BadRequest(erro);
         }
-
-        [HttpPost]
-        public async Task<ActionResult<ColaboradorResponseDto>> PostColaborador(ColaboradorCreateDto dto)
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: "23503" or "23001" })
         {
-            var resultado = await _colaboradorService.CriarAsync(dto);
-
-            if (!resultado.Sucesso)
-                return BadRequest(resultado.Mensagem);
-
-            return CreatedAtAction(
-                nameof(GetColaborador),
-                new { id = resultado.Colaborador!.Id },
-                resultado.Colaborador
-            );
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutColaborador(int id, ColaboradorUpdateDto dto)
-        {
-            var atualizado = await _colaboradorService.AtualizarAsync(id, dto);
-
-            if (!atualizado)
-                return NotFound("Colaborador nao encontrado.");
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteColaborador(int id)
-        {
-            var removido = await _colaboradorService.RemoverAsync(id);
-
-            if (!removido)
-                return NotFound("Colaborador nao encontrado.");
-
-            return NoContent();
+            return BadRequest("Este colaborador possui histórico vinculado e não pode ser excluído.");
         }
     }
 }

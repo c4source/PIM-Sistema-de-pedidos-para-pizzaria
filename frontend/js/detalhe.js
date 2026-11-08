@@ -58,7 +58,8 @@ function saveProductToCart() {
 function loadSelectedProduct() {
   if (!selectedProduct) {
     productNameElement.textContent = 'Produto não encontrado';
-    productDescriptionElement.textContent = 'Volte ao cardápio e escolha um produto para ver os detalhes.';
+    productDescriptionElement.textContent =
+      'Volte ao cardápio e escolha um produto para ver os detalhes.';
     detailImageElement.removeAttribute('src');
     detailImageElement.alt = 'Produto não encontrado';
     detailImageElement.classList.add('detail-image--loading');
@@ -75,7 +76,10 @@ function loadSelectedProduct() {
   };
   detailImageElement.src = selectedProduct.imagem;
   detailImageElement.alt = selectedProduct.nome;
-  detailImageElement.classList.toggle('detail-image--contain', selectedProduct.categoria === 'bebida');
+  detailImageElement.classList.toggle(
+    'detail-image--contain',
+    selectedProduct.categoria === 'bebida'
+  );
   productNameElement.textContent = selectedProduct.nome;
   unitPrice = selectedProduct.preco;
   updateDisplayedPrice();
